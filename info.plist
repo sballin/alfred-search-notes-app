@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>in.sball.searchnotes</string>
+	<key>category</key>
+	<string>Tools</string>
+	<key>connections</key>
+	<dict>
+		<key>5BC84589-FA2A-459F-982A-54B612C9BA7F</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>4D8E3444-14C2-4D0E-A8C1-AA67988AE358</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>ED63BB8B-C8D5-442F-BA82-B851D617AEFF</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>AF97AF2F-FA3D-4CCB-9795-78768F962846</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>F42A4420-BA42-4AA5-A300-8048BB39CA32</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>AF97AF2F-FA3D-4CCB-9795-78768F962846</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>Sean Ballinger</string>
+	<key>description</key>
+	<string></string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>Search Notes.app</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>applescript</key>
+				<string>on alfred_script(q)
+	tell application "Notes"		show note id q	end tell
+end alfred_script</string>
+				<key>cachescript</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.applescript</string>
+			<key>uid</key>
+			<string>4D8E3444-14C2-4D0E-A8C1-AA67988AE358</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>alfredfiltersresults</key>
+				<true/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>0</integer>
+				<key>escaping</key>
+				<integer>68</integer>
+				<key>keyword</key>
+				<string>n</string>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<true/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
+				<key>runningsubtext</key>
+				<string></string>
+				<key>script</key>
+				<string>import sqlite3
+import json
+
+
+# Open notes database
+home = '/'.join(__file__.split('/')[:3])
+conn = sqlite3.connect(home + '/Library/Group Containers/group.com.apple.notes/NoteStore.sqlite')
+c = conn.cursor()
+
+# Get uuid string required in full id
+c.execute("SELECT z_uuid FROM z_metadata")
+uuid = str(c.fetchone()[0])
+
+# Get tuples of note title, folder code, snippet, modification date, and id number 
+c.execute("""SELECT ztitle1,zfolder,zsnippet,zmodificationdate1,z_pk
+FROM ziccloudsyncingobject 
+WHERE ztitle1 IS NOT NULL AND zmarkedfordeletion IS NOT 1""")
+matches = c.fetchall()
+# Sort by modification date
+matches = sorted(matches, key=lambda m: m[3], reverse=True)
+
+# Get ordered lists of folder codes and folder names
+c.execute("""SELECT z_pk,ztitle2 
+FROM ziccloudsyncingobject 
+WHERE ztitle2 IS NOT NULL AND zmarkedfordeletion IS NOT 1""")
+folderCodes, folderNames = zip(*c.fetchall())
+
+conn.close()
+
+# Alfred results: title=note title, arg=id to pass on, subtitle="folder name | snippet"
+items = [{"title":    m[0], 
+          "arg":      "x-coredata://" + uuid + "/ICNote/p" + str(m[4]), 
+          "subtitle": folderNames[folderCodes.index(m[1])] + " | " + m[2][:80]}
+         for m in matches]
+
+# Custom icons for folder names that start with corresponding emoji
+icons = [u'\ud83d\udcd3', u'\ud83d\udcd5', u'\ud83d\udcd7', u'\ud83d\udcd8', u'\ud83d\udcd9']
+for i in items:
+    if any(x in i['subtitle'] for x in icons):
+        subtitle = i['subtitle']
+        icon = subtitle[:2]
+        i['subtitle'] = subtitle[3:]
+        i['icon'] = {'type': 'image', 'path': icon.encode('raw_unicode_escape') + '.png'}
+
+output = {"items": items}
+print json.dumps(output)</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string>searchNotes.py</string>
+				<key>subtext</key>
+				<string></string>
+				<key>title</key>
+				<string></string>
+				<key>type</key>
+				<integer>8</integer>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>5BC84589-FA2A-459F-982A-54B612C9BA7F</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>alfredfiltersresults</key>
+				<true/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>2</integer>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>0</integer>
+				<key>escaping</key>
+				<integer>68</integer>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<true/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>2</integer>
+				<key>runningsubtext</key>
+				<string></string>
+				<key>script</key>
+				<string>on run argv
+	tell application "Notes"		set noteRefs to a reference to every note in default account
+	end tell
+	set noteNames to name of noteRefs
+
+	set output to "{\"items\":["
+	repeat with name in noteNames
+		set output to output &amp; "{\"title\":\"" &amp; name  &amp; "\",\"arg\":\"" &amp; name &amp; "\"},"
+	end repeat
+	return output &amp; "]}" 
+end run</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string>searchNotes.applescript</string>
+				<key>subtext</key>
+				<string></string>
+				<key>title</key>
+				<string>Search Apple Notes</string>
+				<key>type</key>
+				<integer>8</integer>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>F42A4420-BA42-4AA5-A300-8048BB39CA32</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>applescript</key>
+				<string>on alfred_script(q)
+	tell application "Notes"
+		set noteRefs to a reference to every note in default account
+		repeat with noteRef in noteRefs
+			if name of noteRef contains q then
+				show noteRef
+				activate
+				exit repeat
+			end if
+		end repeat
+	end tell
+end alfred_script</string>
+				<key>cachescript</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.applescript</string>
+			<key>uid</key>
+			<string>AF97AF2F-FA3D-4CCB-9795-78768F962846</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>alfredfiltersresults</key>
+				<true/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>2</integer>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>0</integer>
+				<key>escaping</key>
+				<integer>68</integer>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<true/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>2</integer>
+				<key>runningsubtext</key>
+				<string>Searching...</string>
+				<key>script</key>
+				<string>on run argv
+	tell application "Notes"		set noteRefs to a reference to every note in default account
+		set noteNames to name of noteRefs
+		set containers to container of noteRefs
+	end tell
+
+	set output to "{\"items\":["
+	repeat with i from 1 to count of noteRefs
+		set output to output &amp; "{\"title\":\"" &amp; (item i in noteNames)  &amp; "\",\"arg\":\"" &amp; (item i in noteNames) &amp; "\",\"subtitle\": \"" &amp; (name of item i of containers) &amp; "\"},"
+	end repeat
+	return output &amp; "]}" 
+end run</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string>searchNotesWithFolders.applescript</string>
+				<key>subtext</key>
+				<string></string>
+				<key>title</key>
+				<string>Search Notes.app</string>
+				<key>type</key>
+				<integer>8</integer>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>ED63BB8B-C8D5-442F-BA82-B851D617AEFF</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string></string>
+	<key>uidata</key>
+	<dict>
+		<key>4D8E3444-14C2-4D0E-A8C1-AA67988AE358</key>
+		<dict>
+			<key>note</key>
+			<string>Show note with given id</string>
+			<key>xpos</key>
+			<integer>520</integer>
+			<key>ypos</key>
+			<integer>70</integer>
+		</dict>
+		<key>5BC84589-FA2A-459F-982A-54B612C9BA7F</key>
+		<dict>
+			<key>note</key>
+			<string>Python SQL database search (fast, only tested on High Sierra)</string>
+			<key>xpos</key>
+			<integer>320</integer>
+			<key>ypos</key>
+			<integer>70</integer>
+		</dict>
+		<key>AF97AF2F-FA3D-4CCB-9795-78768F962846</key>
+		<dict>
+			<key>note</key>
+			<string>Find note with given name</string>
+			<key>xpos</key>
+			<integer>520</integer>
+			<key>ypos</key>
+			<integer>370</integer>
+		</dict>
+		<key>ED63BB8B-C8D5-442F-BA82-B851D617AEFF</key>
+		<dict>
+			<key>note</key>
+			<string>AppleScript search with folder names (slow)</string>
+			<key>xpos</key>
+			<integer>320</integer>
+			<key>ypos</key>
+			<integer>450</integer>
+		</dict>
+		<key>F42A4420-BA42-4AA5-A300-8048BB39CA32</key>
+		<dict>
+			<key>note</key>
+			<string>AppleScript search without folder names (fast)</string>
+			<key>xpos</key>
+			<integer>320</integer>
+			<key>ypos</key>
+			<integer>280</integer>
+		</dict>
+	</dict>
+	<key>webaddress</key>
+	<string>https://sball.in</string>
+</dict>
+</plist>
