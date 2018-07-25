@@ -41,7 +41,7 @@ for i in items:
         subtitle = i['subtitle']
         icon = subtitle[:2]
         i['subtitle'] = subtitle[3:]
-        i['icon'] = {'type': 'image', 'path': icon.encode('raw_unicode_escape') + '.png'}
+        i['icon'] = {'type': 'image', 'path': 'icons/' + icon.encode('raw_unicode_escape') + '.png'}
 
 output = {"items": items}
 print json.dumps(output)
