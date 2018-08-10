@@ -6,13 +6,19 @@
 
 ## Usage
 
-Type `n[part of note title]` and press enter.
+Type `n[part of note]` and press enter.
 
 ## Install
 
 Download the Alfred workflow file from Releases and open it.
 
 ## Customize
+
+### Search 
+
+By default, this searches the title + full text of the notes and orders results based on the last modification date of the note. If you want to search titles only or order results based on alphabetical order, change the [environment variables](https://www.alfredapp.com/help/workflows/advanced/variables/#environment).
+
+### Icons
 
 Icons are from [Emojitwo](https://emojitwo.github.io/) and will show up when they are the first character in the name of a folder, like `📘 GPI` in the screenshot above. Add your own icons to the workflow's `icons` folder and tweak `searchNotes.py` to see them in Alfred.
 
