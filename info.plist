@@ -355,6 +355,15 @@ end run</string>
 			<integer>280</integer>
 		</dict>
 	</dict>
+	<key>variables</key>
+	<dict>
+		<key>searchTitlesOnly</key>
+		<string>0</string>
+		<key>sortByDate</key>
+		<string>1</string>
+	</dict>
+	<key>version</key>
+	<string></string>
 	<key>webaddress</key>
 	<string>https://sball.in</string>
 </dict>
