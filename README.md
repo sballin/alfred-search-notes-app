@@ -1,7 +1,7 @@
 # Search Notes.app with Alfred
 
 <p align="center">
-  <img src="./screenshots/alfred-search-notes-app.png" width="654" title="screenshot">
+  <img src="https://user-images.githubusercontent.com/2719004/44121158-3b7447e6-a01f-11e8-85ef-edd781f2219f.png" width="654" title="screenshot">
 </p>
 
 ## Usage
@@ -16,7 +16,7 @@ Download the Alfred workflow file from Releases and open it.
 
 ### Search 
 
-By default, this searches the title + full text of the notes and orders results based on the last modification date of the note. If you want to search titles only or order results based on alphabetical order, change the [environment variables](https://www.alfredapp.com/help/workflows/advanced/variables/#environment).
+By default, this searches the title + full text of the notes and orders results based on the last modification date of the note. If you want to search titles only or order results alphabetically, change the [environment variables](https://www.alfredapp.com/help/workflows/advanced/variables/#environment).
 
 ### Icons
 
@@ -24,8 +24,5 @@ Icons are from [Emojitwo](https://emojitwo.github.io/) and will show up when the
 
 ## Compatibility
 
-The default search method is only tested in High Sierra. If it's not working for you and/or you're on a different version of macOS, try the AppleScript search methods.
+The default search method is only tested in High Sierra. If it's not working for you and/or you're on a different version of macOS, try the AppleScript search methods using the keywords `a` and `af`.
 
-<p align="center">
-  <img src="https://user-images.githubusercontent.com/2719004/43259993-60c2f944-90d8-11e8-8e4c-28ecfb428cb8.png" width=359 title="compatibility">
-</p>
