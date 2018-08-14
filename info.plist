@@ -25,7 +25,7 @@
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>AF97AF2F-FA3D-4CCB-9795-78768F962846</string>
+				<string>4D8E3444-14C2-4D0E-A8C1-AA67988AE358</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -38,7 +38,7 @@
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>AF97AF2F-FA3D-4CCB-9795-78768F962846</string>
+				<string>4D8E3444-14C2-4D0E-A8C1-AA67988AE358</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -58,23 +58,6 @@
 	<string>Search Notes.app</string>
 	<key>objects</key>
 	<array>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>applescript</key>
-				<string>on alfred_script(q)
-	tell application "Notes"		show note id q	end tell
-end alfred_script</string>
-				<key>cachescript</key>
-				<true/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.applescript</string>
-			<key>uid</key>
-			<string>4D8E3444-14C2-4D0E-A8C1-AA67988AE358</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
 		<dict>
 			<key>config</key>
 			<dict>
@@ -170,6 +153,23 @@ print json.dumps(output)</string>
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>applescript</key>
+				<string>on alfred_script(q)
+	tell application "Notes"		show note id q	end tell
+end alfred_script</string>
+				<key>cachescript</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.applescript</string>
+			<key>uid</key>
+			<string>4D8E3444-14C2-4D0E-A8C1-AA67988AE358</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>alfredfiltersresults</key>
 				<true/>
 				<key>alfredfiltersresultsmatchmode</key>
@@ -180,6 +180,8 @@ print json.dumps(output)</string>
 				<integer>0</integer>
 				<key>escaping</key>
 				<integer>68</integer>
+				<key>keyword</key>
+				<string>a</string>
 				<key>queuedelaycustom</key>
 				<integer>3</integer>
 				<key>queuedelayimmediatelyinitially</key>
@@ -225,32 +227,6 @@ end run</string>
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>applescript</key>
-				<string>on alfred_script(q)
-	tell application "Notes"
-		set noteRefs to a reference to every note in default account
-		repeat with noteRef in noteRefs
-			if name of noteRef contains q then
-				show noteRef
-				activate
-				exit repeat
-			end if
-		end repeat
-	end tell
-end alfred_script</string>
-				<key>cachescript</key>
-				<true/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.applescript</string>
-			<key>uid</key>
-			<string>AF97AF2F-FA3D-4CCB-9795-78768F962846</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
 				<key>alfredfiltersresults</key>
 				<true/>
 				<key>alfredfiltersresultsmatchmode</key>
@@ -261,6 +237,8 @@ end alfred_script</string>
 				<integer>0</integer>
 				<key>escaping</key>
 				<integer>68</integer>
+				<key>keyword</key>
+				<string>af</string>
 				<key>queuedelaycustom</key>
 				<integer>3</integer>
 				<key>queuedelayimmediatelyinitially</key>
@@ -312,43 +290,34 @@ end run</string>
 		<key>4D8E3444-14C2-4D0E-A8C1-AA67988AE358</key>
 		<dict>
 			<key>note</key>
-			<string>Show note with given id</string>
+			<string>Show note with given ID</string>
 			<key>xpos</key>
 			<integer>520</integer>
 			<key>ypos</key>
-			<integer>70</integer>
+			<integer>280</integer>
 		</dict>
 		<key>5BC84589-FA2A-459F-982A-54B612C9BA7F</key>
 		<dict>
 			<key>note</key>
-			<string>Python SQL database search (fast, only tested on High Sierra)</string>
+			<string>Search note titles and bodies (fast, High Sierra only)</string>
 			<key>xpos</key>
 			<integer>320</integer>
 			<key>ypos</key>
-			<integer>70</integer>
-		</dict>
-		<key>AF97AF2F-FA3D-4CCB-9795-78768F962846</key>
-		<dict>
-			<key>note</key>
-			<string>Find note with given name</string>
-			<key>xpos</key>
-			<integer>520</integer>
-			<key>ypos</key>
-			<integer>370</integer>
+			<integer>110</integer>
 		</dict>
 		<key>ED63BB8B-C8D5-442F-BA82-B851D617AEFF</key>
 		<dict>
 			<key>note</key>
-			<string>AppleScript search with folder names (slow)</string>
+			<string>Search titles only and show folder names (slowest, compatible)</string>
 			<key>xpos</key>
 			<integer>320</integer>
 			<key>ypos</key>
-			<integer>450</integer>
+			<integer>440</integer>
 		</dict>
 		<key>F42A4420-BA42-4AA5-A300-8048BB39CA32</key>
 		<dict>
 			<key>note</key>
-			<string>AppleScript search without folder names (fast)</string>
+			<string>Search titles only (slower, compatible)</string>
 			<key>xpos</key>
 			<integer>320</integer>
 			<key>ypos</key>

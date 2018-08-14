@@ -52,12 +52,10 @@ for i, d in enumerate(dbItems):
     # In body, strip weird characters, title & weird header artifacts, 
     # and replace line breaks with spaces
     body = zlib.decompress(d[5], 16+zlib.MAX_WBITS).split('\x1a\x10', 1)[0]
-    body = re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f-\xff]', '', body)
-    body = re.sub('^.*\n', ' ', body)
-    body = re.sub('\n', ' ', body)
-    body = re.sub('^  ', '', body)
+    body = re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f-\xff]|^  ', '', body)
+    body = re.sub('^.*\n|\n', ' ', body)
     
-    subtitle = folderNames[folderCodes.index(d[1])] + " | " + body[:100]
+    subtitle = folderNames[folderCodes.index(d[1])] + '  |' + body[:100]
     
     # Custom icons for folder names that start with corresponding emoji
     if any(x in subtitle[:2] for x in icons):
@@ -73,4 +71,4 @@ for i, d in enumerate(dbItems):
                 'match': d[0] if searchTitlesOnly else d[0] + body,
                 'icon': icon}
 
-print json.dumps({'items': items}, sort_keys=True)
+print json.dumps({'items': items})
