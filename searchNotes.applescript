@@ -10,7 +10,7 @@ on run argv
 		set noteIDs to id of allNotes
 		set noteNames to name of allNotes
 		repeat with i from 1 to count of allNotes
-					set end of output to {title:(item i of noteNames), arg:(item i of noteIDs), icon:{|type|:"fileicon", path:"/Applications/Notes.app"}}
+			set end of output to {title:(item i of noteNames), arg:(item i of noteIDs), icon:{|type|:"fileicon", path:"/Applications/Notes.app"}}
 		end repeat
 	end tell
 	
