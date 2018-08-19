@@ -207,7 +207,7 @@ end run</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
-				<string>searchNotes.applescript</string>
+				<string>searchNoteTitles.applescript</string>
 				<key>subtext</key>
 				<string></string>
 				<key>title</key>
@@ -238,7 +238,7 @@ end run</string>
 				<key>escaping</key>
 				<integer>68</integer>
 				<key>keyword</key>
-				<string>af</string>
+				<string>b</string>
 				<key>queuedelaycustom</key>
 				<integer>3</integer>
 				<key>queuedelayimmediatelyinitially</key>
@@ -265,7 +265,7 @@ end run</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
-				<string>searchNotesWithFolders.applescript</string>
+				<string>searchNotes.applescript</string>
 				<key>subtext</key>
 				<string></string>
 				<key>title</key>
@@ -292,7 +292,7 @@ end run</string>
 			<key>note</key>
 			<string>Show note with given ID</string>
 			<key>xpos</key>
-			<integer>520</integer>
+			<integer>540</integer>
 			<key>ypos</key>
 			<integer>280</integer>
 		</dict>
@@ -308,7 +308,7 @@ end run</string>
 		<key>ED63BB8B-C8D5-442F-BA82-B851D617AEFF</key>
 		<dict>
 			<key>note</key>
-			<string>Search titles only and show folder names (slowest, compatible)</string>
+			<string>Search titles and bodies (slowest, compatible)</string>
 			<key>xpos</key>
 			<integer>320</integer>
 			<key>ypos</key>

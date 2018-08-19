@@ -1,7 +1,7 @@
 # Search Notes.app with Alfred
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/2719004/44121158-3b7447e6-a01f-11e8-85ef-edd781f2219f.png" width="654" title="screenshot">
+  <img src="https://user-images.githubusercontent.com/2719004/44310455-e1b71100-a3d6-11e8-9fba-73bd9018ae0b.png" width="654" title="screenshot">
 </p>
 
 ## Usage
@@ -24,5 +24,5 @@ Icons are from [Emojitwo](https://emojitwo.github.io/) and will show up when the
 
 ## Compatibility
 
-The default search method is only tested in High Sierra. If it's not working for you and/or you're on a different version of macOS, try the AppleScript search methods using the keywords `a` and `af`.
+The default search method is only tested in High Sierra. If it's not working for you and/or you're on a different version of macOS, try the AppleScript search methods using the keywords `a` and `b`.
 

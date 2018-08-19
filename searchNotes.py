@@ -63,7 +63,7 @@ for i, d in enumerate(dbItems):
         subtitle = subtitle[3:]
         icon = {'type': 'image', 'path': 'icons/' + iconText + '.png'}
     else:
-        icon = {'type': 'fileicon', 'path': '/Applications/Notes.app'}
+        icon = {'type': 'default'}
     
     items[i] = {'title': d[0],
                 'subtitle': subtitle,
