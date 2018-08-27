@@ -23,7 +23,7 @@ on run argv
 					set noteBody to (noteBody's stringByReplacingOccurrencesOfString:"<[^>]*>|
 " withString:" " options:NSRegularExpressionSearch range:{0, noteBody's |length|()})
 					set noteBody to (noteBody's stringByReplacingOccurrencesOfString:"^ +| +$| +(?= )|" withString:"" options:NSRegularExpressionSearch range:{0, noteBody's |length|()}) as text
-					set match to (item i of noteNames) & " " & noteBody
+					set match to (item i of noteNames) & " " & folderName & " " & noteBody
 					if length of noteBody is less than 100 then
 						set subtitle to noteBody
 					else

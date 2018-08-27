@@ -21,11 +21,24 @@
 				<false/>
 			</dict>
 		</array>
-		<key>ED63BB8B-C8D5-442F-BA82-B851D617AEFF</key>
+		<key>D4791DDD-A038-4CC6-8126-781887365BD8</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
 				<string>4D8E3444-14C2-4D0E-A8C1-AA67988AE358</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>ED63BB8B-C8D5-442F-BA82-B851D617AEFF</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>D4791DDD-A038-4CC6-8126-781887365BD8</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -282,11 +295,64 @@ end run</string>
 			<key>version</key>
 			<integer>2</integer>
 		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>68</integer>
+				<key>script</key>
+				<string>import sys
+
+query = "{query}"
+
+sys.stdout.write(query)</string>
+				<key>scriptargtype</key>
+				<integer>0</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>3</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>D4791DDD-A038-4CC6-8126-781887365BD8</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>applescript</key>
+				<string>on alfred_script(q)
+	tell application "Notes"		show note id q	end tell
+end alfred_script</string>
+				<key>cachescript</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.applescript</string>
+			<key>uid</key>
+			<string>3A91AE1C-D402-4703-9B05-90817AA577F0</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
 	</array>
 	<key>readme</key>
 	<string></string>
 	<key>uidata</key>
 	<dict>
+		<key>3A91AE1C-D402-4703-9B05-90817AA577F0</key>
+		<dict>
+			<key>note</key>
+			<string>Show note with given name</string>
+			<key>xpos</key>
+			<integer>540</integer>
+			<key>ypos</key>
+			<integer>440</integer>
+		</dict>
 		<key>4D8E3444-14C2-4D0E-A8C1-AA67988AE358</key>
 		<dict>
 			<key>note</key>
@@ -294,7 +360,7 @@ end run</string>
 			<key>xpos</key>
 			<integer>540</integer>
 			<key>ypos</key>
-			<integer>280</integer>
+			<integer>200</integer>
 		</dict>
 		<key>5BC84589-FA2A-459F-982A-54B612C9BA7F</key>
 		<dict>
@@ -305,12 +371,19 @@ end run</string>
 			<key>ypos</key>
 			<integer>110</integer>
 		</dict>
+		<key>D4791DDD-A038-4CC6-8126-781887365BD8</key>
+		<dict>
+			<key>xpos</key>
+			<integer>350</integer>
+			<key>ypos</key>
+			<integer>440</integer>
+		</dict>
 		<key>ED63BB8B-C8D5-442F-BA82-B851D617AEFF</key>
 		<dict>
 			<key>note</key>
 			<string>Search titles and bodies (slowest, compatible)</string>
 			<key>xpos</key>
-			<integer>320</integer>
+			<integer>160</integer>
 			<key>ypos</key>
 			<integer>440</integer>
 		</dict>
