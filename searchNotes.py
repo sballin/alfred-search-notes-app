@@ -60,35 +60,36 @@ try:
 except:
     openedDatabase = False
          
-# Alfred results: title = note title, arg = id to pass on, subtitle = folder name, 
-# match = note contents from gzipped database entries after stripping footers.
-items = [{} for d in dbItems]
-gotOneRealNote = False
-for i, d in enumerate(dbItems):
-    try:
-        folderName = folderNames[folderCodes.index(d[1])]
-        if folderName == 'Recently Deleted':
-            continue
-        body = extractNoteBody(d[5])
-        subtitle = folderName + '  |' + body[:100]
-        match = u'{} {} {}'.format(d[0], folderName, '' if searchTitlesOnly else body)
-        
-        # Custom icons for folder names that start with corresponding emoji
-        if any(x in subtitle[:2] for x in icons):
-            iconText = subtitle[:2].encode('raw_unicode_escape')
-            subtitle = subtitle[3:]
-            icon = {'type': 'image', 'path': 'icons/' + iconText + '.png'}
-        else:
-            icon = {'type': 'default'}
-        
-        items[i] = {'title': d[0],
-                    'subtitle': subtitle,
-                    'arg': 'x-coredata://' + uuid + '/ICNote/p' + str(d[3]),
-                    'match': match,
-                    'icon': icon}
-        gotOneRealNote = True
-    except Exception as e:
-        items[i] = {'title': 'Error getting note', 'subtitle': str(e)}
+if openedDatabase:
+    # Alfred results: title = note title, arg = id to pass on, subtitle = folder name, 
+    # match = note contents from gzipped database entries after stripping footers.
+    items = [{} for d in dbItems]
+    gotOneRealNote = False
+    for i, d in enumerate(dbItems):
+        try:
+            folderName = folderNames[folderCodes.index(d[1])]
+            if folderName == 'Recently Deleted':
+                continue
+            body = extractNoteBody(d[5])
+            subtitle = folderName + '  |' + body[:100]
+            match = u'{} {} {}'.format(d[0], folderName, '' if searchTitlesOnly else body)
+            
+            # Custom icons for folder names that start with corresponding emoji
+            if any(x in subtitle[:2] for x in icons):
+                iconText = subtitle[:2].encode('raw_unicode_escape')
+                subtitle = subtitle[3:]
+                icon = {'type': 'image', 'path': 'icons/' + iconText + '.png'}
+            else:
+                icon = {'type': 'default'}
+            
+            items[i] = {'title': d[0],
+                        'subtitle': subtitle,
+                        'arg': 'x-coredata://' + uuid + '/ICNote/p' + str(d[3]),
+                        'match': match,
+                        'icon': icon}
+            gotOneRealNote = True
+        except Exception as e:
+            items[i] = {'title': 'Error getting note', 'subtitle': str(e)}
 
 if openedDatabase and gotOneRealNote:
     import json
