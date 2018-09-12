@@ -1,7 +1,7 @@
 # Search Notes.app with Alfred
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/2719004/45398015-8a404580-b610-11e8-9879-93c9c002a375.png" width="654" title="screenshot">
+  <img src="https://user-images.githubusercontent.com/2719004/45428832-03bb5080-b670-11e8-91bb-1c1c84eeee0b.png" width="654" title="screenshot">
 </p>
 
 ## Usage
