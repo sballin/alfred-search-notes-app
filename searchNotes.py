@@ -10,7 +10,18 @@ def extractNoteBody(data):
         # Strip weird characters, title & weird header artifacts, 
         # and replace line breaks with spaces
         data = zlib.decompress(data, 16+zlib.MAX_WBITS).split('\x1a\x10', 1)[0]
-        data = re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f-\xff]|^  ', '', data)
+
+        # Reference: https://github.com/threeplanetssoftware/apple_cloud_notes_parser
+        # Find magic hex and remove it
+        index = data.index('\x08\x00\x10\x00\x1a')
+        index = data.index('\x12', index)
+
+        # Read from the next byte after magic index
+        data = data[index+1:]
+
+        # unicode
+        data = unicode(data, "utf8", errors="ignore")
+
         return re.sub('^.*\n|\n', ' ', data)
     except Exception as e:
         return 'Note body could not be extracted: {}'.format(e)
