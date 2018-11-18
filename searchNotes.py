@@ -19,7 +19,6 @@ def extractNoteBody(data):
         # Read from the next byte after magic index
         data = data[index+1:]
 
-        # unicode
         data = unicode(data, "utf8", errors="ignore")
 
         return re.sub('^.*\n|\n', ' ', data)
@@ -103,9 +102,9 @@ if openedDatabase:
             items[i] = {'title': 'Error getting note', 'subtitle': str(e)}
 
 if openedDatabase and gotOneRealNote:
-    import json
-    print json.dumps({'items': items})
+    from json import dumps
+    print dumps({'items': items})
 else:
-    import subprocess
-    print subprocess.check_output(os.path.dirname(__file__) 
-                                  + '/searchNoteTitles.applescript')
+    from subprocess import check_output
+    print check_output(os.path.dirname(__file__) 
+                       + '/searchNoteTitles.applescript')
