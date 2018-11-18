@@ -34,6 +34,19 @@
 				<false/>
 			</dict>
 		</array>
+		<key>6F3DD843-22EF-4A97-BAF8-511894B5202D</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>4D8E3444-14C2-4D0E-A8C1-AA67988AE358</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>ED63BB8B-C8D5-442F-BA82-B851D617AEFF</key>
 		<array>
 			<dict>
@@ -128,52 +141,9 @@
 				<key>runningsubtext</key>
 				<string></string>
 				<key>script</key>
-				<string>import sqlite3
-import json
+				<string>from searchNotes import getNotes
 
-
-# Open notes database
-home = '/'.join(__file__.split('/')[:3])
-conn = sqlite3.connect(home + '/Library/Group Containers/group.com.apple.notes/NoteStore.sqlite')
-c = conn.cursor()
-
-# Get uuid string required in full id
-c.execute("SELECT z_uuid FROM z_metadata")
-uuid = str(c.fetchone()[0])
-
-# Get tuples of note title, folder code, snippet, modification date, and id number 
-c.execute("""SELECT ztitle1,zfolder,zsnippet,zmodificationdate1,z_pk
-FROM ziccloudsyncingobject 
-WHERE ztitle1 IS NOT NULL AND zmarkedfordeletion IS NOT 1""")
-matches = c.fetchall()
-# Sort by modification date
-matches = sorted(matches, key=lambda m: m[3], reverse=True)
-
-# Get ordered lists of folder codes and folder names
-c.execute("""SELECT z_pk,ztitle2 
-FROM ziccloudsyncingobject 
-WHERE ztitle2 IS NOT NULL AND zmarkedfordeletion IS NOT 1""")
-folderCodes, folderNames = zip(*c.fetchall())
-
-conn.close()
-
-# Alfred results: title=note title, arg=id to pass on, subtitle="folder name | snippet"
-items = [{"title":    m[0], 
-          "arg":      "x-coredata://" + uuid + "/ICNote/p" + str(m[4]), 
-          "subtitle": folderNames[folderCodes.index(m[1])] + " | " + m[2][:80]}
-         for m in matches]
-
-# Custom icons for folder names that start with corresponding emoji
-icons = [u'\ud83d\udcd3', u'\ud83d\udcd5', u'\ud83d\udcd7', u'\ud83d\udcd8', u'\ud83d\udcd9']
-for i in items:
-    if any(x in i['subtitle'] for x in icons):
-        subtitle = i['subtitle']
-        icon = subtitle[:2]
-        i['subtitle'] = subtitle[3:]
-        i['icon'] = {'type': 'image', 'path': icon.encode('raw_unicode_escape') + '.png'}
-
-output = {"items": items}
-print json.dumps(output)</string>
+getNotes()</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -197,9 +167,63 @@ print json.dumps(output)</string>
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>alfredfiltersresults</key>
+				<true/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>escaping</key>
+				<integer>68</integer>
+				<key>keyword</key>
+				<string>fn</string>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<true/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
+				<key>runningsubtext</key>
+				<string></string>
+				<key>script</key>
+				<string>from searchNotes import getNotes
+
+getNotes()</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string>searchFolders.py</string>
+				<key>subtext</key>
+				<string></string>
+				<key>title</key>
+				<string></string>
+				<key>type</key>
+				<integer>8</integer>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>6F3DD843-22EF-4A97-BAF8-511894B5202D</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>applescript</key>
 				<string>on alfred_script(q)
-	tell application "Notes"		show note id q	end tell
+	tell application "Notes"
+		if q contains "Note"
+			show note id q
+		else
+			show folder id q
+		end if	end tell
 end alfred_script</string>
 				<key>cachescript</key>
 				<true/>
@@ -225,7 +249,7 @@ end alfred_script</string>
 				<key>escaping</key>
 				<integer>68</integer>
 				<key>keyword</key>
-				<string>a</string>
+				<string>an</string>
 				<key>queuedelaycustom</key>
 				<integer>3</integer>
 				<key>queuedelayimmediatelyinitially</key>
@@ -259,7 +283,7 @@ end run</string>
 				<key>type</key>
 				<integer>8</integer>
 				<key>withspace</key>
-				<true/>
+				<false/>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.input.scriptfilter</string>
@@ -282,7 +306,7 @@ end run</string>
 				<key>escaping</key>
 				<integer>68</integer>
 				<key>keyword</key>
-				<string>b</string>
+				<string>bn</string>
 				<key>queuedelaycustom</key>
 				<integer>3</integer>
 				<key>queuedelayimmediatelyinitially</key>
@@ -317,7 +341,7 @@ end run</string>
 				<key>type</key>
 				<integer>8</integer>
 				<key>withspace</key>
-				<true/>
+				<false/>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.input.scriptfilter</string>
@@ -341,14 +365,16 @@ end run</string>
 		<key>4D8E3444-14C2-4D0E-A8C1-AA67988AE358</key>
 		<dict>
 			<key>note</key>
-			<string>Show note with given ID</string>
+			<string>Show note or folder with given ID</string>
 			<key>xpos</key>
-			<integer>520</integer>
+			<integer>540</integer>
 			<key>ypos</key>
-			<integer>280</integer>
+			<integer>360</integer>
 		</dict>
 		<key>5BC84589-FA2A-459F-982A-54B612C9BA7F</key>
 		<dict>
+			<key>colorindex</key>
+			<integer>5</integer>
 			<key>note</key>
 			<string>Search note titles and bodies (fast, High Sierra or greater)</string>
 			<key>xpos</key>
@@ -356,23 +382,38 @@ end run</string>
 			<key>ypos</key>
 			<integer>110</integer>
 		</dict>
+		<key>6F3DD843-22EF-4A97-BAF8-511894B5202D</key>
+		<dict>
+			<key>colorindex</key>
+			<integer>5</integer>
+			<key>note</key>
+			<string>Search folder names (High Sierra or greater)</string>
+			<key>xpos</key>
+			<integer>320</integer>
+			<key>ypos</key>
+			<integer>280</integer>
+		</dict>
 		<key>ED63BB8B-C8D5-442F-BA82-B851D617AEFF</key>
 		<dict>
+			<key>colorindex</key>
+			<integer>1</integer>
 			<key>note</key>
 			<string>Search titles and bodies (slowest, compatible)</string>
 			<key>xpos</key>
 			<integer>320</integer>
 			<key>ypos</key>
-			<integer>440</integer>
+			<integer>600</integer>
 		</dict>
 		<key>F42A4420-BA42-4AA5-A300-8048BB39CA32</key>
 		<dict>
+			<key>colorindex</key>
+			<integer>1</integer>
 			<key>note</key>
 			<string>Search titles only (slower, compatible)</string>
 			<key>xpos</key>
 			<integer>320</integer>
 			<key>ypos</key>
-			<integer>280</integer>
+			<integer>440</integer>
 		</dict>
 	</dict>
 	<key>variables</key>

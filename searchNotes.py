@@ -24,19 +24,9 @@ def extractNoteBody(data):
         return re.sub('^.*\n|\n', ' ', data)
     except Exception as e:
         return 'Note body could not be extracted: {}'.format(e)
-
-
-# Sort matches by title or modification date, option to search titles only.
-# Edit with Alfred workflow environment variable.
-sortId = 2 if os.getenv('sortByDate') == '1' else 0
-searchTitlesOnly = (os.getenv('searchTitlesOnly') == '1')
-sortInReverse = (sortId == 2)
-
-# Custom icons to look for in folder names
-icons = [u'\ud83d\udcd3', u'\ud83d\udcd5', u'\ud83d\udcd7', u'\ud83d\udcd8', 
-         u'\ud83d\udcd9']
-         
-try:
+        
+        
+def readDatabase():
     # Open notes database
     home = os.path.expanduser('~')
     db = home + '/Library/Group Containers/group.com.apple.notes/NoteStore.sqlite'
@@ -66,45 +56,62 @@ try:
     folderCodes, folderNames = zip(*c.fetchall())
 
     conn.close()
-    openedDatabase = True
-except:
-    openedDatabase = False
-         
-if openedDatabase:
-    # Alfred results: title = note title, arg = id to pass on, subtitle = folder name, 
-    # match = note contents from gzipped database entries after stripping footers.
-    items = [{} for d in dbItems]
-    gotOneRealNote = False
-    for i, d in enumerate(dbItems):
-        try:
-            folderName = folderNames[folderCodes.index(d[1])]
-            if folderName == 'Recently Deleted':
-                continue
-            body = extractNoteBody(d[5])
-            subtitle = folderName + '  |' + body[:100]
-            match = u'{} {} {}'.format(d[0], folderName, '' if searchTitlesOnly else body)
-            
-            # Custom icons for folder names that start with corresponding emoji
-            if any(x in subtitle[:2] for x in icons):
-                iconText = subtitle[:2].encode('raw_unicode_escape')
-                subtitle = subtitle[3:]
-                icon = {'type': 'image', 'path': 'icons/' + iconText + '.png'}
-            else:
-                icon = {'type': 'default'}
-            
-            items[i] = {'title': d[0],
-                        'subtitle': subtitle,
-                        'arg': 'x-coredata://' + uuid + '/ICNote/p' + str(d[3]),
-                        'match': match,
-                        'icon': icon}
-            gotOneRealNote = True
-        except Exception as e:
-            items[i] = {'title': 'Error getting note', 'subtitle': str(e)}
+    return uuid, dbItems, folderCodes, folderNames
 
-if openedDatabase and gotOneRealNote:
-    from json import dumps
-    print dumps({'items': items})
-else:
-    from subprocess import check_output
-    print check_output(os.path.dirname(__file__) 
-                       + '/searchNoteTitles.applescript')
+
+# Sort matches by title or modification date, option to search titles only.
+# Edit with Alfred workflow environment variable.
+sortId = 2 if os.getenv('sortByDate') == '1' else 0
+searchTitlesOnly = (os.getenv('searchTitlesOnly') == '1')
+sortInReverse = (sortId == 2)
+
+if __name__ == '__main__':
+    # Custom icons to look for in folder names
+    icons = [u'\ud83d\udcd3', u'\ud83d\udcd5', u'\ud83d\udcd7', u'\ud83d\udcd8', 
+             u'\ud83d\udcd9']
+
+    # Read Notes database and get contents
+    try:
+        uuid, dbItems, folderCodes, folderNames = readDatabase()
+        openedDatabase = True
+    except:
+        openedDatabase = False
+             
+    if openedDatabase:
+        # Alfred results: title = note title, arg = id to pass on, subtitle = folder name, 
+        # match = note contents from gzipped database entries after stripping footers.
+        items = [{} for d in dbItems]
+        gotOneRealNote = False
+        for i, d in enumerate(dbItems):
+            try:
+                folderName = folderNames[folderCodes.index(d[1])]
+                if folderName == 'Recently Deleted':
+                    continue
+                body = extractNoteBody(d[5])
+                subtitle = folderName + '  |' + body[:100]
+                match = u'{} {} {}'.format(d[0], folderName, '' if searchTitlesOnly else body)
+                
+                # Custom icons for folder names that start with corresponding emoji
+                if any(x in subtitle[:2] for x in icons):
+                    iconText = subtitle[:2].encode('raw_unicode_escape')
+                    subtitle = subtitle[3:]
+                    icon = {'type': 'image', 'path': 'icons/' + iconText + '.png'}
+                else:
+                    icon = {'type': 'default'}
+                
+                items[i] = {'title': d[0],
+                            'subtitle': subtitle,
+                            'arg': 'x-coredata://' + uuid + '/ICNote/p' + str(d[3]),
+                            'match': match,
+                            'icon': icon}
+                gotOneRealNote = True
+            except Exception as e:
+                items[i] = {'title': 'Error getting note', 'subtitle': str(e)}
+                
+    if openedDatabase and gotOneRealNote:
+        import json 
+        print json.dumps({'items': items})
+    else:
+        import subprocess 
+        print subprocess.check_output(os.path.dirname(__file__) 
+                                      + '/searchNoteTitles.applescript')
