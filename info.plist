@@ -446,6 +446,8 @@ end run</string>
 		</dict>
 		<key>6740BCB6-6818-49E2-A88A-9D19EA132F08</key>
 		<dict>
+			<key>note</key>
+			<string>Format note URL</string>
 			<key>xpos</key>
 			<integer>510</integer>
 			<key>ypos</key>
@@ -464,6 +466,8 @@ end run</string>
 		</dict>
 		<key>DDAEA7F3-310A-4F75-8624-6E256C84ABF3</key>
 		<dict>
+			<key>note</key>
+			<string>Copy note URL (open with Note Opener/Note Opener.app)</string>
 			<key>xpos</key>
 			<integer>650</integer>
 			<key>ypos</key>
