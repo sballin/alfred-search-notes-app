@@ -7,107 +7,107 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1477057721B2D3F6009FC34D /* AppleScriptObjC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1477057621B2D3F6009FC34D /* AppleScriptObjC.framework */; };
-		1477057A21B2D3F6009FC34D /* AppDelegate.applescript in Sources */ = {isa = PBXBuildFile; fileRef = 1477057921B2D3F6009FC34D /* AppDelegate.applescript */; };
-		1477057C21B2D3F8009FC34D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1477057B21B2D3F8009FC34D /* Assets.xcassets */; };
-		1477058221B2D3F8009FC34D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1477058121B2D3F8009FC34D /* main.m */; };
-		14A4F48021B4D78600D44634 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 14A4F47F21B4D78600D44634 /* MainMenu.xib */; };
+		1490E0CD21B797A30075772F /* AppleScriptObjC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1490E0CC21B797A30075772F /* AppleScriptObjC.framework */; };
+		1490E0D021B797A30075772F /* AppDelegate.applescript in Sources */ = {isa = PBXBuildFile; fileRef = 1490E0CF21B797A30075772F /* AppDelegate.applescript */; };
+		1490E0D221B797A40075772F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1490E0D121B797A40075772F /* Assets.xcassets */; };
+		1490E0D521B797A40075772F /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1490E0D321B797A40075772F /* MainMenu.xib */; };
+		1490E0D821B797A40075772F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1490E0D721B797A40075772F /* main.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		1477057321B2D3F6009FC34D /* Open Notes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Open Notes.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		1477057621B2D3F6009FC34D /* AppleScriptObjC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppleScriptObjC.framework; path = System/Library/Frameworks/AppleScriptObjC.framework; sourceTree = SDKROOT; };
-		1477057921B2D3F6009FC34D /* AppDelegate.applescript */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.applescript; path = AppDelegate.applescript; sourceTree = "<group>"; };
-		1477057B21B2D3F8009FC34D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		1477058021B2D3F8009FC34D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		1477058121B2D3F8009FC34D /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		14A4F47F21B4D78600D44634 /* MainMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainMenu.xib; sourceTree = "<group>"; };
+		1490E0C921B797A30075772F /* Note Opener.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Note Opener.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1490E0CC21B797A30075772F /* AppleScriptObjC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppleScriptObjC.framework; path = System/Library/Frameworks/AppleScriptObjC.framework; sourceTree = SDKROOT; };
+		1490E0CF21B797A30075772F /* AppDelegate.applescript */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.applescript; path = AppDelegate.applescript; sourceTree = "<group>"; };
+		1490E0D121B797A40075772F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		1490E0D421B797A40075772F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		1490E0D621B797A40075772F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1490E0D721B797A40075772F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		1477057021B2D3F6009FC34D /* Frameworks */ = {
+		1490E0C621B797A30075772F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1477057721B2D3F6009FC34D /* AppleScriptObjC.framework in Frameworks */,
+				1490E0CD21B797A30075772F /* AppleScriptObjC.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		1477056A21B2D3F6009FC34D = {
+		1490E0C021B797A30075772F = {
 			isa = PBXGroup;
 			children = (
-				1477057821B2D3F6009FC34D /* openNotes */,
-				1477057521B2D3F6009FC34D /* Frameworks */,
-				1477057421B2D3F6009FC34D /* Products */,
+				1490E0CE21B797A30075772F /* Note Opener */,
+				1490E0CB21B797A30075772F /* Frameworks */,
+				1490E0CA21B797A30075772F /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		1477057421B2D3F6009FC34D /* Products */ = {
+		1490E0CA21B797A30075772F /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1477057321B2D3F6009FC34D /* Open Notes.app */,
+				1490E0C921B797A30075772F /* Note Opener.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		1477057521B2D3F6009FC34D /* Frameworks */ = {
+		1490E0CB21B797A30075772F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				1477057621B2D3F6009FC34D /* AppleScriptObjC.framework */,
+				1490E0CC21B797A30075772F /* AppleScriptObjC.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		1477057821B2D3F6009FC34D /* openNotes */ = {
+		1490E0CE21B797A30075772F /* Note Opener */ = {
 			isa = PBXGroup;
 			children = (
-				1477057921B2D3F6009FC34D /* AppDelegate.applescript */,
-				1477057B21B2D3F8009FC34D /* Assets.xcassets */,
-				1477058021B2D3F8009FC34D /* Info.plist */,
-				1477058121B2D3F8009FC34D /* main.m */,
-				14A4F47F21B4D78600D44634 /* MainMenu.xib */,
+				1490E0CF21B797A30075772F /* AppDelegate.applescript */,
+				1490E0D121B797A40075772F /* Assets.xcassets */,
+				1490E0D321B797A40075772F /* MainMenu.xib */,
+				1490E0D621B797A40075772F /* Info.plist */,
+				1490E0D721B797A40075772F /* main.m */,
 			);
-			path = openNotes;
+			path = "Note Opener";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		1477057221B2D3F6009FC34D /* openNotes */ = {
+		1490E0C821B797A30075772F /* Note Opener */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1477058521B2D3F8009FC34D /* Build configuration list for PBXNativeTarget "openNotes" */;
+			buildConfigurationList = 1490E0DB21B797A40075772F /* Build configuration list for PBXNativeTarget "Note Opener" */;
 			buildPhases = (
-				1477056F21B2D3F6009FC34D /* Sources */,
-				1477057021B2D3F6009FC34D /* Frameworks */,
-				1477057121B2D3F6009FC34D /* Resources */,
+				1490E0C521B797A30075772F /* Sources */,
+				1490E0C621B797A30075772F /* Frameworks */,
+				1490E0C721B797A30075772F /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = openNotes;
-			productName = openNotes;
-			productReference = 1477057321B2D3F6009FC34D /* Open Notes.app */;
+			name = "Note Opener";
+			productName = "Note Opener";
+			productReference = 1490E0C921B797A30075772F /* Note Opener.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		1477056B21B2D3F6009FC34D /* Project object */ = {
+		1490E0C121B797A30075772F /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 1010;
 				ORGANIZATIONNAME = "Sean Ballinger";
 				TargetAttributes = {
-					1477057221B2D3F6009FC34D = {
+					1490E0C821B797A30075772F = {
 						CreatedOnToolsVersion = 10.1;
 					};
 				};
 			};
-			buildConfigurationList = 1477056E21B2D3F6009FC34D /* Build configuration list for PBXProject "openNotes" */;
+			buildConfigurationList = 1490E0C421B797A30075772F /* Build configuration list for PBXProject "Note Opener" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -115,42 +115,53 @@
 				en,
 				Base,
 			);
-			mainGroup = 1477056A21B2D3F6009FC34D;
-			productRefGroup = 1477057421B2D3F6009FC34D /* Products */;
+			mainGroup = 1490E0C021B797A30075772F;
+			productRefGroup = 1490E0CA21B797A30075772F /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				1477057221B2D3F6009FC34D /* openNotes */,
+				1490E0C821B797A30075772F /* Note Opener */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		1477057121B2D3F6009FC34D /* Resources */ = {
+		1490E0C721B797A30075772F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1477057C21B2D3F8009FC34D /* Assets.xcassets in Resources */,
-				14A4F48021B4D78600D44634 /* MainMenu.xib in Resources */,
+				1490E0D221B797A40075772F /* Assets.xcassets in Resources */,
+				1490E0D521B797A40075772F /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		1477056F21B2D3F6009FC34D /* Sources */ = {
+		1490E0C521B797A30075772F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1477058221B2D3F8009FC34D /* main.m in Sources */,
-				1477057A21B2D3F6009FC34D /* AppDelegate.applescript in Sources */,
+				1490E0D821B797A40075772F /* main.m in Sources */,
+				1490E0D021B797A30075772F /* AppDelegate.applescript in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXVariantGroup section */
+		1490E0D321B797A40075772F /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1490E0D421B797A40075772F /* Base */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
 /* Begin XCBuildConfiguration section */
-		1477058321B2D3F8009FC34D /* Debug */ = {
+		1490E0D921B797A40075772F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -182,7 +193,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -209,7 +220,7 @@
 			};
 			name = Debug;
 		};
-		1477058421B2D3F8009FC34D /* Release */ = {
+		1490E0DA21B797A40075772F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -241,7 +252,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
@@ -261,66 +272,62 @@
 			};
 			name = Release;
 		};
-		1477058621B2D3F8009FC34D /* Debug */ = {
+		1490E0DC21B797A40075772F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = ATCB85PJR3;
-				INFOPLIST_FILE = openNotes/Info.plist;
+				INFOPLIST_FILE = "Note Opener/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = in.sball.OpenNotes;
-				PRODUCT_NAME = "Open Notes";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PRODUCT_BUNDLE_IDENTIFIER = "in.sball.Note-Opener";
+				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
-		1477058721B2D3F8009FC34D /* Release */ = {
+		1490E0DD21B797A40075772F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = ATCB85PJR3;
-				INFOPLIST_FILE = openNotes/Info.plist;
+				INFOPLIST_FILE = "Note Opener/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = in.sball.OpenNotes;
-				PRODUCT_NAME = "Open Notes";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PRODUCT_BUNDLE_IDENTIFIER = "in.sball.Note-Opener";
+				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1477056E21B2D3F6009FC34D /* Build configuration list for PBXProject "openNotes" */ = {
+		1490E0C421B797A30075772F /* Build configuration list for PBXProject "Note Opener" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1477058321B2D3F8009FC34D /* Debug */,
-				1477058421B2D3F8009FC34D /* Release */,
+				1490E0D921B797A40075772F /* Debug */,
+				1490E0DA21B797A40075772F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		1477058521B2D3F8009FC34D /* Build configuration list for PBXNativeTarget "openNotes" */ = {
+		1490E0DB21B797A40075772F /* Build configuration list for PBXNativeTarget "Note Opener" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1477058621B2D3F8009FC34D /* Debug */,
-				1477058721B2D3F8009FC34D /* Release */,
+				1490E0DC21B797A40075772F /* Debug */,
+				1490E0DD21B797A40075772F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 1477056B21B2D3F6009FC34D /* Project object */;
+	rootObject = 1490E0C121B797A30075772F /* Project object */;
 }

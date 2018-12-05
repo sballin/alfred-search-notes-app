@@ -1,8 +1,8 @@
 //
 //  main.m
-//  openNotes
+//  Note Opener
 //
-//  Created by Sean on 12/1/18.
+//  Created by Sean on 12/5/18.
 //  Copyright © 2018 Sean Ballinger. All rights reserved.
 //
 

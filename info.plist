@@ -21,38 +21,15 @@
 				<false/>
 			</dict>
 		</array>
-		<key>4E5F5FF1-3222-42E0-88CF-F8FD85524988</key>
-		<array>
-			<dict>
-				<key>destinationuid</key>
-				<string>DDAEA7F3-310A-4F75-8624-6E256C84ABF3</string>
-				<key>modifiers</key>
-				<integer>0</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
-		</array>
 		<key>5BC84589-FA2A-459F-982A-54B612C9BA7F</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>4E5F5FF1-3222-42E0-88CF-F8FD85524988</string>
+				<string>6740BCB6-6818-49E2-A88A-9D19EA132F08</string>
 				<key>modifiers</key>
 				<integer>524288</integer>
 				<key>modifiersubtext</key>
 				<string>Copy note URL to clipboard</string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
-			<dict>
-				<key>destinationuid</key>
-				<string>6740BCB6-6818-49E2-A88A-9D19EA132F08</string>
-				<key>modifiers</key>
-				<integer>262144</integer>
-				<key>modifiersubtext</key>
-				<string>Do the thing</string>
 				<key>vitoclose</key>
 				<false/>
 			</dict>
@@ -213,29 +190,24 @@ getNotes()</string>
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>concurrently</key>
+				<key>applescript</key>
+				<string>use framework "Foundation"property NSString : a reference to current application's NSString
+property NSCharacterSet : a reference to current application's NSCharacterSet
+
+
+on alfred_script(q)	tell application "Notes"		set noteName to name of note id q		set noteName to (NSString's stringWithString:noteName)		set noteName to (NSString's stringWithString:noteName)		set noteName to (noteName's stringByAddingPercentEncodingWithAllowedCharacters:(NSCharacterSet's URLPathAllowedCharacterSet)) as text		
+		set noteName to "notes://" &amp; noteName	end tell
+
+end alfred_script</string>
+				<key>cachescript</key>
 				<false/>
-				<key>escaping</key>
-				<integer>68</integer>
-				<key>script</key>
-				<string>import sys
-
-query = sys.argv[1]
-
-sys.stdout.write("notes://" + query.split('/')[-1])</string>
-				<key>scriptargtype</key>
-				<integer>1</integer>
-				<key>scriptfile</key>
-				<string></string>
-				<key>type</key>
-				<integer>3</integer>
 			</dict>
 			<key>type</key>
-			<string>alfred.workflow.action.script</string>
+			<string>alfred.workflow.action.applescript</string>
 			<key>uid</key>
-			<string>4E5F5FF1-3222-42E0-88CF-F8FD85524988</string>
+			<string>6740BCB6-6818-49E2-A88A-9D19EA132F08</string>
 			<key>version</key>
-			<integer>2</integer>
+			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -253,27 +225,6 @@ sys.stdout.write("notes://" + query.split('/')[-1])</string>
 			<string>DDAEA7F3-310A-4F75-8624-6E256C84ABF3</string>
 			<key>version</key>
 			<integer>2</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>applescript</key>
-				<string>use framework "Foundation"property NSRegularExpressionSearch : a reference to 1024property NSString : a reference to current application's NSStringproperty NSJSONSerialization : a reference to current application's NSJSONSerializationproperty NSUTF8StringEncoding : a reference to current application's NSUTF8StringEncoding
-
-
-on alfred_script(q)	tell application "Notes"		set noteName to name of note id q		set noteName to (NSString's stringWithString:noteName)		set noteName to (noteName's stringByReplacingOccurrencesOfString:"_" withString:"\\\\_" options:NSRegularExpressionSearch range:{0, noteName's |length|()})		set noteName to (noteName's stringByReplacingOccurrencesOfString:" " withString:"_" options:NSRegularExpressionSearch range:{0, noteName's |length|()}) as text
-		set noteName to "notes://" &amp; noteName	end tell
-
-end alfred_script</string>
-				<key>cachescript</key>
-				<false/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.applescript</string>
-			<key>uid</key>
-			<string>6740BCB6-6818-49E2-A88A-9D19EA132F08</string>
-			<key>version</key>
-			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -482,15 +433,6 @@ end run</string>
 			<key>ypos</key>
 			<integer>280</integer>
 		</dict>
-		<key>4E5F5FF1-3222-42E0-88CF-F8FD85524988</key>
-		<dict>
-			<key>note</key>
-			<string>Copy URL to open with bundled openNote.app</string>
-			<key>xpos</key>
-			<integer>510</integer>
-			<key>ypos</key>
-			<integer>30</integer>
-		</dict>
 		<key>5BC84589-FA2A-459F-982A-54B612C9BA7F</key>
 		<dict>
 			<key>colorindex</key>
@@ -505,9 +447,9 @@ end run</string>
 		<key>6740BCB6-6818-49E2-A88A-9D19EA132F08</key>
 		<dict>
 			<key>xpos</key>
-			<integer>500</integer>
+			<integer>510</integer>
 			<key>ypos</key>
-			<integer>150</integer>
+			<integer>30</integer>
 		</dict>
 		<key>6F3DD843-22EF-4A97-BAF8-511894B5202D</key>
 		<dict>
