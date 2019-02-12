@@ -26,6 +26,15 @@ def extractNoteBody(data):
         return 'Note body could not be extracted: {}'.format(e)
         
         
+def fixStringEnds(text):
+    # Source: https://stackoverflow.com/a/30487177
+    pos = len(text) - 1
+    while pos > -1 and ord(text[pos]) & 0xC0 == 0x80:
+        # Character at pos is a continuation byte (bit 7 set, bit 6 not)
+        pos -= 1
+    return text[:pos]
+        
+        
 def readDatabase():
     # Open notes database
     home = os.path.expanduser('~')
@@ -99,6 +108,7 @@ if __name__ == '__main__':
                 else:
                     icon = {'type': 'default'}
                 
+                subtitle = fixStringEnds(subtitle)
                 items[i] = {'title': d[0],
                             'subtitle': subtitle,
                             'arg': 'x-coredata://' + uuid + '/ICNote/p' + str(d[3]),
@@ -109,8 +119,8 @@ if __name__ == '__main__':
                 items[i] = {'title': 'Error getting note', 'subtitle': str(e)}
                 
     if openedDatabase and gotOneRealNote:
-        import json 
-        print json.dumps({'items': items})
+        import json
+        print json.dumps({'items': items}, ensure_ascii=True)
     else:
         import subprocess 
         print subprocess.check_output(os.path.dirname(__file__) 

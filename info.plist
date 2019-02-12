@@ -8,6 +8,19 @@
 	<string>Tools</string>
 	<key>connections</key>
 	<dict>
+		<key>060809AF-8160-439A-85F9-D672664E3A1A</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>5BC84589-FA2A-459F-982A-54B612C9BA7F</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>1A6D4810-ABAF-4604-9639-CC1327A279B7</key>
 		<array>
 			<dict>
@@ -127,7 +140,7 @@
 				<key>leftcursor</key>
 				<false/>
 				<key>modsmode</key>
-				<integer>0</integer>
+				<integer>2</integer>
 				<key>relatedAppsMode</key>
 				<integer>0</integer>
 			</dict>
@@ -194,10 +207,8 @@ getNotes()</string>
 				<string>use framework "Foundation"property NSString : a reference to current application's NSString
 property NSCharacterSet : a reference to current application's NSCharacterSet
 
-
 on alfred_script(q)	tell application "Notes"		set noteName to name of note id q		set noteName to (NSString's stringWithString:noteName)		set noteName to (NSString's stringWithString:noteName)		set noteName to (noteName's stringByAddingPercentEncodingWithAllowedCharacters:(NSCharacterSet's URLPathAllowedCharacterSet)) as text		
 		set noteName to "notes://" &amp; noteName	end tell
-
 end alfred_script</string>
 				<key>cachescript</key>
 				<false/>
@@ -223,6 +234,41 @@ end alfred_script</string>
 			<string>alfred.workflow.output.clipboard</string>
 			<key>uid</key>
 			<string>DDAEA7F3-310A-4F75-8624-6E256C84ABF3</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>action</key>
+				<integer>0</integer>
+				<key>argument</key>
+				<integer>0</integer>
+				<key>focusedappvariable</key>
+				<false/>
+				<key>focusedappvariablename</key>
+				<string></string>
+				<key>hotkey</key>
+				<integer>37</integer>
+				<key>hotmod</key>
+				<integer>1048576</integer>
+				<key>hotstring</key>
+				<string>L</string>
+				<key>leftcursor</key>
+				<false/>
+				<key>modsmode</key>
+				<integer>2</integer>
+				<key>relatedApps</key>
+				<array>
+					<string>com.apple.Notes</string>
+				</array>
+				<key>relatedAppsMode</key>
+				<integer>1</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.hotkey</string>
+			<key>uid</key>
+			<string>060809AF-8160-439A-85F9-D672664E3A1A</string>
 			<key>version</key>
 			<integer>2</integer>
 		</dict>
@@ -417,6 +463,13 @@ end run</string>
 	<string></string>
 	<key>uidata</key>
 	<dict>
+		<key>060809AF-8160-439A-85F9-D672664E3A1A</key>
+		<dict>
+			<key>xpos</key>
+			<integer>80</integer>
+			<key>ypos</key>
+			<integer>160</integer>
+		</dict>
 		<key>1A6D4810-ABAF-4604-9639-CC1327A279B7</key>
 		<dict>
 			<key>xpos</key>
@@ -431,12 +484,10 @@ end run</string>
 			<key>xpos</key>
 			<integer>510</integer>
 			<key>ypos</key>
-			<integer>280</integer>
+			<integer>320</integer>
 		</dict>
 		<key>5BC84589-FA2A-459F-982A-54B612C9BA7F</key>
 		<dict>
-			<key>colorindex</key>
-			<integer>9</integer>
 			<key>note</key>
 			<string>Search note titles and bodies (fast, High Sierra or greater)</string>
 			<key>xpos</key>
@@ -455,8 +506,6 @@ end run</string>
 		</dict>
 		<key>6F3DD843-22EF-4A97-BAF8-511894B5202D</key>
 		<dict>
-			<key>colorindex</key>
-			<integer>9</integer>
 			<key>note</key>
 			<string>Search folder names (High Sierra or greater)</string>
 			<key>xpos</key>
