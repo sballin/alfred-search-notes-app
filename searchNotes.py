@@ -98,7 +98,7 @@ if __name__ == '__main__':
                     continue
                 body = extractNoteBody(d[5])
                 subtitle = folderName + '  |' + body[:100]
-                match = u'{} {} {}'.format(d[0], folderName, '' if searchTitlesOnly else body)
+                match = u'{} {} {}'.format(folderName, d[0], '' if searchTitlesOnly else body)
                 
                 # Custom icons for folder names that start with corresponding emoji
                 if any(x in subtitle[:2] for x in icons):

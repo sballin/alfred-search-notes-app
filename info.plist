@@ -113,7 +113,7 @@
 	<key>createdby</key>
 	<string>Sean Ballinger</string>
 	<key>description</key>
-	<string></string>
+	<string>Find and open notes in iCloud/Apple Notes</string>
 	<key>disabled</key>
 	<false/>
 	<key>name</key>
@@ -484,7 +484,7 @@ end run</string>
 			<key>xpos</key>
 			<integer>510</integer>
 			<key>ypos</key>
-			<integer>320</integer>
+			<integer>280</integer>
 		</dict>
 		<key>5BC84589-FA2A-459F-982A-54B612C9BA7F</key>
 		<dict>
@@ -555,6 +555,6 @@ end run</string>
 	<key>version</key>
 	<string></string>
 	<key>webaddress</key>
-	<string>https://sball.in</string>
+	<string>https://github.com/sballin/alfred-search-notes-app</string>
 </dict>
 </plist>
