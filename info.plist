@@ -328,9 +328,9 @@ getNotes()</string>
 				<string>on alfred_script(q)
 	tell application "Notes"
 		if q contains "Note"
-			show note id q
+			show note id q in default account
 		else
-			show folder id q
+			show folder id q in default account
 		end if	end tell
 end alfred_script</string>
 				<key>cachescript</key>
