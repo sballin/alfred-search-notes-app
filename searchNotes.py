@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 import sqlite3
 import zlib
 import re
@@ -24,8 +24,8 @@ def extractNoteBody(data):
         return re.sub('^.*\n|\n', ' ', data)
     except Exception as e:
         return 'Note body could not be extracted: {}'.format(e)
-        
-        
+
+
 def fixStringEnds(text):
     # Source: https://stackoverflow.com/a/30487177
     pos = len(text) - 1
@@ -33,8 +33,8 @@ def fixStringEnds(text):
         # Character at pos is a continuation byte (bit 7 set, bit 6 not)
         pos -= 1
     return text[:pos]
-        
-        
+
+
 def readDatabase():
     # Open notes database
     home = os.path.expanduser('~')
@@ -52,7 +52,7 @@ def readDatabase():
                  FROM ziccloudsyncingobject AS t1
                  INNER JOIN zicnotedata AS t2
                  ON t1.znotedata = t2.z_pk
-                 WHERE t1.ztitle1 IS NOT NULL 
+                 WHERE t1.ztitle1 IS NOT NULL
                        AND t1.zmarkedfordeletion IS NOT 1""")
     # Get data and check for d[5] because a New Note with no body can trip us up
     dbItems = [d for d in c.fetchall() if d[5]]
@@ -60,7 +60,7 @@ def readDatabase():
 
     # Get ordered lists of folder codes and folder names
     c.execute("""SELECT z_pk,ztitle2 FROM ziccloudsyncingobject
-                 WHERE ztitle2 IS NOT NULL 
+                 WHERE ztitle2 IS NOT NULL
                        AND zmarkedfordeletion IS NOT 1""")
     folderCodes, folderNames = zip(*c.fetchall())
 
@@ -76,7 +76,8 @@ sortInReverse = (sortId == 2)
 
 if __name__ == '__main__':
     # Custom icons to look for in folder names
-    icons = [u'\ud83d\udcd3', u'\ud83d\udcd5', u'\ud83d\udcd7', u'\ud83d\udcd8', 
+    icons = [u'\ud83d\udcd3', u'\ud83d\udcd5',
+             u'\ud83d\udcd7', u'\ud83d\udcd8',
              u'\ud83d\udcd9']
 
     # Read Notes database and get contents
@@ -85,7 +86,7 @@ if __name__ == '__main__':
         openedDatabase = True
     except:
         openedDatabase = False
-             
+
     if openedDatabase:
         # Alfred results: title = note title, arg = id to pass on, subtitle = folder name, 
         # match = note contents from gzipped database entries after stripping footers.
@@ -99,7 +100,7 @@ if __name__ == '__main__':
                 body = extractNoteBody(d[5])
                 subtitle = folderName + '  |' + body[:100]
                 match = u'{} {} {}'.format(folderName, d[0], '' if searchTitlesOnly else body)
-                
+
                 # Custom icons for folder names that start with corresponding emoji
                 if any(x in subtitle[:2] for x in icons):
                     iconText = subtitle[:2].encode('raw_unicode_escape')
@@ -107,7 +108,7 @@ if __name__ == '__main__':
                     icon = {'type': 'image', 'path': 'icons/' + iconText + '.png'}
                 else:
                     icon = {'type': 'default'}
-                
+
                 subtitle = fixStringEnds(subtitle)
                 items[i] = {'title': d[0],
                             'subtitle': subtitle,
@@ -117,11 +118,11 @@ if __name__ == '__main__':
                 gotOneRealNote = True
             except Exception as e:
                 items[i] = {'title': 'Error getting note', 'subtitle': str(e)}
-                
+
     if openedDatabase and gotOneRealNote:
         import json
-        print json.dumps({'items': items}, ensure_ascii=True)
+        print(json.dumps({'items': items}, ensure_ascii=True))
     else:
-        import subprocess 
-        print subprocess.check_output(os.path.dirname(__file__) 
-                                      + '/searchNoteTitles.applescript')
+        import subprocess
+        print(subprocess.check_output(os.path.dirname(__file__)
+                                      + '/searchNoteTitles.applescript'))
