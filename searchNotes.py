@@ -1,32 +1,40 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 import sqlite3
 import zlib
 import re
 import os
+import json
 
 
 def extractNoteBody(data):
+    # Decompress
     try:
-        # Strip weird characters, title & weird header artifacts, 
-        # and replace line breaks with spaces
-        data = zlib.decompress(data, 16+zlib.MAX_WBITS).split('\x1a\x10', 1)[0]
-
-        # Reference: https://github.com/threeplanetssoftware/apple_cloud_notes_parser
-        # Find magic hex and remove it
-        index = data.index('\x08\x00\x10\x00\x1a')
-        index = data.index('\x12', index)
-
-        # Read from the next byte after magic index
-        data = data[index+1:]
-
-        data = unicode(data, "utf8", errors="ignore")
-
-        return re.sub('^.*\n|\n', ' ', data)
-    except Exception as e:
-        return 'Note body could not be extracted: {}'.format(e)
+        data = zlib.decompress(data, 16+zlib.MAX_WBITS).split(b'\x1a\x10', 1)[0]
+    except zlib.error as e:
+        return 'Encrypted note'
+    # Find magic hex and remove it 
+    # Source: https://github.com/threeplanetssoftware/apple_cloud_notes_parser
+    index = data.index(b'\x08\x00\x10\x00\x1a')
+    index = data.index(b'\x12', index) # starting from index found previously
+    # Read from the next byte after magic index
+    data = data[index+1:]
+    # Convert from bytes object to string
+    text = data.decode('utf-8', errors='ignore')
+    # Remove title
+    lines = text.split('\n')
+    if len(lines) > 1:
+        return '\n'.join(lines[1:])
+    else:
+        return ''
 
 
 def fixStringEnds(text):
+    """
+    Shortening the note body for a one-line preview can chop two-byte unicode
+    characters in half. This method fixes that.
+    """
+    # This method can chop off the last character of a short note, so add a dummy
+    text = text + '.'
     # Source: https://stackoverflow.com/a/30487177
     pos = len(text) - 1
     while pos > -1 and ord(text[pos]) & 0xC0 == 0x80:
@@ -52,16 +60,16 @@ def readDatabase():
                  FROM ziccloudsyncingobject AS t1
                  INNER JOIN zicnotedata AS t2
                  ON t1.znotedata = t2.z_pk
-                 WHERE t1.ztitle1 IS NOT NULL
-                       AND t1.zmarkedfordeletion IS NOT 1""")
+                 WHERE t1.ztitle1 IS NOT NULL AND 
+                       t1.zmarkedfordeletion IS NOT 1""")
     # Get data and check for d[5] because a New Note with no body can trip us up
     dbItems = [d for d in c.fetchall() if d[5]]
     dbItems = sorted(dbItems, key=lambda d: d[sortId], reverse=sortInReverse)
 
     # Get ordered lists of folder codes and folder names
     c.execute("""SELECT z_pk,ztitle2 FROM ziccloudsyncingobject
-                 WHERE ztitle2 IS NOT NULL
-                       AND zmarkedfordeletion IS NOT 1""")
+                 WHERE ztitle2 IS NOT NULL AND 
+                       zmarkedfordeletion IS NOT 1""")
     folderCodes, folderNames = zip(*c.fetchall())
 
     conn.close()
@@ -76,9 +84,7 @@ sortInReverse = (sortId == 2)
 
 if __name__ == '__main__':
     # Custom icons to look for in folder names
-    icons = [u'\ud83d\udcd3', u'\ud83d\udcd5',
-             u'\ud83d\udcd7', u'\ud83d\udcd8',
-             u'\ud83d\udcd9']
+    icons = ['📓', '📕', '📗', '📘', '📙']
 
     # Read Notes database and get contents
     try:
@@ -97,20 +103,24 @@ if __name__ == '__main__':
                 folderName = folderNames[folderCodes.index(d[1])]
                 if folderName == 'Recently Deleted':
                     continue
+                title = d[0]
                 body = extractNoteBody(d[5])
-                subtitle = folderName + '  |' + body[:100]
-                match = u'{} {} {}'.format(folderName, d[0], '' if searchTitlesOnly else body)
-
+                # Replace any number of \ns with a single space for note body preview
+                bodyPreview = ' '.join(body[:100].replace('\n', ' ').split())
+                subtitle = folderName + ' | ' + bodyPreview
+                if searchTitlesOnly:
+                    match = u'{} {}'.format(folderName, title)
+                else:
+                    match = u'{} {} {}'.format(folderName, title, body)
                 # Custom icons for folder names that start with corresponding emoji
-                if any(x in subtitle[:2] for x in icons):
-                    iconText = subtitle[:2].encode('raw_unicode_escape')
-                    subtitle = subtitle[3:]
-                    icon = {'type': 'image', 'path': 'icons/' + iconText + '.png'}
+                if any(x in folderName[:2] for x in icons):
+                    iconText = folderName[:2]#.encode('raw_unicode_escape')
+                    icon = {'type': 'image', 'path': 'icons/' + folderName[0] + '.png'}
+                    subtitle = subtitle[2:]
                 else:
                     icon = {'type': 'default'}
-
                 subtitle = fixStringEnds(subtitle)
-                items[i] = {'title': d[0],
+                items[i] = {'title': title,
                             'subtitle': subtitle,
                             'arg': 'x-coredata://' + uuid + '/ICNote/p' + str(d[3]),
                             'match': match,
@@ -120,9 +130,4 @@ if __name__ == '__main__':
                 items[i] = {'title': 'Error getting note', 'subtitle': str(e)}
 
     if openedDatabase and gotOneRealNote:
-        import json
         print(json.dumps({'items': items}, ensure_ascii=True))
-    else:
-        import subprocess
-        print(subprocess.check_output(os.path.dirname(__file__)
-                                      + '/searchNoteTitles.applescript'))
