@@ -15,14 +15,9 @@ on run argv
 			set folderName to item folderIndex of folderNames
 			if folderName is not "Recently Deleted" then
 				set currentFolder to (a reference to item folderIndex of folders in default account)
-				set noteIDs to id of notes of currentFolder
-				set noteNames to name of notes of currentFolder
-				set noteBodies to body of notes of currentFolder
+				set {noteIDs, noteNames, noteBodies} to {id, name, plaintext} of notes of currentFolder
 				repeat with i from 1 to count of noteIDs
-					set noteBody to (NSString's stringWithString:(item i of noteBodies))
-					set noteBody to (noteBody's stringByReplacingOccurrencesOfString:"<[^>]*>|
-" withString:" " options:NSRegularExpressionSearch range:{0, noteBody's |length|()})
-					set noteBody to (noteBody's stringByReplacingOccurrencesOfString:"^ +| +$| +(?= )|" withString:"" options:NSRegularExpressionSearch range:{0, noteBody's |length|()}) as text
+					set noteBody to item i of noteBodies
 					set match to (item i of noteNames) & " " & folderName & " " & noteBody
 					if length of noteBody is less than 100 then
 						set subtitle to noteBody
