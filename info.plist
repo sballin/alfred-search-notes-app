@@ -42,7 +42,17 @@
 				<key>modifiers</key>
 				<integer>524288</integer>
 				<key>modifiersubtext</key>
-				<string>Copy note URL to clipboard</string>
+				<string>Copy notes:// URL</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>DC692798-E272-4547-BE83-4B63B823E456</string>
+				<key>modifiers</key>
+				<integer>1048576</integer>
+				<key>modifiersubtext</key>
+				<string>Copy note body</string>
 				<key>vitoclose</key>
 				<false/>
 			</dict>
@@ -83,24 +93,11 @@
 				<false/>
 			</dict>
 		</array>
-		<key>ED63BB8B-C8D5-442F-BA82-B851D617AEFF</key>
+		<key>DC692798-E272-4547-BE83-4B63B823E456</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>4D8E3444-14C2-4D0E-A8C1-AA67988AE358</string>
-				<key>modifiers</key>
-				<integer>0</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
-		</array>
-		<key>F42A4420-BA42-4AA5-A300-8048BB39CA32</key>
-		<array>
-			<dict>
-				<key>destinationuid</key>
-				<string>4D8E3444-14C2-4D0E-A8C1-AA67988AE358</string>
+				<string>DDAEA7F3-310A-4F75-8624-6E256C84ABF3</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -113,13 +110,50 @@
 	<key>createdby</key>
 	<string>Sean Ballinger</string>
 	<key>description</key>
-	<string>Find and open notes in iCloud/Apple Notes</string>
+	<string>Open notes in iCloud/Apple Notes</string>
 	<key>disabled</key>
 	<false/>
 	<key>name</key>
 	<string>Search Notes.app</string>
 	<key>objects</key>
 	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>applescript</key>
+				<string>use framework "Foundation"property NSString : a reference to current application's NSString
+property NSCharacterSet : a reference to current application's NSCharacterSet
+
+on alfred_script(q)	tell application "Notes"		set noteName to name of note id q		set noteName to (NSString's stringWithString:noteName)		set noteName to (noteName's stringByAddingPercentEncodingWithAllowedCharacters:(NSCharacterSet's URLPathAllowedCharacterSet)) as text		
+		set noteName to "notes://" &amp; noteName	end tell
+end alfred_script</string>
+				<key>cachescript</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.applescript</string>
+			<key>uid</key>
+			<string>6740BCB6-6818-49E2-A88A-9D19EA132F08</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>autopaste</key>
+				<false/>
+				<key>clipboardtext</key>
+				<string>{query}</string>
+				<key>transient</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.clipboard</string>
+			<key>uid</key>
+			<string>DDAEA7F3-310A-4F75-8624-6E256C84ABF3</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
 		<dict>
 			<key>config</key>
 			<dict>
@@ -154,6 +188,23 @@
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>applescript</key>
+				<string>on alfred_script(q)
+	tell application "Notes" to get first line of plaintext of note id q in default account
+end alfred_script</string>
+				<key>cachescript</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.applescript</string>
+			<key>uid</key>
+			<string>DC692798-E272-4547-BE83-4B63B823E456</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>alfredfiltersresults</key>
 				<true/>
 				<key>alfredfiltersresultsmatchmode</key>
@@ -183,7 +234,7 @@ getNotes()</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
-				<string>searchNotes.py</string>
+				<string>get_notes.py</string>
 				<key>subtext</key>
 				<string></string>
 				<key>title</key>
@@ -197,43 +248,6 @@ getNotes()</string>
 			<string>alfred.workflow.input.scriptfilter</string>
 			<key>uid</key>
 			<string>5BC84589-FA2A-459F-982A-54B612C9BA7F</string>
-			<key>version</key>
-			<integer>2</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>applescript</key>
-				<string>use framework "Foundation"property NSString : a reference to current application's NSString
-property NSCharacterSet : a reference to current application's NSCharacterSet
-
-on alfred_script(q)	tell application "Notes"		set noteName to name of note id q		set noteName to (NSString's stringWithString:noteName)		set noteName to (NSString's stringWithString:noteName)		set noteName to (noteName's stringByAddingPercentEncodingWithAllowedCharacters:(NSCharacterSet's URLPathAllowedCharacterSet)) as text		
-		set noteName to "notes://" &amp; noteName	end tell
-end alfred_script</string>
-				<key>cachescript</key>
-				<false/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.applescript</string>
-			<key>uid</key>
-			<string>6740BCB6-6818-49E2-A88A-9D19EA132F08</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>autopaste</key>
-				<false/>
-				<key>clipboardtext</key>
-				<string>{query}</string>
-				<key>transient</key>
-				<false/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.output.clipboard</string>
-			<key>uid</key>
-			<string>DDAEA7F3-310A-4F75-8624-6E256C84ABF3</string>
 			<key>version</key>
 			<integer>2</integer>
 		</dict>
@@ -275,6 +289,28 @@ end alfred_script</string>
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>applescript</key>
+				<string>on alfred_script(q)
+	tell application "Notes"
+		if q contains "Note"
+			show note id q in default account
+		else
+			show folder id q in default account
+		end if	end tell
+end alfred_script</string>
+				<key>cachescript</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.applescript</string>
+			<key>uid</key>
+			<string>4D8E3444-14C2-4D0E-A8C1-AA67988AE358</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>alfredfiltersresults</key>
 				<true/>
 				<key>alfredfiltersresultsmatchmode</key>
@@ -304,7 +340,7 @@ getNotes()</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
-				<string>searchFolders.py</string>
+				<string>get_folders.py</string>
 				<key>subtext</key>
 				<string></string>
 				<key>title</key>
@@ -321,228 +357,78 @@ getNotes()</string>
 			<key>version</key>
 			<integer>2</integer>
 		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>applescript</key>
-				<string>on alfred_script(q)
-	tell application "Notes"
-		if q contains "Note"
-			show note id q in default account
-		else
-			show folder id q in default account
-		end if	end tell
-end alfred_script</string>
-				<key>cachescript</key>
-				<true/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.applescript</string>
-			<key>uid</key>
-			<string>4D8E3444-14C2-4D0E-A8C1-AA67988AE358</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>alfredfiltersresults</key>
-				<true/>
-				<key>alfredfiltersresultsmatchmode</key>
-				<integer>2</integer>
-				<key>argumenttrimmode</key>
-				<integer>0</integer>
-				<key>argumenttype</key>
-				<integer>1</integer>
-				<key>escaping</key>
-				<integer>68</integer>
-				<key>keyword</key>
-				<string>an</string>
-				<key>queuedelaycustom</key>
-				<integer>3</integer>
-				<key>queuedelayimmediatelyinitially</key>
-				<true/>
-				<key>queuedelaymode</key>
-				<integer>0</integer>
-				<key>queuemode</key>
-				<integer>2</integer>
-				<key>runningsubtext</key>
-				<string></string>
-				<key>script</key>
-				<string>on run argv
-	tell application "Notes"		set noteRefs to a reference to every note in default account
-	end tell
-	set noteNames to name of noteRefs
-
-	set output to "{\"items\":["
-	repeat with name in noteNames
-		set output to output &amp; "{\"title\":\"" &amp; name  &amp; "\",\"arg\":\"" &amp; name &amp; "\"},"
-	end repeat
-	return output &amp; "]}" 
-end run</string>
-				<key>scriptargtype</key>
-				<integer>1</integer>
-				<key>scriptfile</key>
-				<string>searchNoteTitles.applescript</string>
-				<key>subtext</key>
-				<string></string>
-				<key>title</key>
-				<string>Search Apple Notes</string>
-				<key>type</key>
-				<integer>8</integer>
-				<key>withspace</key>
-				<false/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.input.scriptfilter</string>
-			<key>uid</key>
-			<string>F42A4420-BA42-4AA5-A300-8048BB39CA32</string>
-			<key>version</key>
-			<integer>2</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>alfredfiltersresults</key>
-				<true/>
-				<key>alfredfiltersresultsmatchmode</key>
-				<integer>2</integer>
-				<key>argumenttrimmode</key>
-				<integer>0</integer>
-				<key>argumenttype</key>
-				<integer>1</integer>
-				<key>escaping</key>
-				<integer>68</integer>
-				<key>keyword</key>
-				<string>bn</string>
-				<key>queuedelaycustom</key>
-				<integer>3</integer>
-				<key>queuedelayimmediatelyinitially</key>
-				<true/>
-				<key>queuedelaymode</key>
-				<integer>0</integer>
-				<key>queuemode</key>
-				<integer>2</integer>
-				<key>runningsubtext</key>
-				<string>Searching...</string>
-				<key>script</key>
-				<string>on run argv
-	tell application "Notes"		set noteRefs to a reference to every note in default account
-		set noteNames to name of noteRefs
-		set containers to container of noteRefs
-	end tell
-
-	set output to "{\"items\":["
-	repeat with i from 1 to count of noteRefs
-		set output to output &amp; "{\"title\":\"" &amp; (item i in noteNames)  &amp; "\",\"arg\":\"" &amp; (item i in noteNames) &amp; "\",\"subtitle\": \"" &amp; (name of item i of containers) &amp; "\"},"
-	end repeat
-	return output &amp; "]}" 
-end run</string>
-				<key>scriptargtype</key>
-				<integer>1</integer>
-				<key>scriptfile</key>
-				<string>searchNotes.applescript</string>
-				<key>subtext</key>
-				<string></string>
-				<key>title</key>
-				<string>Search Notes.app</string>
-				<key>type</key>
-				<integer>8</integer>
-				<key>withspace</key>
-				<false/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.input.scriptfilter</string>
-			<key>uid</key>
-			<string>ED63BB8B-C8D5-442F-BA82-B851D617AEFF</string>
-			<key>version</key>
-			<integer>2</integer>
-		</dict>
 	</array>
 	<key>readme</key>
-	<string></string>
+	<string>Instructions: https://github.com/sballin/alfred-search-notes-app 
+
+New versions: https://github.com/sballin/alfred-search-notes-app/releases</string>
 	<key>uidata</key>
 	<dict>
 		<key>060809AF-8160-439A-85F9-D672664E3A1A</key>
 		<dict>
 			<key>xpos</key>
-			<integer>80</integer>
+			<integer>50</integer>
 			<key>ypos</key>
-			<integer>160</integer>
+			<integer>230</integer>
 		</dict>
 		<key>1A6D4810-ABAF-4604-9639-CC1327A279B7</key>
 		<dict>
 			<key>xpos</key>
-			<integer>80</integer>
+			<integer>50</integer>
 			<key>ypos</key>
-			<integer>30</integer>
+			<integer>120</integer>
 		</dict>
 		<key>4D8E3444-14C2-4D0E-A8C1-AA67988AE358</key>
 		<dict>
 			<key>note</key>
-			<string>Show note or folder with given ID</string>
+			<string>Show note/folder with given ID</string>
 			<key>xpos</key>
-			<integer>510</integer>
+			<integer>480</integer>
 			<key>ypos</key>
-			<integer>280</integer>
+			<integer>350</integer>
 		</dict>
 		<key>5BC84589-FA2A-459F-982A-54B612C9BA7F</key>
 		<dict>
 			<key>note</key>
-			<string>Search note titles and bodies (fast, High Sierra or greater)</string>
+			<string>Search titles (and bodies if environment variable is set)</string>
 			<key>xpos</key>
-			<integer>290</integer>
+			<integer>250</integer>
 			<key>ypos</key>
-			<integer>30</integer>
+			<integer>180</integer>
 		</dict>
 		<key>6740BCB6-6818-49E2-A88A-9D19EA132F08</key>
 		<dict>
 			<key>note</key>
-			<string>Format note URL</string>
+			<string>Make notes:// URL</string>
 			<key>xpos</key>
-			<integer>510</integer>
+			<integer>480</integer>
 			<key>ypos</key>
-			<integer>30</integer>
+			<integer>40</integer>
 		</dict>
 		<key>6F3DD843-22EF-4A97-BAF8-511894B5202D</key>
 		<dict>
 			<key>note</key>
-			<string>Search folder names (High Sierra or greater)</string>
+			<string>Search folder names</string>
 			<key>xpos</key>
-			<integer>290</integer>
+			<integer>250</integer>
 			<key>ypos</key>
-			<integer>200</integer>
+			<integer>350</integer>
+		</dict>
+		<key>DC692798-E272-4547-BE83-4B63B823E456</key>
+		<dict>
+			<key>note</key>
+			<string>Get note body</string>
+			<key>xpos</key>
+			<integer>480</integer>
+			<key>ypos</key>
+			<integer>180</integer>
 		</dict>
 		<key>DDAEA7F3-310A-4F75-8624-6E256C84ABF3</key>
 		<dict>
-			<key>note</key>
-			<string>Copy note URL (open with Note Opener/Note Opener.app)</string>
 			<key>xpos</key>
-			<integer>650</integer>
+			<integer>680</integer>
 			<key>ypos</key>
-			<integer>30</integer>
-		</dict>
-		<key>ED63BB8B-C8D5-442F-BA82-B851D617AEFF</key>
-		<dict>
-			<key>colorindex</key>
-			<integer>1</integer>
-			<key>note</key>
-			<string>Search titles and bodies (slowest, compatible)</string>
-			<key>xpos</key>
-			<integer>290</integer>
-			<key>ypos</key>
-			<integer>520</integer>
-		</dict>
-		<key>F42A4420-BA42-4AA5-A300-8048BB39CA32</key>
-		<dict>
-			<key>colorindex</key>
-			<integer>1</integer>
-			<key>note</key>
-			<string>Search titles only (slower, compatible)</string>
-			<key>xpos</key>
-			<integer>290</integer>
-			<key>ypos</key>
-			<integer>360</integer>
+			<integer>110</integer>
 		</dict>
 	</dict>
 	<key>variables</key>
@@ -553,7 +439,7 @@ end run</string>
 		<string>1</string>
 	</dict>
 	<key>version</key>
-	<string></string>
+	<string>1.4.3</string>
 	<key>webaddress</key>
 	<string>https://github.com/sballin/alfred-search-notes-app</string>
 </dict>
