@@ -89,7 +89,6 @@ def getNotes(searchBodies=False):
 
     # Alfred results: title = note title, arg = id to pass on, subtitle = folder name, 
     # match = note contents from gzipped database entries after stripping footers.
-    gotOneRealNote = False
     items = [{} for d in dbItems]
     for i, d in enumerate(dbItems):
         folderName = folderNames[folderCodes.index(d[1])]
@@ -117,7 +116,6 @@ def getNotes(searchBodies=False):
                     'arg': 'x-coredata://' + uuid + '/ICNote/p' + str(d[3]),
                     'match': match,
                     'icon': icon}
-        gotOneRealNote = True
 
     return json.dumps({'items': items}, ensure_ascii=True)
 
