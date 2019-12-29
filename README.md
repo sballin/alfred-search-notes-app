@@ -1,4 +1,4 @@
-# Search Notes.app with Alfred
+Search Notes.app with Alfred
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/2719004/71554521-5c635800-2a31-11ea-97db-1b7c41aaf408.png" width="654" title="screenshot">
