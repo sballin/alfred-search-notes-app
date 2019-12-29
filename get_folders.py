@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import json
-from searchNotes import readDatabase
+from get_notes import readDatabase
+
 
 uuid, dbItems, folderCodes, folderNames = readDatabase()
 

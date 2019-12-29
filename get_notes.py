@@ -64,7 +64,6 @@ def readDatabase():
                        t1.zmarkedfordeletion IS NOT 1""")
     # Get data and check for d[5] because a New Note with no body can trip us up
     dbItems = [d for d in c.fetchall() if d[5]]
-    dbItems = sorted(dbItems, key=lambda d: d[sortId], reverse=sortInReverse)
 
     # Get ordered lists of folder codes and folder names
     c.execute("""SELECT z_pk,ztitle2 FROM ziccloudsyncingobject
@@ -76,58 +75,52 @@ def readDatabase():
     return uuid, dbItems, folderCodes, folderNames
 
 
-# Sort matches by title or modification date, option to search titles only.
-# Edit with Alfred workflow environment variable.
-sortId = 2 if os.getenv('sortByDate') == '1' else 0
-searchTitlesOnly = (os.getenv('searchTitlesOnly') == '1')
-sortInReverse = (sortId == 2)
-
-if __name__ == '__main__':
+def getNotes(searchBodies=False):
     # Custom icons to look for in folder names
     icons = ['📓', '📕', '📗', '📘', '📙']
 
     # Read Notes database and get contents
-    try:
-        uuid, dbItems, folderCodes, folderNames = readDatabase()
-        openedDatabase = True
-    except:
-        openedDatabase = False
+    uuid, dbItems, folderCodes, folderNames = readDatabase()
+    
+    # Sort matches by title or modification date (read Alfred environment variable)
+    sortId = 2 if os.getenv('sortByDate') == '1' else 0
+    sortInReverse = (sortId == 2)
+    dbItems = sorted(dbItems, key=lambda d: d[sortId], reverse=sortInReverse)
 
-    if openedDatabase:
-        # Alfred results: title = note title, arg = id to pass on, subtitle = folder name, 
-        # match = note contents from gzipped database entries after stripping footers.
-        items = [{} for d in dbItems]
-        gotOneRealNote = False
-        for i, d in enumerate(dbItems):
-            try:
-                folderName = folderNames[folderCodes.index(d[1])]
-                if folderName == 'Recently Deleted':
-                    continue
-                title = d[0]
-                body = extractNoteBody(d[5])
-                # Replace any number of \ns with a single space for note body preview
-                bodyPreview = ' '.join(body[:100].replace('\n', ' ').split())
-                subtitle = folderName + ' | ' + bodyPreview
-                if searchTitlesOnly:
-                    match = u'{} {}'.format(folderName, title)
-                else:
-                    match = u'{} {} {}'.format(folderName, title, body)
-                # Custom icons for folder names that start with corresponding emoji
-                if any(x in folderName[:2] for x in icons):
-                    iconText = folderName[:2]#.encode('raw_unicode_escape')
-                    icon = {'type': 'image', 'path': 'icons/' + folderName[0] + '.png'}
-                    subtitle = subtitle[2:]
-                else:
-                    icon = {'type': 'default'}
-                subtitle = fixStringEnds(subtitle)
-                items[i] = {'title': title,
-                            'subtitle': subtitle,
-                            'arg': 'x-coredata://' + uuid + '/ICNote/p' + str(d[3]),
-                            'match': match,
-                            'icon': icon}
-                gotOneRealNote = True
-            except Exception as e:
-                items[i] = {'title': 'Error getting note', 'subtitle': str(e)}
+    # Alfred results: title = note title, arg = id to pass on, subtitle = folder name, 
+    # match = note contents from gzipped database entries after stripping footers.
+    gotOneRealNote = False
+    items = [{} for d in dbItems]
+    for i, d in enumerate(dbItems):
+        folderName = folderNames[folderCodes.index(d[1])]
+        if folderName == 'Recently Deleted':
+            continue
+        title = d[0]
+        body = extractNoteBody(d[5])
+        # Replace any number of \ns with a single space for note body preview
+        bodyPreview = ' '.join(body[:100].replace('\n', ' ').split())
+        subtitle = folderName + ' | ' + bodyPreview
+        if searchBodies:
+            match = u'{} {} {}'.format(folderName, title, body)
+        else:
+            match = u'{} {}'.format(folderName, title)
+        # Custom icons for folder names that start with corresponding emoji
+        if any(x in folderName[:2] for x in icons):
+            iconText = folderName[:2]#.encode('raw_unicode_escape')
+            icon = {'type': 'image', 'path': 'icons/' + folderName[0] + '.png'}
+            subtitle = subtitle[2:]
+        else:
+            icon = {'type': 'default'}
+        subtitle = fixStringEnds(subtitle)
+        items[i] = {'title': title,
+                    'subtitle': subtitle,
+                    'arg': 'x-coredata://' + uuid + '/ICNote/p' + str(d[3]),
+                    'match': match,
+                    'icon': icon}
+        gotOneRealNote = True
 
-    if openedDatabase and gotOneRealNote:
-        print(json.dumps({'items': items}, ensure_ascii=True))
+    return json.dumps({'items': items}, ensure_ascii=True)
+
+
+if __name__ == '__main__':
+    print(getNotes(searchBodies=False))

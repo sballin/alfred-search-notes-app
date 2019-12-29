@@ -1,28 +1,40 @@
 # Search Notes.app with Alfred
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/2719004/45428832-03bb5080-b670-11e8-91bb-1c1c84eeee0b.png" width="654" title="screenshot">
+  <img src="https://user-images.githubusercontent.com/2719004/71554521-5c635800-2a31-11ea-97db-1b7c41aaf408.png" width="654" title="screenshot">
 </p>
 
 ## Usage
 
-Type `n[part of note]` and press enter.
+### Search keywords
+
+*   **n** to search note titles (this also lets you find notes using the pattern "[folder name] [note name]")
+*   **nb** to include note body text in search
+*   **nf** to search note folder names
+
+### Result actions
+
+*   **enter** to open the note/folder
+*   **cmd+enter** to copy the note body to the clipboard
+*   **alt+enter** to copy notes://[title of note] to the clipboard
+
+Use `Note Opener/Note Opener.app` to make notes:// urls open the relevant note when clicked.
 
 ## Install
 
-Download the Alfred workflow file from Releases and open it.
+Download the latest .alfredworkflow file in [releases](https://github.com/sballin/alfred-search-notes-app/releases/latest) and open it.
 
 ## Customize
 
-### Search 
+### Result ordering
 
-By default, this searches the title + full text of the notes and orders results based on the last modification date of the note. If you want to search titles only or order results alphabetically, change the [environment variables](https://www.alfredapp.com/help/workflows/advanced/variables/#environment).
+By default, results are ordered based on the modification date of the note. If you want to order results alphabetically, change the [environment variable](https://www.alfredapp.com/help/workflows/advanced/variables/#environment).
 
 ### Icons
 
-Icons are from [Emojitwo](https://emojitwo.github.io/) and will show up when they are the first character in the name of a folder, like `📘 GPI` in the screenshot above. Add your own icons to the workflow's `icons` folder and tweak `searchNotes.py` to see them in Alfred.
+Custom icons will show up when a folder name begins with an emoji, like `📗 Misc` in the screenshot above. Add your own icons to the workflow's `icons` folder and tweak `get_notes.py` to see them in Alfred. The default icons are from [Emojitwo](https://emojitwo.github.io/).
 
 ## Compatibility
 
-The default search method is only tested in High Sierra. If it's not working for you and/or you're on a different version of macOS, try the AppleScript search methods using the keywords `a` and `b`.
+Versions >2.0.0 should work out of the box on Catalina. With modifications, they might work on earlier OSes. Earlier releases should work out of the box on Mojave and earlier macOS versions. They include applescript search methods.
 

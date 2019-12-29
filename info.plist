@@ -93,6 +93,39 @@
 				<false/>
 			</dict>
 		</array>
+		<key>B9ECD7D6-EA33-4E2E-AE3E-4E22EEDD6097</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>6740BCB6-6818-49E2-A88A-9D19EA132F08</string>
+				<key>modifiers</key>
+				<integer>524288</integer>
+				<key>modifiersubtext</key>
+				<string>Copy notes:// URL</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>DC692798-E272-4547-BE83-4B63B823E456</string>
+				<key>modifiers</key>
+				<integer>1048576</integer>
+				<key>modifiersubtext</key>
+				<string>Copy note body</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>4D8E3444-14C2-4D0E-A8C1-AA67988AE358</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>DC692798-E272-4547-BE83-4B63B823E456</key>
 		<array>
 			<dict>
@@ -114,46 +147,9 @@
 	<key>disabled</key>
 	<false/>
 	<key>name</key>
-	<string>Search Notes.app</string>
+	<string>Search Notes</string>
 	<key>objects</key>
 	<array>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>applescript</key>
-				<string>use framework "Foundation"property NSString : a reference to current application's NSString
-property NSCharacterSet : a reference to current application's NSCharacterSet
-
-on alfred_script(q)	tell application "Notes"		set noteName to name of note id q		set noteName to (NSString's stringWithString:noteName)		set noteName to (noteName's stringByAddingPercentEncodingWithAllowedCharacters:(NSCharacterSet's URLPathAllowedCharacterSet)) as text		
-		set noteName to "notes://" &amp; noteName	end tell
-end alfred_script</string>
-				<key>cachescript</key>
-				<true/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.applescript</string>
-			<key>uid</key>
-			<string>6740BCB6-6818-49E2-A88A-9D19EA132F08</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>autopaste</key>
-				<false/>
-				<key>clipboardtext</key>
-				<string>{query}</string>
-				<key>transient</key>
-				<false/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.output.clipboard</string>
-			<key>uid</key>
-			<string>DDAEA7F3-310A-4F75-8624-6E256C84ABF3</string>
-			<key>version</key>
-			<integer>2</integer>
-		</dict>
 		<dict>
 			<key>config</key>
 			<dict>
@@ -189,8 +185,11 @@ end alfred_script</string>
 			<key>config</key>
 			<dict>
 				<key>applescript</key>
-				<string>on alfred_script(q)
-	tell application "Notes" to get first line of plaintext of note id q in default account
+				<string>use framework "Foundation"property NSString : a reference to current application's NSString
+property NSCharacterSet : a reference to current application's NSCharacterSet
+
+on alfred_script(q)	tell application "Notes"		set noteName to name of note id q		set noteName to (NSString's stringWithString:noteName)		set noteName to (noteName's stringByAddingPercentEncodingWithAllowedCharacters:(NSCharacterSet's URLPathAllowedCharacterSet)) as text		
+		set noteName to "notes://" &amp; noteName	end tell
 end alfred_script</string>
 				<key>cachescript</key>
 				<true/>
@@ -198,7 +197,7 @@ end alfred_script</string>
 			<key>type</key>
 			<string>alfred.workflow.action.applescript</string>
 			<key>uid</key>
-			<string>DC692798-E272-4547-BE83-4B63B823E456</string>
+			<string>6740BCB6-6818-49E2-A88A-9D19EA132F08</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -226,7 +225,7 @@ end alfred_script</string>
 				<key>queuemode</key>
 				<integer>1</integer>
 				<key>runningsubtext</key>
-				<string></string>
+				<string>Getting notes...</string>
 				<key>script</key>
 				<string>from searchNotes import getNotes
 
@@ -238,11 +237,11 @@ getNotes()</string>
 				<key>subtext</key>
 				<string></string>
 				<key>title</key>
-				<string></string>
+				<string>Search notes</string>
 				<key>type</key>
 				<integer>8</integer>
 				<key>withspace</key>
-				<false/>
+				<true/>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.input.scriptfilter</string>
@@ -289,6 +288,89 @@ getNotes()</string>
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>autopaste</key>
+				<false/>
+				<key>clipboardtext</key>
+				<string>{query}</string>
+				<key>transient</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.clipboard</string>
+			<key>uid</key>
+			<string>DDAEA7F3-310A-4F75-8624-6E256C84ABF3</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>applescript</key>
+				<string>on alfred_script(q)
+	tell application "Notes" to get plaintext of note id q in default account	set body to text (paragraph 2) thru -1 of the result
+end alfred_script</string>
+				<key>cachescript</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.applescript</string>
+			<key>uid</key>
+			<string>DC692798-E272-4547-BE83-4B63B823E456</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>alfredfiltersresults</key>
+				<true/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>escaping</key>
+				<integer>68</integer>
+				<key>keyword</key>
+				<string>nb</string>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<true/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
+				<key>runningsubtext</key>
+				<string>Getting notes...</string>
+				<key>script</key>
+				<string>from searchNotes import getNotes
+
+getNotes()</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string>get_note_bodies.py</string>
+				<key>subtext</key>
+				<string></string>
+				<key>title</key>
+				<string>Search note bodies</string>
+				<key>type</key>
+				<integer>8</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>B9ECD7D6-EA33-4E2E-AE3E-4E22EEDD6097</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>applescript</key>
 				<string>on alfred_script(q)
 	tell application "Notes"
@@ -322,7 +404,7 @@ end alfred_script</string>
 				<key>escaping</key>
 				<integer>68</integer>
 				<key>keyword</key>
-				<string>fn</string>
+				<string>nf</string>
 				<key>queuedelaycustom</key>
 				<integer>3</integer>
 				<key>queuedelayimmediatelyinitially</key>
@@ -332,7 +414,7 @@ end alfred_script</string>
 				<key>queuemode</key>
 				<integer>1</integer>
 				<key>runningsubtext</key>
-				<string></string>
+				<string>Getting folders...</string>
 				<key>script</key>
 				<string>from searchNotes import getNotes
 
@@ -344,11 +426,11 @@ getNotes()</string>
 				<key>subtext</key>
 				<string></string>
 				<key>title</key>
-				<string></string>
+				<string>Search note folders</string>
 				<key>type</key>
 				<integer>8</integer>
 				<key>withspace</key>
-				<false/>
+				<true/>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.input.scriptfilter</string>
@@ -367,79 +449,86 @@ New versions: https://github.com/sballin/alfred-search-notes-app/releases</strin
 		<key>060809AF-8160-439A-85F9-D672664E3A1A</key>
 		<dict>
 			<key>xpos</key>
-			<integer>50</integer>
+			<integer>100</integer>
 			<key>ypos</key>
-			<integer>230</integer>
+			<integer>170</integer>
 		</dict>
 		<key>1A6D4810-ABAF-4604-9639-CC1327A279B7</key>
 		<dict>
 			<key>xpos</key>
-			<integer>50</integer>
+			<integer>100</integer>
 			<key>ypos</key>
-			<integer>120</integer>
+			<integer>60</integer>
 		</dict>
 		<key>4D8E3444-14C2-4D0E-A8C1-AA67988AE358</key>
 		<dict>
 			<key>note</key>
-			<string>Show note/folder with given ID</string>
+			<string>Show note/folder</string>
 			<key>xpos</key>
-			<integer>480</integer>
+			<integer>520</integer>
 			<key>ypos</key>
-			<integer>350</integer>
+			<integer>390</integer>
 		</dict>
 		<key>5BC84589-FA2A-459F-982A-54B612C9BA7F</key>
 		<dict>
 			<key>note</key>
-			<string>Search titles (and bodies if environment variable is set)</string>
+			<string>Search note titles</string>
 			<key>xpos</key>
-			<integer>250</integer>
+			<integer>290</integer>
 			<key>ypos</key>
-			<integer>180</integer>
+			<integer>110</integer>
 		</dict>
 		<key>6740BCB6-6818-49E2-A88A-9D19EA132F08</key>
 		<dict>
 			<key>note</key>
-			<string>Make notes:// URL</string>
+			<string>alt: Make notes:// URL</string>
 			<key>xpos</key>
-			<integer>480</integer>
+			<integer>520</integer>
 			<key>ypos</key>
-			<integer>40</integer>
+			<integer>110</integer>
 		</dict>
 		<key>6F3DD843-22EF-4A97-BAF8-511894B5202D</key>
 		<dict>
 			<key>note</key>
 			<string>Search folder names</string>
 			<key>xpos</key>
-			<integer>250</integer>
+			<integer>290</integer>
 			<key>ypos</key>
-			<integer>350</integer>
+			<integer>390</integer>
+		</dict>
+		<key>B9ECD7D6-EA33-4E2E-AE3E-4E22EEDD6097</key>
+		<dict>
+			<key>note</key>
+			<string>Search note bodies</string>
+			<key>xpos</key>
+			<integer>290</integer>
+			<key>ypos</key>
+			<integer>250</integer>
 		</dict>
 		<key>DC692798-E272-4547-BE83-4B63B823E456</key>
 		<dict>
 			<key>note</key>
-			<string>Get note body</string>
+			<string>cmd: Get note body</string>
 			<key>xpos</key>
-			<integer>480</integer>
+			<integer>520</integer>
 			<key>ypos</key>
-			<integer>180</integer>
+			<integer>250</integer>
 		</dict>
 		<key>DDAEA7F3-310A-4F75-8624-6E256C84ABF3</key>
 		<dict>
 			<key>xpos</key>
-			<integer>680</integer>
+			<integer>710</integer>
 			<key>ypos</key>
-			<integer>110</integer>
+			<integer>180</integer>
 		</dict>
 	</dict>
 	<key>variables</key>
 	<dict>
-		<key>searchTitlesOnly</key>
-		<string>1</string>
 		<key>sortByDate</key>
 		<string>1</string>
 	</dict>
 	<key>version</key>
-	<string>1.4.3</string>
+	<string>2.0.0</string>
 	<key>webaddress</key>
 	<string>https://github.com/sballin/alfred-search-notes-app</string>
 </dict>
