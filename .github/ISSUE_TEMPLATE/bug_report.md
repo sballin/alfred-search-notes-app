@@ -8,7 +8,7 @@ assignees: ''
 ---
 
 **Describe the bug**
-A clear and concise description of what the bug is, including [debug log output](https://www.alfredapp.com/help/workflows/advanced/debugger/)
+A clear and concise description of what the bug is, including [debug log output](https://www.alfredapp.com/help/workflows/advanced/debugger/).
 
 **To Reproduce**
 Steps to reproduce the behavior:
