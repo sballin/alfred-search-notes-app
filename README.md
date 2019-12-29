@@ -22,7 +22,9 @@ Use `Note Opener/Note Opener.app` to make notes:// urls open the relevant note w
 
 ## Install
 
-Download the latest .alfredworkflow file in [releases](https://github.com/sballin/alfred-search-notes-app/releases/latest) and open it.
+Download the latest .alfredworkflow file in [releases](https://github.com/sballin/alfred-search-notes-app/releases) and open it.
+
+Versions >=2.0.0 should work out of the box on Catalina and can be modified to work on earlier OSes. Versions <=1.4.3 should work out of the box on Mojave and earlier macOS versions. 
 
 ## Customize
 
@@ -33,8 +35,3 @@ By default, results are ordered based on the modification date of the note. If y
 ### Icons
 
 Custom icons will show up when a folder name begins with an emoji, like `📗 Misc` in the screenshot above. Add your own icons to the workflow's `icons` folder and tweak `get_notes.py` to see them in Alfred. The default icons are from [Emojitwo](https://emojitwo.github.io/).
-
-## Compatibility
-
-Versions >2.0.0 should work out of the box on Catalina. With modifications, they might work on earlier OSes. Earlier releases should work out of the box on Mojave and earlier macOS versions. They include applescript search methods.
-
