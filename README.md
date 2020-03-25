@@ -22,9 +22,11 @@ Use `Note Opener/Note Opener.app` to make notes:// urls open the relevant note w
 
 ## Install
 
-Download the latest .alfredworkflow file in [releases](https://github.com/sballin/alfred-search-notes-app/releases) and open it.
+If you're on macOS Catalina, download version [2.0.0](https://github.com/sballin/alfred-search-notes-app/releases/download/2.0.0/Search.Notes.alfredworkflow) of the workflow. If you haven't used python 3 on your computer before, you may need to install the Xcode developer tools by running the following command in a terminal:
 
-Versions >=2.0.0 should work out of the box on Catalina and can be modified to work on earlier OSes. Versions <=1.4.3 should work out of the box on Mojave and earlier macOS versions. 
+    xcode-select --install
+
+If that doesn't work for you, or you're on an older macOS, try version [1.4.3](https://github.com/sballin/alfred-search-notes-app/releases/tag/1.4.3).
 
 ## Customize
 
