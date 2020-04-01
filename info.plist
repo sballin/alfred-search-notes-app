@@ -184,30 +184,12 @@
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>applescript</key>
-				<string>use framework "Foundation"property NSString : a reference to current application's NSString
-property NSCharacterSet : a reference to current application's NSCharacterSet
-
-on alfred_script(q)	tell application "Notes"		set noteName to name of note id q		set noteName to (NSString's stringWithString:noteName)		set noteName to (noteName's stringByAddingPercentEncodingWithAllowedCharacters:(NSCharacterSet's URLPathAllowedCharacterSet)) as text		
-		set noteName to "notes://" &amp; noteName	end tell
-end alfred_script</string>
-				<key>cachescript</key>
-				<true/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.applescript</string>
-			<key>uid</key>
-			<string>6740BCB6-6818-49E2-A88A-9D19EA132F08</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
 				<key>alfredfiltersresults</key>
 				<true/>
 				<key>alfredfiltersresultsmatchmode</key>
 				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<false/>
 				<key>argumenttrimmode</key>
 				<integer>0</integer>
 				<key>argumenttype</key>
@@ -248,7 +230,27 @@ getNotes()</string>
 			<key>uid</key>
 			<string>5BC84589-FA2A-459F-982A-54B612C9BA7F</string>
 			<key>version</key>
-			<integer>2</integer>
+			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>applescript</key>
+				<string>use framework "Foundation"property NSString : a reference to current application's NSString
+property NSCharacterSet : a reference to current application's NSCharacterSet
+
+on alfred_script(q)	tell application "Notes"		set noteName to name of note id q		set noteName to (NSString's stringWithString:noteName)		set noteName to (noteName's stringByAddingPercentEncodingWithAllowedCharacters:(NSCharacterSet's URLPathAllowedCharacterSet)) as text		
+		set noteName to "notes://" &amp; noteName	end tell
+end alfred_script</string>
+				<key>cachescript</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.applescript</string>
+			<key>uid</key>
+			<string>6740BCB6-6818-49E2-A88A-9D19EA132F08</string>
+			<key>version</key>
+			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -300,7 +302,7 @@ getNotes()</string>
 			<key>uid</key>
 			<string>DDAEA7F3-310A-4F75-8624-6E256C84ABF3</string>
 			<key>version</key>
-			<integer>2</integer>
+			<integer>3</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -326,6 +328,8 @@ end alfred_script</string>
 				<true/>
 				<key>alfredfiltersresultsmatchmode</key>
 				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<false/>
 				<key>argumenttrimmode</key>
 				<integer>0</integer>
 				<key>argumenttype</key>
@@ -366,7 +370,7 @@ getNotes()</string>
 			<key>uid</key>
 			<string>B9ECD7D6-EA33-4E2E-AE3E-4E22EEDD6097</string>
 			<key>version</key>
-			<integer>2</integer>
+			<integer>3</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -397,6 +401,8 @@ end alfred_script</string>
 				<true/>
 				<key>alfredfiltersresultsmatchmode</key>
 				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<false/>
 				<key>argumenttrimmode</key>
 				<integer>0</integer>
 				<key>argumenttype</key>
@@ -437,13 +443,22 @@ getNotes()</string>
 			<key>uid</key>
 			<string>6F3DD843-22EF-4A97-BAF8-511894B5202D</string>
 			<key>version</key>
-			<integer>2</integer>
+			<integer>3</integer>
 		</dict>
 	</array>
 	<key>readme</key>
-	<string>Instructions: https://github.com/sballin/alfred-search-notes-app 
+	<string>Install instructions
+====================
+https://github.com/sballin/alfred-search-notes-app#install
 
-New versions: https://github.com/sballin/alfred-search-notes-app/releases</string>
+Note: If you're on macOS Catalina and haven't used python before, the workflow will not function unless you install the Xcode developer tools with the command `xcode-select --install`. See instructions or create an issue on Github for further help.
+
+
+Stay up-to-date with new versions
+=================================
+To be notified of new versions, "watch" the repo on Github (https://github.com/sballin/alfred-search-notes-app) or subscribe to the Alfred forum thread (https://www.alfredforum.com/topic/11716-search-appleicloud-notes/).
+
+Or manually check releases: https://github.com/sballin/alfred-search-notes-app/releases</string>
 	<key>uidata</key>
 	<dict>
 		<key>060809AF-8160-439A-85F9-D672664E3A1A</key>
@@ -528,7 +543,7 @@ New versions: https://github.com/sballin/alfred-search-notes-app/releases</strin
 		<string>1</string>
 	</dict>
 	<key>version</key>
-	<string>2.0.0</string>
+	<string>2.1.0</string>
 	<key>webaddress</key>
 	<string>https://github.com/sballin/alfred-search-notes-app</string>
 </dict>
