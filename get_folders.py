@@ -3,13 +3,14 @@ import json
 from get_notes import readDatabase
 
 
-uuid, dbItems, folderCodes, folderNames = readDatabase()
+uuid, dbItems, folders = readDatabase()
 
 items = []
-for i, name in enumerate(folderNames):
+for folderCode in folders:
+    name = folders[folderCode]
     if name != 'New Folder':
         items.append({'title': name,
                       'subtitle': 'Folder',
-                      'arg':'x-coredata://' + uuid + '/ICFolder/p' + str(folderCodes[i])})
+                      'arg':'x-coredata://' + uuid + '/ICFolder/p' + str(folderCode)})
 
 print(json.dumps({'items': items}))
