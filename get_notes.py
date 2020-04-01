@@ -41,6 +41,13 @@ def fixStringEnds(text):
         # Character at pos is a continuation byte (bit 7 set, bit 6 not)
         pos -= 1
     return text[:pos]
+    
+    
+def newlinesToSpace(text):
+    """
+    Replace any number of newlines with a single space character.
+    """
+    return ' '.join(text.replace('\n', ' ').split())
 
 
 def readDatabase():
@@ -119,7 +126,7 @@ def getNotes(searchBodies=False):
             
         try:
             # Replace any number of \ns with a single space for note body preview
-            bodyPreview = ' '.join(body[:100].replace('\n', ' ').split())
+            bodyPreview = newlinesToSpace(body[:100])
         except:
             bodyPreview = ''
             
@@ -129,7 +136,8 @@ def getNotes(searchBodies=False):
             subtitle = folderName
             
         if searchBodies:
-            match = u'{} {} {}'.format(folderName, title, body)
+            bodyMatch = newlinesToSpace(body)
+            match = u'{} {} {}'.format(folderName, title, bodyMatch)
         else:
             match = u'{} {}'.format(folderName, title)
             
