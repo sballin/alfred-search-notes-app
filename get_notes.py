@@ -44,10 +44,10 @@ def fixStringEnds(text):
 
 
 def readDatabase():
-    # Open notes database
+    # Open notes database read-only 
     home = os.path.expanduser('~')
     db = home + '/Library/Group Containers/group.com.apple.notes/NoteStore.sqlite'
-    conn = sqlite3.connect(db)
+    conn = sqlite3.connect('file:' + db + '?mode=ro', uri=True)
     c = conn.cursor()
 
     # Get uuid string required in full id
