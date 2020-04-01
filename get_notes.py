@@ -95,42 +95,62 @@ def getNotes(searchBodies=False):
     uuid, dbItems, folders = readDatabase()
     
     # Sort matches by title or modification date (read Alfred environment variable)
-    if os.getenv('sortByDate') == '1':
-        sortId = 2
-        sortInReverse = True
-    else:
+    if os.getenv('sortByDate') == '0':
         sortId = 0
         sortInReverse = False
+    else:
+        sortId = 2
+        sortInReverse = True
     dbItems = sorted(dbItems, key=lambda d: d[sortId], reverse=sortInReverse)
 
     # Alfred results: title = note title, arg = id to pass on, subtitle = folder name, 
     # match = note contents from gzipped database entries after stripping footers.
     items = [{} for d in dbItems]
     for i, d in enumerate(dbItems):
-        folderName = folders[d[1]]
+        title, folderCode, modDate, noteId, bodyData = d
+        folderName = folders[folderCode]
         if folderName == 'Recently Deleted':
             continue
-        title = d[0]
-        body = extractNoteBody(d[4])
-        # Replace any number of \ns with a single space for note body preview
-        bodyPreview = ' '.join(body[:100].replace('\n', ' ').split())
-        subtitle = folderName + ' | ' + bodyPreview
+            
+        try:
+            body = extractNoteBody(bodyData)
+        except:
+            body = ''
+            
+        try:
+            # Replace any number of \ns with a single space for note body preview
+            bodyPreview = ' '.join(body[:100].replace('\n', ' ').split())
+        except:
+            bodyPreview = ''
+            
+        if bodyPreview:
+            subtitle = folderName + ' | ' + bodyPreview
+        else:
+            subtitle = folderName
+            
         if searchBodies:
             match = u'{} {} {}'.format(folderName, title, body)
         else:
             match = u'{} {}'.format(folderName, title)
-        # Custom icons for folder names that start with corresponding emoji
-        # import pdb; pdb.set_trace()
-        #if any(x in folderName[:2] for x in icons):
-        if folderName[0] in icons.keys():
-            icon = {'type': 'image', 'path': 'icons/' + icons[folderName[0]]}
-            subtitle = subtitle[2:]
-        else:
+            
+        try:
+            # Custom icons for folder names that start with corresponding emoji
+            if folderName[0] in icons.keys():
+                icon = {'type': 'image', 'path': 'icons/' + icons[folderName[0]]}
+                subtitle = subtitle[2:]
+            else:
+                icon = {'type': 'default'}
+        except: 
             icon = {'type': 'default'}
-        subtitle = fixStringEnds(subtitle)
+            
+        try:
+            subtitle = fixStringEnds(subtitle)
+        except:
+            subtitle = folderName
+        
         items[i] = {'title': title,
                     'subtitle': subtitle,
-                    'arg': 'x-coredata://' + uuid + '/ICNote/p' + str(d[3]),
+                    'arg': 'x-coredata://' + uuid + '/ICNote/p' + str(noteId),
                     'match': match,
                     'icon': icon}
 
