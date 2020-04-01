@@ -50,52 +50,68 @@ def readDatabase():
     conn = sqlite3.connect('file:' + db + '?mode=ro', uri=True)
     c = conn.cursor()
 
-    # Get uuid string required in full id
+    # Get uuid string required in x-coredata URL
     c.execute('SELECT z_uuid FROM z_metadata')
     uuid = str(c.fetchone()[0])
 
-    # Get tuples of note title, folder code, modification date, & id#
-    c.execute("""SELECT t1.ztitle1,t1.zfolder,t1.zmodificationdate1,
-                        t1.z_pk,t1.znotedata,t2.zdata,t2.z_pk
-                 FROM ziccloudsyncingobject AS t1
-                 INNER JOIN zicnotedata AS t2
-                 ON t1.znotedata = t2.z_pk
-                 WHERE t1.ztitle1 IS NOT NULL AND 
-                       t1.zmarkedfordeletion IS NOT 1""")
-    # Get data and check for d[5] because a New Note with no body can trip us up
-    dbItems = [d for d in c.fetchall() if d[5]]
+    # Get note rows
+    c.execute("""SELECT c.ztitle1,            -- note title (str)
+                        c.zfolder,            -- folder code (int)
+                        c.zmodificationdate1, -- modification date (float)
+                        c.z_pk,               -- note id for x-coredata URL (int)
+                        n.zdata               -- note body text (str)
+                 FROM ziccloudsyncingobject AS c
+                 INNER JOIN zicnotedata AS n
+                 ON c.znotedata = n.z_pk -- note id (int) distinct from x-coredata one
+                 WHERE c.ztitle1 IS NOT NULL AND 
+                       c.zfolder IS NOT NULL AND            -- fix issues/21
+                       c.zmodificationdate1 IS NOT NULL AND -- fix issues/20
+                       c.z_pk IS NOT NULL AND
+                       n.zdata IS NOT NULL AND              -- fix issues/3
+                       c.zmarkedfordeletion IS NOT 1""")
+    dbItems = c.fetchall()
 
-    # Get ordered lists of folder codes and folder names
-    c.execute("""SELECT z_pk,ztitle2 FROM ziccloudsyncingobject
+    # Get folder rows
+    c.execute("""SELECT z_pk,   -- folder code
+                        ztitle2 -- folder name
+                 FROM ziccloudsyncingobject
                  WHERE ztitle2 IS NOT NULL AND 
                        zmarkedfordeletion IS NOT 1""")
-    folderCodes, folderNames = zip(*c.fetchall())
+    folders = {code: name for code, name in c.fetchall()}
 
     conn.close()
-    return uuid, dbItems, folderCodes, folderNames
+    return uuid, dbItems, folders
 
 
 def getNotes(searchBodies=False):
     # Custom icons to look for in folder names
-    icons = ['📓', '📕', '📗', '📘', '📙']
+    icons = {'📓': 'notebook.png', 
+             '📕': 'redbook.png', 
+             '📗': 'greenbook.png', 
+             '📘': 'bluebook.png', 
+             '📙': 'orangebook.png'}
 
     # Read Notes database and get contents
-    uuid, dbItems, folderCodes, folderNames = readDatabase()
+    uuid, dbItems, folders = readDatabase()
     
     # Sort matches by title or modification date (read Alfred environment variable)
-    sortId = 2 if os.getenv('sortByDate') == '1' else 0
-    sortInReverse = (sortId == 2)
+    if os.getenv('sortByDate') == '1':
+        sortId = 2
+        sortInReverse = True
+    else:
+        sortId = 0
+        sortInReverse = False
     dbItems = sorted(dbItems, key=lambda d: d[sortId], reverse=sortInReverse)
 
     # Alfred results: title = note title, arg = id to pass on, subtitle = folder name, 
     # match = note contents from gzipped database entries after stripping footers.
     items = [{} for d in dbItems]
     for i, d in enumerate(dbItems):
-        folderName = folderNames[folderCodes.index(d[1])]
+        folderName = folders[d[1]]
         if folderName == 'Recently Deleted':
             continue
         title = d[0]
-        body = extractNoteBody(d[5])
+        body = extractNoteBody(d[4])
         # Replace any number of \ns with a single space for note body preview
         bodyPreview = ' '.join(body[:100].replace('\n', ' ').split())
         subtitle = folderName + ' | ' + bodyPreview
@@ -104,9 +120,10 @@ def getNotes(searchBodies=False):
         else:
             match = u'{} {}'.format(folderName, title)
         # Custom icons for folder names that start with corresponding emoji
-        if any(x in folderName[:2] for x in icons):
-            iconText = folderName[:2]#.encode('raw_unicode_escape')
-            icon = {'type': 'image', 'path': 'icons/' + folderName[0] + '.png'}
+        # import pdb; pdb.set_trace()
+        #if any(x in folderName[:2] for x in icons):
+        if folderName[0] in icons.keys():
+            icon = {'type': 'image', 'path': 'icons/' + icons[folderName[0]]}
             subtitle = subtitle[2:]
         else:
             icon = {'type': 'default'}
