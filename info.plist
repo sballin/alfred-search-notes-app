@@ -34,6 +34,19 @@
 				<false/>
 			</dict>
 		</array>
+		<key>4D8E3444-14C2-4D0E-A8C1-AA67988AE358</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>0B8A749B-E2E7-4B1B-9711-1C77A495BD97</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>5BC84589-FA2A-459F-982A-54B612C9BA7F</key>
 		<array>
 			<dict>
@@ -72,6 +85,16 @@
 			<dict>
 				<key>destinationuid</key>
 				<string>DDAEA7F3-310A-4F75-8624-6E256C84ABF3</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>0B8A749B-E2E7-4B1B-9711-1C77A495BD97</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -131,6 +154,16 @@
 			<dict>
 				<key>destinationuid</key>
 				<string>DDAEA7F3-310A-4F75-8624-6E256C84ABF3</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>0B8A749B-E2E7-4B1B-9711-1C77A495BD97</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -209,19 +242,21 @@
 				<key>runningsubtext</key>
 				<string>Getting notes...</string>
 				<key>script</key>
-				<string>from searchNotes import getNotes
-
-getNotes()</string>
+				<string>python3 -I -S get_notes.py 2&gt;&gt; error_log.txt
+if [[ $? != 0 ]]; then
+    sh handle_error.sh
+fi
+</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
-				<string>get_notes.py</string>
+				<string>get_notes</string>
 				<key>subtext</key>
 				<string></string>
 				<key>title</key>
 				<string>Search notes</string>
 				<key>type</key>
-				<integer>8</integer>
+				<integer>0</integer>
 				<key>withspace</key>
 				<true/>
 			</dict>
@@ -349,9 +384,11 @@ end alfred_script</string>
 				<key>runningsubtext</key>
 				<string>Getting notes...</string>
 				<key>script</key>
-				<string>from searchNotes import getNotes
-
-getNotes()</string>
+				<string>python3 -S get_note_bodies.py 2&gt;&gt; error_log.txt
+if [[ $? != 0 ]]; then
+    sh handle_error.sh
+fi
+</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -361,7 +398,7 @@ getNotes()</string>
 				<key>title</key>
 				<string>Search note bodies</string>
 				<key>type</key>
-				<integer>8</integer>
+				<integer>0</integer>
 				<key>withspace</key>
 				<true/>
 			</dict>
@@ -375,12 +412,42 @@ getNotes()</string>
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>python3 -I -S update.py 2&gt;&gt; error_log.txt
+if [[ $? != 0 ]]; then
+    sh handle_error.sh
+fi</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string>update.py</string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>0B8A749B-E2E7-4B1B-9711-1C77A495BD97</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>applescript</key>
 				<string>on alfred_script(q)
 	tell application "Notes"
-		if q contains "Note"
+		if q contains "Note" then
+			show note id q in default account
+             -- Once more, otherwise this fails when toolbar search is active
 			show note id q in default account
 		else
+			show folder id q in default account
+             -- Once more, otherwise this fails when toolbar search is active
 			show folder id q in default account
 		end if	end tell
 end alfred_script</string>
@@ -422,9 +489,11 @@ end alfred_script</string>
 				<key>runningsubtext</key>
 				<string>Getting folders...</string>
 				<key>script</key>
-				<string>from searchNotes import getNotes
-
-getNotes()</string>
+				<string>python3 -S get_folders.py 2&gt;&gt; error_log.txt
+if [[ $? != 0 ]]; then
+    sh handle_error.sh
+fi
+</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -434,7 +503,7 @@ getNotes()</string>
 				<key>title</key>
 				<string>Search note folders</string>
 				<key>type</key>
-				<integer>8</integer>
+				<integer>0</integer>
 				<key>withspace</key>
 				<true/>
 			</dict>
@@ -447,94 +516,94 @@ getNotes()</string>
 		</dict>
 	</array>
 	<key>readme</key>
-	<string>Install instructions
-====================
-https://github.com/sballin/alfred-search-notes-app#install
+	<string>Note: If you're on macOS Catalina and haven't used python before, the workflow will not function unless you install the Xcode developer tools with the command `xcode-select --install`. 
 
-Note: If you're on macOS Catalina and haven't used python before, the workflow will not function unless you install the Xcode developer tools with the command `xcode-select --install`. See instructions or create an issue on Github for further help.
-
-
-Stay up-to-date with new versions
-=================================
-To be notified of new versions, "watch" the repo on Github (https://github.com/sballin/alfred-search-notes-app) or subscribe to the Alfred forum thread (https://www.alfredforum.com/topic/11716-search-appleicloud-notes/).
-
-Or manually check releases: https://github.com/sballin/alfred-search-notes-app/releases</string>
+For further info and troubleshooting, visit https://github.com/sballin/alfred-search-notes-app</string>
 	<key>uidata</key>
 	<dict>
 		<key>060809AF-8160-439A-85F9-D672664E3A1A</key>
 		<dict>
 			<key>xpos</key>
-			<integer>100</integer>
+			<integer>55</integer>
 			<key>ypos</key>
-			<integer>170</integer>
+			<integer>195</integer>
+		</dict>
+		<key>0B8A749B-E2E7-4B1B-9711-1C77A495BD97</key>
+		<dict>
+			<key>note</key>
+			<string>Check for updates</string>
+			<key>xpos</key>
+			<integer>670</integer>
+			<key>ypos</key>
+			<integer>345</integer>
 		</dict>
 		<key>1A6D4810-ABAF-4604-9639-CC1327A279B7</key>
 		<dict>
 			<key>xpos</key>
-			<integer>100</integer>
+			<integer>55</integer>
 			<key>ypos</key>
-			<integer>60</integer>
+			<integer>85</integer>
 		</dict>
 		<key>4D8E3444-14C2-4D0E-A8C1-AA67988AE358</key>
 		<dict>
 			<key>note</key>
 			<string>Show note/folder</string>
 			<key>xpos</key>
-			<integer>520</integer>
+			<integer>475</integer>
 			<key>ypos</key>
-			<integer>390</integer>
+			<integer>415</integer>
 		</dict>
 		<key>5BC84589-FA2A-459F-982A-54B612C9BA7F</key>
 		<dict>
 			<key>note</key>
 			<string>Search note titles</string>
 			<key>xpos</key>
-			<integer>290</integer>
+			<integer>245</integer>
 			<key>ypos</key>
-			<integer>110</integer>
+			<integer>135</integer>
 		</dict>
 		<key>6740BCB6-6818-49E2-A88A-9D19EA132F08</key>
 		<dict>
 			<key>note</key>
-			<string>alt: Make notes:// URL</string>
+			<string>⌥ Make notes:// URL</string>
 			<key>xpos</key>
-			<integer>520</integer>
+			<integer>475</integer>
 			<key>ypos</key>
-			<integer>110</integer>
+			<integer>135</integer>
 		</dict>
 		<key>6F3DD843-22EF-4A97-BAF8-511894B5202D</key>
 		<dict>
 			<key>note</key>
 			<string>Search folder names</string>
 			<key>xpos</key>
-			<integer>290</integer>
+			<integer>245</integer>
 			<key>ypos</key>
-			<integer>390</integer>
+			<integer>415</integer>
 		</dict>
 		<key>B9ECD7D6-EA33-4E2E-AE3E-4E22EEDD6097</key>
 		<dict>
 			<key>note</key>
 			<string>Search note bodies</string>
 			<key>xpos</key>
-			<integer>290</integer>
+			<integer>245</integer>
 			<key>ypos</key>
-			<integer>250</integer>
+			<integer>275</integer>
 		</dict>
 		<key>DC692798-E272-4547-BE83-4B63B823E456</key>
 		<dict>
 			<key>note</key>
-			<string>cmd: Get note body</string>
+			<string>⌘ Get note body</string>
 			<key>xpos</key>
-			<integer>520</integer>
+			<integer>475</integer>
 			<key>ypos</key>
-			<integer>250</integer>
+			<integer>275</integer>
 		</dict>
 		<key>DDAEA7F3-310A-4F75-8624-6E256C84ABF3</key>
 		<dict>
 			<key>xpos</key>
-			<integer>710</integer>
+			<integer>670</integer>
 			<key>ypos</key>
-			<integer>180</integer>
+			<integer>205</integer>
 		</dict>
 	</dict>
 	<key>variables</key>
@@ -543,7 +612,7 @@ Or manually check releases: https://github.com/sballin/alfred-search-notes-app/r
 		<string>1</string>
 	</dict>
 	<key>version</key>
-	<string>2.1.0</string>
+	<string>2.2.0</string>
 	<key>webaddress</key>
 	<string>https://github.com/sballin/alfred-search-notes-app</string>
 </dict>

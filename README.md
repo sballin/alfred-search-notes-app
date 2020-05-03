@@ -22,7 +22,7 @@ Use `Note Opener/Note Opener.app` to make notes:// urls open the relevant note w
 
 ## Install
 
-If you're on macOS Catalina, download version [2.1.0](https://github.com/sballin/alfred-search-notes-app/releases/download/2.1.0/Search.Notes.alfredworkflow) of the workflow. If you haven't used python 3 on your computer before, you may need to install the Xcode developer tools by running the following command in a terminal:
+If you're on macOS Catalina, download the [latest version](https://github.com/sballin/alfred-search-notes-app/releases/latest/download/Search.Notes.alfredworkflow) of the workflow. If you haven't used python 3 on your computer before, you may need to install the Xcode developer tools by running the following command in a terminal:
 
     xcode-select --install
 
@@ -30,7 +30,9 @@ If that doesn't work for you, or you're on an older macOS, try version [1.4.3](h
 
 ### Stay up to date
 
-Be notified of new releases by watching this repo or subscribing to the Alfred forum [thread](https://www.alfredforum.com/topic/11716-search-appleicloud-notes/).
+By default, the workflow checks Github for updates every 24 hours. This can be disabled by removing the connections to the "Check for updates" block in the workflow.
+
+You can also be notified of new releases by watching this repo or subscribing to the Alfred forum [thread](https://www.alfredforum.com/topic/11716-search-appleicloud-notes/).
 
 ## Customize
 

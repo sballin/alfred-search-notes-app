@@ -1,3 +1,4 @@
 .DS_STORE
 xcuserdata/
-
+error_log.txt
+__pycache__/

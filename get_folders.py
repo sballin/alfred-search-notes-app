@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import json
 from get_notes import readDatabase
 
