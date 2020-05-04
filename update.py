@@ -58,15 +58,19 @@ def update(updateUrl):
         os.system('open ' + updateFile)
     
 
-if oneDaySinceLastCheck():
-    latestUrl = 'https://api.github.com/repos/sballin/alfred-search-notes-app/releases/latest'
-    r = request.urlopen(latestUrl, timeout=60)
-    if r.status == 200:
-        body = r.read()
-        latest = json.loads(body.decode('utf-8'))
-        latestVersion = latest['tag_name']
-        updateUrl = latest['assets'][0]['browser_download_url']
-        
-        if updateAvailable(latestVersion): 
-            if userWantsUpdate(updateUrl):
-                update(updateUrl)
+try:
+    if oneDaySinceLastCheck():
+        latestUrl = 'https://api.github.com/repos/sballin/alfred-search-notes-app/releases/latest'
+        r = request.urlopen(latestUrl, timeout=60)
+        if r.status == 200:
+            body = r.read()
+            latest = json.loads(body.decode('utf-8'))
+            latestVersion = latest['tag_name']
+            updateUrl = latest['assets'][0]['browser_download_url']
+            
+            if updateAvailable(latestVersion): 
+                if userWantsUpdate(updateUrl):
+                    update(updateUrl)
+except:
+    pass
+    

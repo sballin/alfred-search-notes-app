@@ -217,6 +217,26 @@
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>applescript</key>
+				<string>use framework "Foundation"property NSString : a reference to current application's NSString
+property NSCharacterSet : a reference to current application's NSCharacterSet
+
+on alfred_script(q)	tell application "Notes"		set noteName to name of note id q		set noteName to (NSString's stringWithString:noteName)		set noteName to (noteName's stringByAddingPercentEncodingWithAllowedCharacters:(NSCharacterSet's URLPathAllowedCharacterSet)) as text		
+		set noteName to "notes://" &amp; noteName	end tell
+end alfred_script</string>
+				<key>cachescript</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.applescript</string>
+			<key>uid</key>
+			<string>6740BCB6-6818-49E2-A88A-9D19EA132F08</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>alfredfiltersresults</key>
 				<true/>
 				<key>alfredfiltersresultsmatchmode</key>
@@ -266,26 +286,6 @@ fi
 			<string>5BC84589-FA2A-459F-982A-54B612C9BA7F</string>
 			<key>version</key>
 			<integer>3</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>applescript</key>
-				<string>use framework "Foundation"property NSString : a reference to current application's NSString
-property NSCharacterSet : a reference to current application's NSCharacterSet
-
-on alfred_script(q)	tell application "Notes"		set noteName to name of note id q		set noteName to (NSString's stringWithString:noteName)		set noteName to (noteName's stringByAddingPercentEncodingWithAllowedCharacters:(NSCharacterSet's URLPathAllowedCharacterSet)) as text		
-		set noteName to "notes://" &amp; noteName	end tell
-end alfred_script</string>
-				<key>cachescript</key>
-				<true/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.applescript</string>
-			<key>uid</key>
-			<string>6740BCB6-6818-49E2-A88A-9D19EA132F08</string>
-			<key>version</key>
-			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -612,7 +612,7 @@ For further info and troubleshooting, visit https://github.com/sballin/alfred-se
 		<string>1</string>
 	</dict>
 	<key>version</key>
-	<string>2.2.0</string>
+	<string>2.2.1</string>
 	<key>webaddress</key>
 	<string>https://github.com/sballin/alfred-search-notes-app</string>
 </dict>
