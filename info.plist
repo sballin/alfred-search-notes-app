@@ -611,6 +611,8 @@ For further info and troubleshooting, visit https://github.com/sballin/alfred-se
 		<key>sortByDate</key>
 		<string>1</string>
 	</dict>
+	<key>variablesdontexport</key>
+	<array/>
 	<key>version</key>
 	<string>2.2.1</string>
 	<key>webaddress</key>

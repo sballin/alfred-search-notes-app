@@ -3,7 +3,6 @@ import time
 import json
 import plistlib
 from distutils.version import StrictVersion
-from urllib import request
 
 
 def oneDaySinceLastCheck():
@@ -32,14 +31,17 @@ def updateAvailable(latestVersion):
         return False
 
 
-def userWantsUpdate(updateUrl):
+def userWantsUpdate(updateNotes):
+    '''
+    Show user a confirmation dialog.
+    '''
     retval = os.system("""
-osascript -e 'display dialog "An update is available for the Search Notes workflow. Press OK to download and open this file:
+osascript -e 'display dialog "An update is available for the Search Notes workflow. Press OK to download and open it. Notes for this release:
 
 %s
 
-Daily update checks can be disabled by editing the workflow."'
-""" % updateUrl)
+Daily update checks can be disabled by editing the workflow."' 2>/dev/null
+""" % updateNotes)
     if retval == 0:
         return True
     else:
@@ -50,27 +52,27 @@ def update(updateUrl):
     '''
     Download and open new version of workflow.
     '''
-    r = request.urlopen(updateUrl, timeout=60)
-    if r.status == 200:
-        updateFile = '/tmp/Search.Notes.alfredworkflow'
-        with open(updateFile, 'wb') as f:
-            f.write(r.read())
-        os.system('open ' + updateFile)
+    updateFile = '/tmp/Search.Notes.alfredworkflow'
+    # --location is required in order to follow redirects
+    curlRet = os.system('curl --silent --location --output %s %s' % (updateFile, updateUrl))
+    openRet = 1
+    if curlRet == 0:
+        openRet = os.system('open ' + updateFile)
+    if curlRet != 0 or openRet != 0:
+        os.system("osascript -e 'display dialog \"The Search Notes workflow failed to update.\"' 2>/dev/null")
     
 
-try:
-    if oneDaySinceLastCheck():
-        latestUrl = 'https://api.github.com/repos/sballin/alfred-search-notes-app/releases/latest'
-        r = request.urlopen(latestUrl, timeout=60)
-        if r.status == 200:
-            body = r.read()
-            latest = json.loads(body.decode('utf-8'))
-            latestVersion = latest['tag_name']
-            updateUrl = latest['assets'][0]['browser_download_url']
-            
-            if updateAvailable(latestVersion): 
-                if userWantsUpdate(updateUrl):
-                    update(updateUrl)
-except:
-    pass
-    
+if oneDaySinceLastCheck():
+    latestUrl = 'https://api.github.com/repos/sballin/alfred-search-notes-app/releases/latest'
+    latestFile = 'latest_release.json'
+    retval = os.system('curl --silent --max-time 30 --output %s %s' % (latestFile, latestUrl))
+    if retval == 0:
+        with open(latestFile, 'r') as f:
+            latest = json.load(f)
+        latestVersion = latest['tag_name']
+        updateNotes = latest['body']
+        updateUrl = latest['assets'][0]['browser_download_url']
+        
+        if updateAvailable(latestVersion): 
+            if userWantsUpdate(updateNotes):
+                update(updateUrl)
