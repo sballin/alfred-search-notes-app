@@ -51,6 +51,16 @@
 		<array>
 			<dict>
 				<key>destinationuid</key>
+				<string>CE746687-24FD-4E5C-841F-0D4826E007C4</string>
+				<key>modifiers</key>
+				<integer>131072</integer>
+				<key>modifiersubtext</key>
+				<string>Search in Notes toolbar</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
 				<string>6740BCB6-6818-49E2-A88A-9D19EA132F08</string>
 				<key>modifiers</key>
 				<integer>524288</integer>
@@ -84,16 +94,6 @@
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>DDAEA7F3-310A-4F75-8624-6E256C84ABF3</string>
-				<key>modifiers</key>
-				<integer>0</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
-			<dict>
-				<key>destinationuid</key>
 				<string>0B8A749B-E2E7-4B1B-9711-1C77A495BD97</string>
 				<key>modifiers</key>
 				<integer>0</integer>
@@ -118,6 +118,16 @@
 		</array>
 		<key>B9ECD7D6-EA33-4E2E-AE3E-4E22EEDD6097</key>
 		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>CE746687-24FD-4E5C-841F-0D4826E007C4</string>
+				<key>modifiers</key>
+				<integer>131072</integer>
+				<key>modifiersubtext</key>
+				<string>Search in Notes toolbar</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
 			<dict>
 				<key>destinationuid</key>
 				<string>6740BCB6-6818-49E2-A88A-9D19EA132F08</string>
@@ -149,11 +159,11 @@
 				<false/>
 			</dict>
 		</array>
-		<key>DC692798-E272-4547-BE83-4B63B823E456</key>
+		<key>CE746687-24FD-4E5C-841F-0D4826E007C4</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>DDAEA7F3-310A-4F75-8624-6E256C84ABF3</string>
+				<string>0B8A749B-E2E7-4B1B-9711-1C77A495BD97</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -161,6 +171,9 @@
 				<key>vitoclose</key>
 				<false/>
 			</dict>
+		</array>
+		<key>DC692798-E272-4547-BE83-4B63B823E456</key>
+		<array>
 			<dict>
 				<key>destinationuid</key>
 				<string>0B8A749B-E2E7-4B1B-9711-1C77A495BD97</string>
@@ -218,11 +231,10 @@
 			<key>config</key>
 			<dict>
 				<key>applescript</key>
-				<string>use framework "Foundation"property NSString : a reference to current application's NSString
-property NSCharacterSet : a reference to current application's NSCharacterSet
-
-on alfred_script(q)	tell application "Notes"		set noteName to name of note id q		set noteName to (NSString's stringWithString:noteName)		set noteName to (noteName's stringByAddingPercentEncodingWithAllowedCharacters:(NSCharacterSet's URLPathAllowedCharacterSet)) as text		
-		set noteName to "notes://" &amp; noteName	end tell
+				<string>on alfred_script(q)
+	tell application "System Events"		tell process "Notes"			set frontmost to true			click menu item "Note List Search…" of menu of menu item "Find" of menu "Edit" of menu bar 1
+			-- Get user search query which is second half of q
+			set userQuery to text ((offset of "?" in q)+1) thru -1 of q			keystroke userQuery		end tell	end tell
 end alfred_script</string>
 				<key>cachescript</key>
 				<true/>
@@ -230,7 +242,7 @@ end alfred_script</string>
 			<key>type</key>
 			<string>alfred.workflow.action.applescript</string>
 			<key>uid</key>
-			<string>6740BCB6-6818-49E2-A88A-9D19EA132F08</string>
+			<string>CE746687-24FD-4E5C-841F-0D4826E007C4</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -238,7 +250,7 @@ end alfred_script</string>
 			<key>config</key>
 			<dict>
 				<key>alfredfiltersresults</key>
-				<true/>
+				<false/>
 				<key>alfredfiltersresultsmatchmode</key>
 				<integer>0</integer>
 				<key>argumenttreatemptyqueryasnil</key>
@@ -258,11 +270,11 @@ end alfred_script</string>
 				<key>queuedelaymode</key>
 				<integer>0</integer>
 				<key>queuemode</key>
-				<integer>1</integer>
+				<integer>2</integer>
 				<key>runningsubtext</key>
 				<string>Getting notes...</string>
 				<key>script</key>
-				<string>python3 -I -S get_notes.py 2&gt;&gt; error_log.txt
+				<string>cmd/search_notes/search_notes "$@" 2&gt;&gt; error_log.txt
 if [[ $? != 0 ]]; then
     sh handle_error.sh
 fi
@@ -270,13 +282,13 @@ fi
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
-				<string>get_notes</string>
+				<string>cmd/search_notes/search_notes</string>
 				<key>subtext</key>
 				<string></string>
 				<key>title</key>
 				<string>Search notes</string>
 				<key>type</key>
-				<integer>0</integer>
+				<integer>8</integer>
 				<key>withspace</key>
 				<true/>
 			</dict>
@@ -325,26 +337,17 @@ fi
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>autopaste</key>
-				<false/>
-				<key>clipboardtext</key>
-				<string>{query}</string>
-				<key>transient</key>
-				<false/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.output.clipboard</string>
-			<key>uid</key>
-			<string>DDAEA7F3-310A-4F75-8624-6E256C84ABF3</string>
-			<key>version</key>
-			<integer>3</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
 				<key>applescript</key>
-				<string>on alfred_script(q)
-	tell application "Notes" to get plaintext of note id q in default account	set body to text (paragraph 2) thru -1 of the result
+				<string>use framework "Foundation"
+use scripting additions -- fixes errors due to previous lineproperty NSString : a reference to current application's NSString
+property NSCharacterSet : a reference to current application's NSCharacterSet
+
+on alfred_script(q)	tell application "Notes"
+		-- Get note id which is first item in q
+		set q to text 1 thru ((offset of "?" in q)-1) of q		set noteName to name of note id q
+		set the clipboard to noteName		set noteName to (NSString's stringWithString:noteName)		set noteName to (noteName's stringByAddingPercentEncodingWithAllowedCharacters:(NSCharacterSet's URLPathAllowedCharacterSet)) as text		
+		set noteUrl to "notes://" &amp; noteName
+		set the clipboard to noteUrl	end tell
 end alfred_script</string>
 				<key>cachescript</key>
 				<true/>
@@ -352,7 +355,7 @@ end alfred_script</string>
 			<key>type</key>
 			<string>alfred.workflow.action.applescript</string>
 			<key>uid</key>
-			<string>DC692798-E272-4547-BE83-4B63B823E456</string>
+			<string>6740BCB6-6818-49E2-A88A-9D19EA132F08</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -440,16 +443,10 @@ fi</string>
 			<dict>
 				<key>applescript</key>
 				<string>on alfred_script(q)
-	tell application "Notes"
-		if q contains "Note" then
-			show note id q in default account
-             -- Once more, otherwise this fails when toolbar search is active
-			show note id q in default account
-		else
-			show folder id q in default account
-             -- Once more, otherwise this fails when toolbar search is active
-			show folder id q in default account
-		end if	end tell
+	-- Get note id which is first item in q
+	set q to text 1 thru ((offset of "?" in q)-1) of q
+	tell application "Notes" to get plaintext of note id q in default account	set body to text (paragraph 2) thru -1 of the result
+	set the clipboard to body
 end alfred_script</string>
 				<key>cachescript</key>
 				<true/>
@@ -457,7 +454,7 @@ end alfred_script</string>
 			<key>type</key>
 			<string>alfred.workflow.action.applescript</string>
 			<key>uid</key>
-			<string>4D8E3444-14C2-4D0E-A8C1-AA67988AE358</string>
+			<string>DC692798-E272-4547-BE83-4B63B823E456</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -514,6 +511,43 @@ fi
 			<key>version</key>
 			<integer>3</integer>
 		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>applescript</key>
+				<string>-- Some commands need to run twice otherwise they fail when toolbar search is active
+
+on alfred_script(q)
+	tell application "Notes"
+		if q contains "/ICNote/p" then
+			-- Show user requested note
+			-- Get note id which is first item in q
+			set noteID to text 1 thru ((offset of "?" in q)-1) of q
+			show note id noteID in default account
+			show note id noteID in default account
+		else if q contains "/ICFolder/p" then
+			-- Show user requested folder
+			show folder id q in default account
+			show folder id q in default account
+		else
+			-- Create new note from user query
+			-- Move from any other folder/state to default "Notes" folder
+			show default folder in default account
+			show default folder in default account
+			tell application "System Events"				tell process "Notes"					click menu item "New Note" of menu "File" of menu bar 1
+					-- Set title to user query and press enter twice					keystroke q					key code {36,36}				end tell			end tell
+		end if	end tell
+end alfred_scriptc</string>
+				<key>cachescript</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.applescript</string>
+			<key>uid</key>
+			<string>4D8E3444-14C2-4D0E-A8C1-AA67988AE358</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
 	</array>
 	<key>readme</key>
 	<string>Note: If you're on macOS Catalina and haven't used python before, the workflow will not function unless you install the Xcode developer tools with the command `xcode-select --install`. 
@@ -524,86 +558,89 @@ For further info and troubleshooting, visit https://github.com/sballin/alfred-se
 		<key>060809AF-8160-439A-85F9-D672664E3A1A</key>
 		<dict>
 			<key>xpos</key>
-			<integer>55</integer>
+			<integer>35</integer>
 			<key>ypos</key>
-			<integer>195</integer>
+			<integer>170</integer>
 		</dict>
 		<key>0B8A749B-E2E7-4B1B-9711-1C77A495BD97</key>
 		<dict>
 			<key>note</key>
-			<string>Check for updates</string>
+			<string>Check for updates once every 24 hours</string>
 			<key>xpos</key>
-			<integer>670</integer>
+			<integer>795</integer>
 			<key>ypos</key>
-			<integer>345</integer>
+			<integer>280</integer>
 		</dict>
 		<key>1A6D4810-ABAF-4604-9639-CC1327A279B7</key>
 		<dict>
 			<key>xpos</key>
-			<integer>55</integer>
+			<integer>35</integer>
 			<key>ypos</key>
-			<integer>85</integer>
+			<integer>60</integer>
 		</dict>
 		<key>4D8E3444-14C2-4D0E-A8C1-AA67988AE358</key>
 		<dict>
 			<key>note</key>
-			<string>Show note/folder</string>
+			<string>Show note/folder 
+or create note</string>
 			<key>xpos</key>
-			<integer>475</integer>
+			<integer>590</integer>
 			<key>ypos</key>
-			<integer>415</integer>
+			<integer>480</integer>
 		</dict>
 		<key>5BC84589-FA2A-459F-982A-54B612C9BA7F</key>
 		<dict>
 			<key>note</key>
 			<string>Search note titles</string>
 			<key>xpos</key>
-			<integer>245</integer>
+			<integer>225</integer>
 			<key>ypos</key>
-			<integer>135</integer>
+			<integer>115</integer>
 		</dict>
 		<key>6740BCB6-6818-49E2-A88A-9D19EA132F08</key>
 		<dict>
 			<key>note</key>
-			<string>⌥ Make notes:// URL</string>
+			<string>⌥ Copy notes:// URL</string>
 			<key>xpos</key>
-			<integer>475</integer>
+			<integer>590</integer>
 			<key>ypos</key>
-			<integer>135</integer>
+			<integer>210</integer>
 		</dict>
 		<key>6F3DD843-22EF-4A97-BAF8-511894B5202D</key>
 		<dict>
 			<key>note</key>
 			<string>Search folder names</string>
 			<key>xpos</key>
-			<integer>245</integer>
+			<integer>225</integer>
 			<key>ypos</key>
-			<integer>415</integer>
+			<integer>395</integer>
 		</dict>
 		<key>B9ECD7D6-EA33-4E2E-AE3E-4E22EEDD6097</key>
 		<dict>
 			<key>note</key>
 			<string>Search note bodies</string>
 			<key>xpos</key>
-			<integer>245</integer>
+			<integer>225</integer>
 			<key>ypos</key>
-			<integer>275</integer>
+			<integer>255</integer>
+		</dict>
+		<key>CE746687-24FD-4E5C-841F-0D4826E007C4</key>
+		<dict>
+			<key>note</key>
+			<string>⇧ Search in Notes toolbar</string>
+			<key>xpos</key>
+			<integer>590</integer>
+			<key>ypos</key>
+			<integer>60</integer>
 		</dict>
 		<key>DC692798-E272-4547-BE83-4B63B823E456</key>
 		<dict>
 			<key>note</key>
-			<string>⌘ Get note body</string>
+			<string>⌘ Copy note body</string>
 			<key>xpos</key>
-			<integer>475</integer>
+			<integer>590</integer>
 			<key>ypos</key>
-			<integer>275</integer>
-		</dict>
-		<key>DDAEA7F3-310A-4F75-8624-6E256C84ABF3</key>
-		<dict>
-			<key>xpos</key>
-			<integer>670</integer>
-			<key>ypos</key>
-			<integer>205</integer>
+			<integer>345</integer>
 		</dict>
 	</dict>
 	<key>variables</key>
