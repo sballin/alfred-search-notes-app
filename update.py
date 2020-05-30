@@ -2,7 +2,6 @@ import os
 import time
 import json
 import plistlib
-from distutils.version import StrictVersion
 
 
 def oneDaySinceLastCheck():
@@ -25,10 +24,10 @@ def updateAvailable(latestVersion):
     '''
     with open('info.plist', 'rb') as f:
         currentVersion = plistlib.load(f)['version']    
-    if StrictVersion(currentVersion) < StrictVersion(latestVersion):
-        return True
-    else:
+    if str(currentVersion).lower().strip() == str(latestVersion).lower().strip():
         return False
+    else:
+        return True
 
 
 def userWantsUpdate(updateNotes):
