@@ -282,7 +282,7 @@ fi
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
-				<string>cmd/search_notes/search_notes</string>
+				<string>cmd/search_titles/search_titles</string>
 				<key>subtext</key>
 				<string></string>
 				<key>title</key>
@@ -550,9 +550,16 @@ end alfred_scriptc</string>
 		</dict>
 	</array>
 	<key>readme</key>
-	<string>Note: If you're on macOS Catalina and haven't used python before, the workflow will not function unless you install the Xcode developer tools with the command `xcode-select --install`. 
+	<string>Instructions and Help
+---------------------
+https://github.com/sballin/alfred-search-notes-app
 
-For further info and troubleshooting, visit https://github.com/sballin/alfred-search-notes-app</string>
+
+Environment Variables
+---------------------
+searchFolders: 1 = return all notes from any folder matching the search query, 0 = don't
+
+sortByDate: 1 = most recently modified note first, 0 = alphabetical order</string>
 	<key>uidata</key>
 	<dict>
 		<key>060809AF-8160-439A-85F9-D672664E3A1A</key>
@@ -645,11 +652,11 @@ or create note</string>
 	</dict>
 	<key>variables</key>
 	<dict>
+		<key>searchFolders</key>
+		<string>1</string>
 		<key>sortByDate</key>
 		<string>1</string>
 	</dict>
-	<key>variablesdontexport</key>
-	<array/>
 	<key>version</key>
 	<string>2.2.1</string>
 	<key>webaddress</key>
