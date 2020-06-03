@@ -22,8 +22,7 @@ def updateAvailable(latestVersion):
     '''
     Check whether the latest version is ahead of the current version.
     '''
-    with open('info.plist', 'rb') as f:
-        currentVersion = plistlib.load(f)['version']    
+    currentVersion = plistlib.readPlist('info.plist')['version']    
     if str(currentVersion).lower().strip() == str(latestVersion).lower().strip():
         return False
     else:
