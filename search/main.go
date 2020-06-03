@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"path/filepath"
 	"database/sql"
-	"encoding/hex"
 	"bytes"
 	"compress/gzip"
 	"io/ioutil"
@@ -23,14 +22,14 @@ const (
 	TitleKey  = "title"
 	SubtitleKey = "subtitle"
 	ArgKey = "URL"
-	BodyKey = "noteBodyHex"
+	BodyKey = "noteBodyZipped"
 
 	NOTES = `
 SELECT 
     noteTitle as title,
     folderTitle as subtitle,
     'x-coredata://' || z_uuid || '/ICNote/p' || xcoreDataID as URL,
-    HEX(noteBodyZipped) as noteBodyHex
+    noteBodyZipped 
 FROM (
 	SELECT
 		c.ztitle1 AS noteTitle,
@@ -144,6 +143,68 @@ func (lite LiteDB) Query(q string) ([]map[string]string, error) {
 	return results, err
 }
 
+func (lite LiteDB) QueryThenSearch(q string, search string) ([]map[string]string, error) {
+	results := []map[string]string{}
+	rows, err := lite.db.Query(q)
+	if err != nil {
+		return results, err
+	}
+	defer rows.Close()
+
+	cols, err := rows.Columns()
+	if err != nil {
+		return results, err
+	}
+
+	for rows.Next() {
+		m := map[string]string{}
+		columns := make([]interface{}, len(cols))
+		columnPointers := make([]interface{}, len(cols))
+		for i := range columns {
+			columnPointers[i] = &columns[i]
+		}
+		if err := rows.Scan(columnPointers...); err != nil {
+			return results, err
+		}
+		
+		// Skip adding item if note body does not contain search string
+		val := columnPointers[len(cols)-1].(*interface{})
+		s, ok := (*val).([]byte)
+		if !ok {
+			continue
+		}
+		r, err := gzip.NewReader(bytes.NewReader(s))
+		if err != nil {
+			continue
+		}
+		body, err := ioutil.ReadAll(r)
+		if err != nil {
+			continue
+		}
+		if !strings.Contains(strings.ToLower(string(body)), strings.ToLower(search)) {
+			continue
+		}
+		r.Close()
+		
+		for i, colName := range cols {
+			// Don't add note body data to future alfred row
+			if colName == BodyKey {
+				continue
+			}
+			
+			val := columnPointers[i].(*interface{})
+			s, ok := (*val).(string)
+			if ok {
+				m[colName] = s
+			} else {
+				m[colName] = ""
+			}
+		}
+		results = append(results, m)
+	}
+	return results, err
+}
+
 func RowToItem(row map[string]string, query Query) alfred.Item {
 	return alfred.Item{
 		Title:        row[TitleKey],
@@ -228,31 +289,12 @@ func GetSearchBodyRows(litedb LiteDB, query Query) ([]map[string]string, error) 
 		orderBy = "lower(noteTitle) ASC"
 	}
 	searchString := ""
-	rows, err := litedb.Query(fmt.Sprintf(NOTES, searchString, orderBy))
+	rows, err := litedb.QueryThenSearch(fmt.Sprintf(NOTES, searchString, orderBy), escapedWordString)
 	if err != nil {
 		return nil, err
 	}	
-	
-	rowsMatching := []map[string]string{}
-	for _, row := range rows {
-		decoded, err := hex.DecodeString(row[BodyKey])
-		if err != nil {
-			continue
-		}
-		r, err := gzip.NewReader(bytes.NewReader(decoded))
-		if err != nil {
-			continue
-		}
-		body, err := ioutil.ReadAll(r)
-		if err != nil {
-			continue
-		}
-		if strings.Contains(strings.ToLower(string(body)), strings.ToLower(escapedWordString)) {
-			rowsMatching = append(rowsMatching, row)
-		}
-		r.Close()
-	}
-	return rowsMatching, nil
+
+	return rows, nil
 }
 
 func GetSearchFolderRows(litedb LiteDB, query Query) ([]map[string]string, error) {
