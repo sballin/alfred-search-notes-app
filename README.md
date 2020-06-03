@@ -44,6 +44,10 @@ By default, results are ordered based on the modification date of the note. If y
 
 Custom icons will show up when a folder name begins with an emoji, like `📗 Misc` in the screenshot above. Add your own icons to the workflow's `icons` folder and tweak `get_notes.py` to see them in Alfred. The default icons are from [Emojitwo](https://emojitwo.github.io/).
 
+## Contributors
+
+Thank you to all who have submitted pull requests, and to [drgrib](https://github.com/drgrib) for allowing me to repurpose the [alfred-bear](https://github.com/drgrib/alfred-bear) workflow.
+
 ## Donate
 
 If you enjoy using this workflow, consider [donating](http://paypal.me/sbballin)!
