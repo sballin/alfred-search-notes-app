@@ -274,7 +274,7 @@ end alfred_script</string>
 				<key>runningsubtext</key>
 				<string>Getting notes...</string>
 				<key>script</key>
-				<string>cmd/search_notes/search_notes "$@" 2&gt;&gt; error_log.txt
+				<string>search/search titles "$@" 2&gt;&gt; error_log.txt
 if [[ $? != 0 ]]; then
     sh handle_error.sh
 fi
@@ -288,7 +288,7 @@ fi
 				<key>title</key>
 				<string>Search notes</string>
 				<key>type</key>
-				<integer>8</integer>
+				<integer>0</integer>
 				<key>withspace</key>
 				<true/>
 			</dict>

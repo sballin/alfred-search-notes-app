@@ -1,21 +1,26 @@
-package db
+package main
 
 import (
-	"database/sql"
+	"os"
 	"os/user"
+	"strings"
+	"fmt"
 	"path/filepath"
+	"database/sql"
+	"golang.org/x/text/unicode/norm"
 
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/sballin/alfred-search-notes-app/alfred"
 )
 
 const (
 	DbPath = "~/Library/Group Containers/group.com.apple.notes/NoteStore.sqlite"
 
 	TitleKey  = "noteTitle"
-	FolderKey   = "folderName"
+	FolderKey = "folderName"
 	NoteIDKey = "'x-coredata://' || z_uuid || '/ICNote/p' || xcoreDataID"
 
-NOTES_BY_QUERY = `
+	NOTES_BY_QUERY = `
 SELECT 
     'x-coredata://' || z_uuid || '/ICNote/p' || xcoreDataID,
     noteTitle,
@@ -108,4 +113,110 @@ func (lite LiteDB) Query(q string) ([]map[string]string, error) {
 		results = append(results, m)
 	}
 	return results, err
+}
+
+func RowToItem(row map[string]string, query Query) alfred.Item {
+	return alfred.Item{
+		Title:    row[TitleKey],
+		Subtitle: row[FolderKey],
+		Arg:      row[NoteIDKey] + "?" + escape(query.WordString),
+		QuicklookURL: nil,
+	}
+}
+
+type Query struct {
+	Tokens     []string
+	Tags       []string
+	LastToken  string
+	WordString string
+}
+
+func (query Query) String() string {
+	return strings.Join(query.Tokens, " ")
+}
+
+func ParseQuery(arg string) Query {
+	query := Query{}
+	query.Tokens = strings.Split(norm.NFC.String(arg), " ")
+	query.Tags = []string{}
+	words := []string{}
+	for _, e := range query.Tokens {
+		switch {
+		case e == "":
+		case strings.HasPrefix(e, "#"):
+			query.Tags = append(query.Tags, e)
+		default:
+			words = append(words, e)
+		}
+	}
+	query.LastToken = query.Tokens[len(query.Tokens)-1]
+	query.WordString = strings.Join(words, " ")
+	return query
+}
+
+func escape(s string) string {
+	return strings.Replace(s, "'", "''", -1)
+}
+
+func GetSearchRows(litedb LiteDB, query Query) ([]map[string]string, error) {
+	escapedWordString := escape(query.WordString)
+	var sortByDate = os.Getenv("sortByDate")
+	var orderBy = "modDate DESC"
+	if (sortByDate == "0") {
+		orderBy = "lower(noteTitle) ASC"
+	}
+	var searchFolders = os.Getenv("searchFolders")
+	var foldersLike = fmt.Sprintf("lower(folderName) LIKE lower('%%%s%%')", escapedWordString)
+	if (searchFolders == "0") {
+		 foldersLike = "FALSE"
+	}
+	rows, err := litedb.Query(fmt.Sprintf(NOTES_BY_QUERY, escapedWordString, foldersLike, orderBy))
+	if err != nil {
+		return nil, err
+	}
+	return rows, nil
+}
+
+func GetCreateItem(query Query) (*alfred.Item, error) {
+	title := query.WordString
+	item := alfred.Item{
+		Title: title,
+		Arg:   title,
+		Subtitle: "Create new note",
+	}
+	if len(query.Tags) != 0 {
+		item.Subtitle = strings.Join(query.Tags, " ")
+	}
+	return &item, nil
+}
+
+func main() {
+	if len(os.Args) > 1 {
+		query := ParseQuery(os.Args[2])
+
+		litedb, err := NewNotesDB()
+		if err != nil {
+			panic(err)
+		}
+
+		searchRows, err := GetSearchRows(litedb, query)
+		if err != nil {
+			panic(err)
+		}
+
+		createItem, err := GetCreateItem(query)
+		if err != nil {
+			panic(err)
+		}
+
+		if len(searchRows) > 0 {
+			for _, row := range searchRows {
+				alfred.Add(RowToItem(row, query))
+			}
+		} else {
+			alfred.Add(*createItem)
+		}
+
+		alfred.Run()
+	}
 }
