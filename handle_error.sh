@@ -1,5 +1,6 @@
-osascript -e "display dialog \"The Search Notes workflow encountered an error. Press OK to open the error log and the issues page on Github. Please include the error log output in your bug report.\""
+osascript -e "display dialog \"The Search Notes workflow encountered an error. 
+
+You may need to right click the 'search' binary and click Open for macOS to trust it. Press OK to open the folder containing the binary.\""
 if [[ $? == 0 ]]; then
-    open "https://github.com/sballin/alfred-search-notes-app/issues"
-    open error_log.txt
+    open ./search
 fi

@@ -107,6 +107,16 @@
 		<array>
 			<dict>
 				<key>destinationuid</key>
+				<string>CE746687-24FD-4E5C-841F-0D4826E007C4</string>
+				<key>modifiers</key>
+				<integer>131072</integer>
+				<key>modifiersubtext</key>
+				<string>Search in Notes toolbar</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
 				<string>4D8E3444-14C2-4D0E-A8C1-AA67988AE358</string>
 				<key>modifiers</key>
 				<integer>0</integer>
@@ -274,7 +284,7 @@ end alfred_script</string>
 				<key>runningsubtext</key>
 				<string>Getting notes...</string>
 				<key>script</key>
-				<string>search/search titles "$@" 2&gt;&gt; error_log.txt
+				<string>search/search title "$@"
 if [[ $? != 0 ]]; then
     sh handle_error.sh
 fi
@@ -363,7 +373,7 @@ end alfred_script</string>
 			<key>config</key>
 			<dict>
 				<key>alfredfiltersresults</key>
-				<true/>
+				<false/>
 				<key>alfredfiltersresultsmatchmode</key>
 				<integer>0</integer>
 				<key>argumenttreatemptyqueryasnil</key>
@@ -383,11 +393,11 @@ end alfred_script</string>
 				<key>queuedelaymode</key>
 				<integer>0</integer>
 				<key>queuemode</key>
-				<integer>1</integer>
+				<integer>2</integer>
 				<key>runningsubtext</key>
 				<string>Getting notes...</string>
 				<key>script</key>
-				<string>python3 -S get_note_bodies.py 2&gt;&gt; error_log.txt
+				<string>search/search body "$@"
 if [[ $? != 0 ]]; then
     sh handle_error.sh
 fi
@@ -429,7 +439,7 @@ fi</string>
 				<key>scriptfile</key>
 				<string>update.py</string>
 				<key>type</key>
-				<integer>0</integer>
+				<integer>8</integer>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.action.script</string>
@@ -462,7 +472,7 @@ end alfred_script</string>
 			<key>config</key>
 			<dict>
 				<key>alfredfiltersresults</key>
-				<true/>
+				<false/>
 				<key>alfredfiltersresultsmatchmode</key>
 				<integer>0</integer>
 				<key>argumenttreatemptyqueryasnil</key>
@@ -482,11 +492,11 @@ end alfred_script</string>
 				<key>queuedelaymode</key>
 				<integer>0</integer>
 				<key>queuemode</key>
-				<integer>1</integer>
+				<integer>2</integer>
 				<key>runningsubtext</key>
 				<string>Getting folders...</string>
 				<key>script</key>
-				<string>python3 -S get_folders.py 2&gt;&gt; error_log.txt
+				<string>search/search folder "$@"
 if [[ $? != 0 ]]; then
     sh handle_error.sh
 fi
@@ -527,8 +537,10 @@ on alfred_script(q)
 			show note id noteID in default account
 		else if q contains "/ICFolder/p" then
 			-- Show user requested folder
-			show folder id q in default account
-			show folder id q in default account
+			-- Get folder id which is first item in q
+			set folderID to text 1 thru ((offset of "?" in q)-1) of q
+			show folder id folderID in default account
+			show folder id folderID in default account
 		else
 			-- Create new note from user query
 			-- Move from any other folder/state to default "Notes" folder
