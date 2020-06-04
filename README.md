@@ -14,19 +14,22 @@
 
 ### Result actions
 
-*   **enter** to open the note/folder
+*   **enter** to open the note/folder, or create a new note if none was found
+*   **shift+enter** to search for your Alfred query using the Notes in-app search
 *   **cmd+enter** to copy the note body to the clipboard
-*   **alt+enter** to copy notes://[title of note] to the clipboard
-
-Use `Note Opener/Note Opener.app` to make notes:// urls open the relevant note when clicked.
+*   **alt+enter** to copy a notes:// URL to the clipboard that can be opened with the included `Note Opener/Note Opener.app`
 
 ## Install
 
-If you're on macOS Catalina, download the [latest version](https://github.com/sballin/alfred-search-notes-app/releases/latest/download/Search.Notes.alfredworkflow) of the workflow. If you haven't used python 3 on your computer before, you may need to install the Xcode developer tools by running the following command in a terminal:
+If you're on macOS Catalina with Alfred 4, download the [latest version](https://github.com/sballin/alfred-search-notes-app/releases/latest/download/Search.Notes.alfredworkflow) of the workflow.
 
-    xcode-select --install
+### Authorizing the binary
 
-If that doesn't work for you, or you're on an older macOS, try version [1.4.3](https://github.com/sballin/alfred-search-notes-app/releases/tag/1.4.3).
+The "search" binary needs to be manually authorized to run on your computer. Right-click the Search Notes workflow, click "Open in Finder", open the "search" folder, right-click the "search" binary, click "Open", and you should be all set after it runs once in Terminal.
+
+### Older versions
+
+If you encounter problems or are on an older version of macOS/Alfred, try an older version like [1.4.3](https://github.com/sballin/alfred-search-notes-app/releases/tag/1.4.3).
 
 ### Stay up to date
 
@@ -36,17 +39,11 @@ You can also be notified of new releases by watching this repo or subscribing to
 
 ## Customize
 
-### Result ordering
-
-By default, results are ordered based on the modification date of the note. If you want to order results alphabetically, change the [environment variable](https://www.alfredapp.com/help/workflows/advanced/variables/#environment).
-
-### Icons
-
-Custom icons will show up when a folder name begins with an emoji, like `📗 Misc` in the screenshot above. Add your own icons to the workflow's `icons` folder and tweak `get_notes.py` to see them in Alfred. The default icons are from [Emojitwo](https://emojitwo.github.io/).
+Result ordering and title+folder search behavior can be controlled using the [environment variables](https://www.alfredapp.com/help/workflows/advanced/variables/#environment).
 
 ## Contributors
 
-Thank you to all who have submitted pull requests, and to [drgrib](https://github.com/drgrib) for allowing me to repurpose the [alfred-bear](https://github.com/drgrib/alfred-bear) workflow.
+Thank you to all who have submitted pull requests, and to [drgrib](https://github.com/drgrib) for allowing me to build off the [alfred-bear](https://github.com/drgrib/alfred-bear) workflow.
 
 ## Donate
 

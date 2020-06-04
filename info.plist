@@ -564,6 +564,11 @@ end alfred_scriptc</string>
 https://github.com/sballin/alfred-search-notes-app
 
 
+Required setup
+--------------
+Authorize the "search" binary to run on your computer. Right-click the Search Notes workflow, click "Open in Finder", open the "search" folder, right-click the "search" binary, click "Open", and after it runs once in Terminal you're done.
+
+
 Environment Variables
 ---------------------
 searchFolders: 1 = return all notes from any folder matching the search query, 0 = don't
@@ -667,7 +672,7 @@ or create note</string>
 		<string>1</string>
 	</dict>
 	<key>version</key>
-	<string>2.2.1</string>
+	<string>3.0.0</string>
 	<key>webaddress</key>
 	<string>https://github.com/sballin/alfred-search-notes-app</string>
 </dict>
