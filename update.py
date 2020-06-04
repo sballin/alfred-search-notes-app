@@ -36,7 +36,7 @@ def userWantsUpdate(updateNotes):
     '''
     retval = os.system("""osascript -e 'display dialog "An update is available for the Alfred Search Notes workflow. You can disable automatic update checks by editing the workflow.
     
-Release notes:
+Information about this release:
 
 %s" with title "Alfred Search Notes Workflow" buttons {"Cancel", "Download"} default button "Download" cancel button "Cancel"' 2>/dev/null""" % updateNotes)
     if retval == 0:
@@ -56,7 +56,8 @@ def update(updateUrl):
     if curlRet == 0:
         openRet = os.system('open ' + updateFile)
     if curlRet != 0 or openRet != 0:
-        os.system("osascript -e 'display dialog \"The Search Notes workflow failed to update.\"' 2>/dev/null")
+        os.system("osascript -e 'display alert \"Alfred Search Notes workflow failed to update.\" as critical' 2>/dev/null")
+    
     
 if oneDaySinceLastCheck():
     latestUrl = 'https://api.github.com/repos/sballin/alfred-search-notes-app/releases/latest'
@@ -65,6 +66,7 @@ if oneDaySinceLastCheck():
     if retval == 0:
         with open(latestFile, 'r') as f:
             latest = json.load(f)
+        os.system('rm -f %s' % latestFile)
         latestVersion = latest['tag_name']
         updateNotes = latest['body']
         updateUrl = latest['assets'][0]['browser_download_url']
