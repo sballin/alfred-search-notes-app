@@ -284,9 +284,9 @@ end alfred_script</string>
 				<key>runningsubtext</key>
 				<string>Getting notes...</string>
 				<key>script</key>
-				<string>search/search title "$@"
+				<string>search/search title "$@" 2&gt;&gt; error_log.txt
 if [[ $? != 0 ]]; then
-    sh handle_error.sh
+    osascript handle_error.scpt
 fi
 </string>
 				<key>scriptargtype</key>
@@ -397,9 +397,9 @@ end alfred_script</string>
 				<key>runningsubtext</key>
 				<string>Getting notes...</string>
 				<key>script</key>
-				<string>search/search body "$@"
+				<string>search/search body "$@" 2&gt;&gt; error_log.txt
 if [[ $? != 0 ]]; then
-    sh handle_error.sh
+    osascript handle_error.scpt
 fi
 </string>
 				<key>scriptargtype</key>
@@ -496,9 +496,9 @@ end alfred_script</string>
 				<key>runningsubtext</key>
 				<string>Getting folders...</string>
 				<key>script</key>
-				<string>search/search folder "$@"
+				<string>search/search folder "$@" 2&gt;&gt; error_log.txt
 if [[ $? != 0 ]]; then
-    sh handle_error.sh
+    osascript handle_error.scpt
 fi
 </string>
 				<key>scriptargtype</key>
