@@ -430,16 +430,13 @@ fi
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>python3 -I -S update.py 2&gt;&gt; error_log.txt
-if [[ $? != 0 ]]; then
-    sh handle_error.sh
-fi</string>
+				<string>python update.py 2&gt;&gt; error_log.txt</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
 				<string>update.py</string>
 				<key>type</key>
-				<integer>8</integer>
+				<integer>0</integer>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.action.script</string>

@@ -1,3 +1,4 @@
+#!/usr/bin/python2
 import os
 import time
 import json
@@ -33,13 +34,11 @@ def userWantsUpdate(updateNotes):
     '''
     Show user a confirmation dialog.
     '''
-    retval = os.system("""
-osascript -e 'display dialog "An update is available for the Search Notes workflow. Press OK to download and open it. Notes for this release:
+    retval = os.system("""osascript -e 'display dialog "An update is available for the Alfred Search Notes workflow. You can disable automatic update checks by editing the workflow.
+    
+Release notes:
 
-%s
-
-Daily update checks can be disabled by editing the workflow."' 2>/dev/null
-""" % updateNotes)
+%s" with title "Alfred Search Notes Workflow" buttons {"Cancel", "Download"} default button "Download" cancel button "Cancel"' 2>/dev/null""" % updateNotes)
     if retval == 0:
         return True
     else:
@@ -59,7 +58,6 @@ def update(updateUrl):
     if curlRet != 0 or openRet != 0:
         os.system("osascript -e 'display dialog \"The Search Notes workflow failed to update.\"' 2>/dev/null")
     
-
 if oneDaySinceLastCheck():
     latestUrl = 'https://api.github.com/repos/sballin/alfred-search-notes-app/releases/latest'
     latestFile = 'latest_release.json'
