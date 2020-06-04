@@ -155,6 +155,10 @@ func (lite LiteDB) QueryThenSearch(q string, search string) ([]map[string]string
 	if err != nil {
 		return results, err
 	}
+	
+	gotReaders := false
+	var bytesReader *bytes.Reader
+	var gzipReader *gzip.Reader
 
 	for rows.Next() {
 		m := map[string]string{}
@@ -166,25 +170,30 @@ func (lite LiteDB) QueryThenSearch(q string, search string) ([]map[string]string
 		if err := rows.Scan(columnPointers...); err != nil {
 			return results, err
 		}
-		
 		// Skip adding item if note body does not contain search string
 		val := columnPointers[len(cols)-1].(*interface{})
-		s, ok := (*val).([]byte)
+		noteBodyZippedBytes, ok := (*val).([]byte)
 		if !ok {
 			continue
 		}
-		r, err := gzip.NewReader(bytes.NewReader(s))
-		if err != nil {
-			continue
+		if gotReaders {
+			bytesReader.Reset(noteBodyZippedBytes)
+			gzipReader.Reset(bytesReader)
+		} else {
+			bytesReader = bytes.NewReader(noteBodyZippedBytes)
+			gzipReader, err = gzip.NewReader(bytesReader)
+			if err != nil {
+				continue
+			}
+			gotReaders = true
 		}
-		body, err := ioutil.ReadAll(r)
+		body, err := ioutil.ReadAll(gzipReader)
 		if err != nil {
 			continue
 		}
 		if !strings.Contains(strings.ToLower(string(body)), strings.ToLower(search)) {
 			continue
 		}
-		r.Close()
 		
 		for i, colName := range cols {
 			// Don't add note body data to future alfred row
