@@ -1,3 +1,5 @@
+/* Modified from github.com/drgrib/alfred so that quicklookurl can be "null" without quotes */
+
 package alfred
 
 import (

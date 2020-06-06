@@ -1,21 +1,28 @@
 # Search Notes.app with Alfred
 
+### Search titles or create a new note if none was found
+
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/2719004/71554521-5c635800-2a31-11ea-97db-1b7c41aaf408.png" width="654" title="screenshot">
+  <img src="https://user-images.githubusercontent.com/2719004/83949726-62850e00-a7f3-11ea-99a7-48f8c67cd480.png" width="654" title="screenshot">
+  <img src="https://user-images.githubusercontent.com/2719004/83949516-403ec080-a7f2-11ea-940c-1813559ce462.png" width="654" title="screenshot">
 </p>
 
-## Usage
+### Search note titles and bodies
 
-### Search keywords
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/2719004/83949619-e094e500-a7f2-11ea-8802-7856620d4ec8.png" width="654" title="screenshot">
+</p>
 
-*   **n** to search note titles (this also lets you find notes using the pattern "[folder name] [note name]")
-*   **nb** to include note body text in search
-*   **nf** to search note folder names
+### Search folder names
+
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/2719004/83949622-e25ea880-a7f2-11ea-92fa-b2250e574402.png" width="654" title="screenshot">
+</p>
 
 ### Result actions
 
-*   **enter** to open the note/folder, or create a new note if none was found
-*   **shift+enter** to search for your Alfred query using the Notes in-app search
+*   **enter** to open the note/folder or create a new note if none was found
+*   **shift+enter** to search for your Alfred query using the Notes in-app search 
 *   **cmd+enter** to copy the note body to the clipboard
 *   **alt+enter** to copy a notes:// URL to the clipboard that can be opened with the included `Note Opener/Note Opener.app`
 
@@ -23,27 +30,27 @@
 
 If you're on macOS Catalina with Alfred 4, download the [latest version](https://github.com/sballin/alfred-search-notes-app/releases/latest/download/Search.Notes.alfredworkflow) of the workflow.
 
-### Authorizing the binary
+### Required setup
 
 The "search" binary needs to be manually authorized to run on your computer. Right-click the Search Notes workflow, click "Open in Finder", open the "search" folder, right-click the "search" binary, click "Open", and you should be all set after it runs once in Terminal.
 
-### Older versions
+### Customize
 
-If you encounter problems or are on an older version of macOS/Alfred, try an older version like [1.4.3](https://github.com/sballin/alfred-search-notes-app/releases/tag/1.4.3).
+Result ordering and title+folder search behavior can be controlled using the [environment variables](https://www.alfredapp.com/help/workflows/advanced/variables/#environment).
 
-### Stay up to date
+### Updates
 
 By default, the workflow checks Github for updates every 24 hours. This can be disabled by removing the connections to the "Check for updates" block in the workflow.
 
-You can also be notified of new releases by watching this repo or subscribing to the Alfred forum [thread](https://www.alfredforum.com/topic/11716-search-appleicloud-notes/).
+### Compile
 
-## Customize
-
-Result ordering and title+folder search behavior can be controlled using the [environment variables](https://www.alfredapp.com/help/workflows/advanced/variables/#environment).
+If you want to compile the binary yourself, you can go into the "search" folder and do `go build`.
 
 ## Contributors
 
 Thank you to all who have submitted pull requests, and to [drgrib](https://github.com/drgrib) for allowing me to build off the [alfred-bear](https://github.com/drgrib/alfred-bear) workflow.
+
+I'm very new to Go, so if you see anything that can be improved, don't hesitate to submit a pull request.
 
 ## Donate
 

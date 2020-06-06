@@ -170,8 +170,10 @@ func (lite LiteDB) QueryThenSearch(q string, search string) ([]map[string]string
 		if err := rows.Scan(columnPointers...); err != nil {
 			return results, err
 		}
+		
 		// Skip adding item if note body does not contain search string
 		val := columnPointers[len(cols)-1].(*interface{})
+		// Type assertion required by bytesReader
 		noteBodyZippedBytes, ok := (*val).([]byte)
 		if !ok {
 			continue
