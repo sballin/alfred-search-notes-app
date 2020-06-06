@@ -564,7 +564,7 @@ end alfred_scriptc</string>
 https://github.com/sballin/alfred-search-notes-app
 
 
-Required setup
+Required Setup
 --------------
 Authorize the "search" binary to run on your computer. Right-click the Search Notes workflow, click "Open in Finder", open the "search" folder, right-click the "search" binary, click "Open", and after it runs once in Terminal you're done.
 
