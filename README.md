@@ -27,7 +27,9 @@ If you're on macOS Catalina with Alfred 4, download the [latest version](https:/
 
 ### Required setup
 
-The "search" binary needs to be manually authorized to run on your computer. After installing, right-click the Search Notes workflow in Alfred preferences, click "Open in Finder", open the "search" folder, right-click the "search" binary, click "Open", and you should be all set after it runs once in Terminal.
+The "search" binary needs to be manually authorized to run on your computer. 
+
+<img src="https://user-images.githubusercontent.com/2719004/83973596-a50f1f00-a8b5-11ea-9edd-73299d6facf6.png" width="890">
 
 ### Customize
 
