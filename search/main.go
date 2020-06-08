@@ -102,7 +102,7 @@ func NewLiteDB(path string) (LiteDB, error) {
 
 func NewNotesDB() (LiteDB, error) {
     path := Expanduser(DbPath)
-    litedb, err := NewLiteDB(path)
+    litedb, err := NewLiteDB("file:" + path + "?mode=ro&_query_only=true")
     return litedb, err
 }
 
