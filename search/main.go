@@ -24,7 +24,7 @@ const (
     ArgKey = "URL"
     BodyKey = "noteBodyZipped"
 
-    NOTES = `
+    NotesSQLTemplate = `
 SELECT 
     noteTitle as title,
     folderTitle as subtitle,
@@ -64,7 +64,7 @@ LEFT JOIN (
 ORDER BY %s
 `
 
-    FOLDERS_BY_TITLE = `
+    FoldersSQLTemplate = `
 SELECT 
     ztitle2 AS title,
     '' AS subtitle,
@@ -81,6 +81,15 @@ WHERE
 ORDER BY title ASC
 `)
 
+type LiteDB struct {
+    db *sql.DB
+}
+
+type UserQuery struct {
+    Tokens     []string
+    WordString string
+}
+
 func Expanduser(path string) string {
     usr, _ := user.Current()
     dir := usr.HomeDir
@@ -88,10 +97,6 @@ func Expanduser(path string) string {
         path = filepath.Join(dir, path[2:])
     }
     return path
-}
-
-type LiteDB struct {
-    db *sql.DB
 }
 
 func NewLiteDB(path string) (LiteDB, error) {
@@ -216,43 +221,17 @@ func (lite LiteDB) QueryThenSearch(q string, search string) ([]map[string]string
     return results, err
 }
 
-func RowToItem(row map[string]string, query Query) alfred.Item {
+func RowToItem(row map[string]string, userQuery UserQuery) alfred.Item {
     return alfred.Item{
         Title:        row[TitleKey],
         Subtitle:     row[SubtitleKey],
-        Arg:          row[ArgKey] + "?" + Escape(query.WordString),
+        Arg:          row[ArgKey] + "?" + Escape(userQuery.WordString),
         QuicklookURL: nil,
     }
 }
 
-type Query struct {
-    Tokens     []string
-    WordString string
-}
-
-func (query Query) String() string {
-    return strings.Join(query.Tokens, " ")
-}
-
-func ParseQuery(arg string) Query {
-    query := Query{}
-    query.Tokens = strings.Split(norm.NFC.String(arg), " ")
-    words := []string{}
-    for _, e := range query.Tokens {
-        if e != "" {
-            words = append(words, e)
-        }
-    }
-    query.WordString = strings.Join(words, " ")
-    return query
-}
-
-func Escape(s string) string {
-    return strings.Replace(s, "'", "''", -1)
-}
-
-func GetCreateNote(query Query) (*alfred.Item, error) {
-    title := query.WordString
+func CreateNoteItem(userQuery UserQuery) (*alfred.Item, error) {
+    title := userQuery.WordString
     item := alfred.Item{
         Title:    title,
         Arg:      title,
@@ -261,35 +240,53 @@ func GetCreateNote(query Query) (*alfred.Item, error) {
     return &item, nil
 }
 
-func GetSearchTitleRows(litedb LiteDB, query Query) ([]map[string]string, error) {
-    escapedWordString := Escape(query.WordString)
-    sortByDate := os.Getenv("sortByDate")
-    orderBy := "modDate DESC"
-    if (sortByDate == "0") {
+func ParseUserQuery(arg string) UserQuery {
+    userQuery := UserQuery{}
+    userQuery.Tokens = strings.Split(norm.NFC.String(arg), " ")
+    words := []string{}
+    for _, e := range userQuery.Tokens {
+        if e != "" {
+            words = append(words, e)
+        }
+    }
+    userQuery.WordString = strings.Join(words, " ")
+    return userQuery
+}
+
+func Escape(s string) string {
+    return strings.Replace(s, "'", "''", -1)
+}
+
+func GetSearchTitleRows(litedb LiteDB, userQuery UserQuery) ([]map[string]string, error) {
+    escapedUserQuery := Escape(userQuery.WordString)
+    var where, orderBy string
+    if (os.Getenv("sortByDate") != "0") {
+        orderBy = "modDate DESC"
+    } else {
         orderBy = "lower(noteTitle) ASC"
     }
-    searchFolders := os.Getenv("searchFolders")
-    foldersLike := fmt.Sprintf("lower(folderTitle) LIKE lower('%%%s%%')", escapedWordString)
-    if (searchFolders == "0") {
-         foldersLike = "FALSE"
+    if (os.Getenv("searchFolders") != "0") {
+        where = fmt.Sprintf("WHERE (lower(noteTitle) LIKE lower('%%%s%%') OR lower(folderTitle) LIKE lower('%%%s%%'))", escapedUserQuery, escapedUserQuery)
+    } else {
+        where = fmt.Sprintf("WHERE lower(noteTitle) LIKE lower('%%%s%%')", escapedUserQuery)
     }
-    searchString := fmt.Sprintf("WHERE (lower(noteTitle) LIKE lower('%%%s%%') OR %s)", escapedWordString, foldersLike)
-    rows, err := litedb.Query(fmt.Sprintf(NOTES, searchString, orderBy))
+    rows, err := litedb.Query(fmt.Sprintf(NotesSQLTemplate, where, orderBy))
     if err != nil {
         return nil, err
     }
     return rows, nil
 }
 
-func GetSearchBodyRows(litedb LiteDB, query Query) ([]map[string]string, error) {
-    escapedWordString := Escape(query.WordString)
-    sortByDate := os.Getenv("sortByDate")
-    orderBy := "modDate DESC"
-    if (sortByDate == "0") {
+func GetSearchBodyRows(litedb LiteDB, userQuery UserQuery) ([]map[string]string, error) {
+    escapedUserQuery := Escape(userQuery.WordString)
+    var orderBy string
+    if (os.Getenv("sortByDate") != "0") {
+        orderBy = "modDate DESC"
+    } else {
         orderBy = "lower(noteTitle) ASC"
     }
-    searchString := ""
-    rows, err := litedb.QueryThenSearch(fmt.Sprintf(NOTES, searchString, orderBy), escapedWordString)
+    where := ""
+    rows, err := litedb.QueryThenSearch(fmt.Sprintf(NotesSQLTemplate, where, orderBy), escapedUserQuery)
     if err != nil {
         return nil, err
     }   
@@ -297,9 +294,9 @@ func GetSearchBodyRows(litedb LiteDB, query Query) ([]map[string]string, error) 
     return rows, nil
 }
 
-func GetSearchFolderRows(litedb LiteDB, query Query) ([]map[string]string, error) {
-    escapedWordString := Escape(query.WordString)
-    rows, err := litedb.Query(fmt.Sprintf(FOLDERS_BY_TITLE, escapedWordString))
+func GetSearchFolderRows(litedb LiteDB, userQuery UserQuery) ([]map[string]string, error) {
+    escapedUserQuery := Escape(userQuery.WordString)
+    rows, err := litedb.Query(fmt.Sprintf(FoldersSQLTemplate, escapedUserQuery))
     if err != nil {
         return nil, err
     }
@@ -317,29 +314,29 @@ func main() {
         litedb, err := NewNotesDB()
         PanicOnErr(err)
         
-        query := ParseQuery(os.Args[2])
+        userQuery := ParseUserQuery(os.Args[2])
         searchRows := []map[string]string{}
             
         if os.Args[1] == "title" {
-            searchRows, err = GetSearchTitleRows(litedb, query)
+            searchRows, err = GetSearchTitleRows(litedb, userQuery)
             PanicOnErr(err)
             
             if len(searchRows) == 0 {
-                createItem, err := GetCreateNote(query)
+                createItem, err := CreateNoteItem(userQuery)
                 PanicOnErr(err)
                 alfred.Add(*createItem)
             }
         } else if os.Args[1] == "body" {
-            searchRows, err = GetSearchBodyRows(litedb, query)
+            searchRows, err = GetSearchBodyRows(litedb, userQuery)
             PanicOnErr(err)
         } else if os.Args[1] == "folder" {
-            searchRows, err = GetSearchFolderRows(litedb, query)
+            searchRows, err = GetSearchFolderRows(litedb, userQuery)
             PanicOnErr(err)
         }
         
         if len(searchRows) > 0 {
             for _, row := range searchRows {
-                alfred.Add(RowToItem(row, query))
+                alfred.Add(RowToItem(row, userQuery))
             }
         }
 
