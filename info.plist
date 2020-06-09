@@ -244,7 +244,11 @@
 				<string>on alfred_script(q)
 	tell application "System Events"		tell process "Notes"			set frontmost to true			click menu item "Note List Search…" of menu of menu item "Find" of menu "Edit" of menu bar 1
 			-- Get user search query which is second half of q
-			set userQuery to text ((offset of "?" in q)+1) thru -1 of q			keystroke userQuery		end tell	end tell
+			set userQuery to text ((offset of "?" in q)+1) thru -1 of q
+			set clipboardOld to the clipboard
+			set the clipboard to userQuery			click menu item "Paste" of menu "Edit" of menu bar 1
+			delay 0.1
+			set the clipboard to clipboardOld		end tell	end tell
 end alfred_script</string>
 				<key>cachescript</key>
 				<true/>
@@ -544,7 +548,12 @@ on alfred_script(q)
 			show default folder in default account
 			show default folder in default account
 			tell application "System Events"				tell process "Notes"					click menu item "New Note" of menu "File" of menu bar 1
-					-- Set title to user query and press enter twice					keystroke q					key code {36,36}				end tell			end tell
+					set clipboardOld to the clipboard
+					set the clipboard to q					click menu item "Paste" of menu "Edit" of menu bar 1
+					click menu item "Title" of menu "Format" of menu bar 1
+					key code {36, 36} -- press enter twice
+					delay 0.1
+					set the clipboard to clipboardOld				end tell			end tell
 		end if	end tell
 end alfred_scriptc</string>
 				<key>cachescript</key>
@@ -566,7 +575,7 @@ https://github.com/sballin/alfred-search-notes-app
 
 Required Setup
 --------------
-Authorize the "search" binary to run on your computer. Right-click the Search Notes workflow, click "Open in Finder", open the "search" folder, right-click the "search" binary, click "Open", and after it runs once in Terminal you're done.
+Authorize the "search" binary to run on your computer: right-click the Search Notes workflow, click "Open in Finder", open the "search" folder, right-click the "search" binary, click "Open", and after it runs once in Terminal you're done.
 
 
 Environment Variables
@@ -671,10 +680,8 @@ or create note</string>
 		<key>sortByDate</key>
 		<string>1</string>
 	</dict>
-	<key>variablesdontexport</key>
-	<array/>
 	<key>version</key>
-	<string>3.0.0</string>
+	<string>3.0.1</string>
 	<key>webaddress</key>
 	<string>https://github.com/sballin/alfred-search-notes-app</string>
 </dict>
