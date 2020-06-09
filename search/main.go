@@ -77,7 +77,7 @@ WHERE
     z_pk > 1 AND -- 1 is the Recently Deleted folder
     title IS NOT NULL AND 
     zmarkedfordeletion != 1 AND
-    lower(title) LIKE lower('%%%s%%')
+    lower(title) LIKE lower(?)
 ORDER BY title ASC
 `)
 
@@ -88,6 +88,10 @@ type LiteDB struct {
 type UserQuery struct {
     Tokens     []string
     WordString string
+}
+
+func Escape(s string) string {
+    return strings.Replace(s, "'", "''", -1)
 }
 
 func Expanduser(path string) string {
@@ -111,9 +115,9 @@ func NewNotesDB() (LiteDB, error) {
     return litedb, err
 }
 
-func (lite LiteDB) Query(q string) ([]map[string]string, error) {
+func (lite LiteDB) Query(sqlQuery string, sqlArg string) ([]map[string]string, error) {
     results := []map[string]string{}
-    rows, err := lite.db.Query(q)
+    rows, err := lite.db.Query(sqlQuery, sqlArg)
     if err != nil {
         return results, err
     }
@@ -253,24 +257,24 @@ func ParseUserQuery(arg string) UserQuery {
     return userQuery
 }
 
-func Escape(s string) string {
-    return strings.Replace(s, "'", "''", -1)
+func GetOrderPreference() string {
+    if (os.Getenv("sortByDate") != "0") {
+        return "modDate DESC"
+    } else {
+        return "lower(noteTitle) ASC"
+    }
 }
 
 func GetSearchTitleRows(litedb LiteDB, userQuery UserQuery) ([]map[string]string, error) {
-    escapedUserQuery := Escape(userQuery.WordString)
-    var where, orderBy string
-    if (os.Getenv("sortByDate") != "0") {
-        orderBy = "modDate DESC"
-    } else {
-        orderBy = "lower(noteTitle) ASC"
-    }
+    likeString := "%%" + userQuery.WordString + "%%"
+    orderBy := GetOrderPreference()
+    var where string
     if (os.Getenv("searchFolders") != "0") {
-        where = fmt.Sprintf("WHERE (lower(noteTitle) LIKE lower('%%%s%%') OR lower(folderTitle) LIKE lower('%%%s%%'))", escapedUserQuery, escapedUserQuery)
+        where = "WHERE (lower(folderTitle) || ' ' || lower(noteTitle)) LIKE lower(?)"
     } else {
-        where = fmt.Sprintf("WHERE lower(noteTitle) LIKE lower('%%%s%%')", escapedUserQuery)
+        where = "WHERE lower(noteTitle) LIKE lower(?)"
     }
-    rows, err := litedb.Query(fmt.Sprintf(NotesSQLTemplate, where, orderBy))
+    rows, err := litedb.Query(fmt.Sprintf(NotesSQLTemplate, where, orderBy), likeString)
     if err != nil {
         return nil, err
     }
@@ -278,15 +282,9 @@ func GetSearchTitleRows(litedb LiteDB, userQuery UserQuery) ([]map[string]string
 }
 
 func GetSearchBodyRows(litedb LiteDB, userQuery UserQuery) ([]map[string]string, error) {
-    escapedUserQuery := Escape(userQuery.WordString)
-    var orderBy string
-    if (os.Getenv("sortByDate") != "0") {
-        orderBy = "modDate DESC"
-    } else {
-        orderBy = "lower(noteTitle) ASC"
-    }
+    orderBy := GetOrderPreference()
     where := ""
-    rows, err := litedb.QueryThenSearch(fmt.Sprintf(NotesSQLTemplate, where, orderBy), escapedUserQuery)
+    rows, err := litedb.QueryThenSearch(fmt.Sprintf(NotesSQLTemplate, where, orderBy), userQuery.WordString)
     if err != nil {
         return nil, err
     }   
@@ -295,8 +293,8 @@ func GetSearchBodyRows(litedb LiteDB, userQuery UserQuery) ([]map[string]string,
 }
 
 func GetSearchFolderRows(litedb LiteDB, userQuery UserQuery) ([]map[string]string, error) {
-    escapedUserQuery := Escape(userQuery.WordString)
-    rows, err := litedb.Query(fmt.Sprintf(FoldersSQLTemplate, escapedUserQuery))
+    likeString := "%%" + userQuery.WordString + "%%"
+    rows, err := litedb.Query(FoldersSQLTemplate, likeString)
     if err != nil {
         return nil, err
     }
