@@ -242,11 +242,11 @@
 			<dict>
 				<key>applescript</key>
 				<string>on alfred_script(q)
-	tell application "System Events"		tell process "Notes"			set frontmost to true			click menu item "Note List Search…" of menu of menu item "Find" of menu "Edit" of menu bar 1
+	tell application "System Events"		tell process "Notes"			set frontmost to true			click menu item 1 of menu of menu item 16 of menu 4 of menu bar 1 -- Edit, Find, Note List Search…
 			-- Get user search query which is second half of q
 			set userQuery to text ((offset of "?" in q)+1) thru -1 of q
 			set clipboardOld to the clipboard
-			set the clipboard to userQuery			click menu item "Paste" of menu "Edit" of menu bar 1
+			set the clipboard to userQuery			click menu item 6 of menu 4 of menu bar 1 -- Edit, Paste
 			delay 0.1
 			set the clipboard to clipboardOld		end tell	end tell
 end alfred_script</string>
@@ -547,15 +547,15 @@ on alfred_script(q)
 			-- Move from any other folder/state to default "Notes" folder
 			show default folder in default account
 			show default folder in default account
-			tell application "System Events"				tell process "Notes"					click menu item "New Note" of menu "File" of menu bar 1
+			tell application "System Events"				tell process "Notes"					click menu item 1 of menu 3 of menu bar 1 -- File, New Note
 					set clipboardOld to the clipboard
-					set the clipboard to q					click menu item "Paste" of menu "Edit" of menu bar 1
-					click menu item "Title" of menu "Format" of menu bar 1
+					set the clipboard to q					click menu item 6 of menu 4 of menu bar 1 -- Edit, Paste
+					click menu item 1 of menu 5 of menu bar 1 -- Format, Title
 					key code {36, 36} -- press enter twice
 					delay 0.1
 					set the clipboard to clipboardOld				end tell			end tell
 		end if	end tell
-end alfred_scriptc</string>
+end alfred_script</string>
 				<key>cachescript</key>
 				<true/>
 			</dict>
