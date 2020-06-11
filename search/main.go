@@ -42,20 +42,21 @@ FROM (
         INNER JOIN zicnotedata AS n ON c.znotedata = n.z_pk -- note id (int) distinct from xcoredataID
     WHERE 
         noteTitle IS NOT NULL AND 
-        noteFolderID > 1 AND -- 1 is the Recently Deleted folder
         modDate IS NOT NULL AND
         xcoredataID IS NOT NULL AND
         noteBodyZipped IS NOT NULL AND
         c.zmarkedfordeletion != 1
 ) AS notes
-LEFT JOIN (
+INNER JOIN (
     SELECT
         z_pk AS folderID,
-        ztitle2 AS folderTitle
-     FROM ziccloudsyncingobject
-     WHERE 
-         folderTitle IS NOT NULL AND 
-         zmarkedfordeletion != 1 
+        ztitle2 AS folderTitle,
+        zfoldertype as isRecentlyDeletedFolder
+    FROM ziccloudsyncingobject
+    WHERE 
+        folderTitle IS NOT NULL AND 
+        isRecentlyDeletedFolder != 1 AND
+        zmarkedfordeletion != 1 
 ) AS folders ON noteFolderID = folderID
 LEFT JOIN (
     SELECT z_uuid FROM z_metadata
@@ -74,7 +75,6 @@ LEFT JOIN (
     SELECT z_uuid FROM z_metadata
 )
 WHERE 
-    z_pk > 1 AND -- 1 is the Recently Deleted folder
     title IS NOT NULL AND 
     zmarkedfordeletion != 1 AND
     lower(title) LIKE lower(?)
