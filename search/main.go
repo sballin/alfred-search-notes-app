@@ -21,14 +21,14 @@ const (
 
     TitleKey  = "title"
     SubtitleKey = "subtitle"
-    ArgKey = "URL"
+    ArgKey = "url"
     BodyKey = "noteBodyZipped"
 
     NotesSQLTemplate = `
 SELECT 
-    noteTitle as title,
-    folderTitle as subtitle,
-    'x-coredata://' || z_uuid || '/ICNote/p' || xcoreDataID as URL,
+    noteTitle AS title,
+    folderTitle AS subtitle,
+    'x-coredata://' || z_uuid || '/ICNote/p' || xcoreDataID AS url,
     noteBodyZipped 
 FROM (
     SELECT
@@ -51,7 +51,7 @@ INNER JOIN (
     SELECT
         z_pk AS folderID,
         ztitle2 AS folderTitle,
-        zfoldertype as isRecentlyDeletedFolder
+        zfoldertype AS isRecentlyDeletedFolder
     FROM ziccloudsyncingobject
     WHERE 
         folderTitle IS NOT NULL AND 
@@ -69,7 +69,7 @@ ORDER BY %s
 SELECT 
     ztitle2 AS title,
     '' AS subtitle,
-    'x-coredata://' || z_uuid || '/ICFolder/p' || z_pk as URL
+    'x-coredata://' || z_uuid || '/ICFolder/p' || z_pk AS url
 FROM ziccloudsyncingobject
 LEFT JOIN (
     SELECT z_uuid FROM z_metadata
@@ -180,30 +180,39 @@ func (lite LiteDB) QueryThenSearch(q string, search string) ([]map[string]string
             return results, err
         }
         
-        // Skip adding item if note body does not contain search string
-        val := columnPointers[len(cols)-1].(*interface{})
-        // Type assertion required by bytesReader
-        noteBodyZippedBytes, ok := (*val).([]byte)
+        // Get note title
+        valTitle := columnPointers[0].(*interface{})
+        title, ok := (*valTitle).(string)
         if !ok {
             continue
         }
-        if gotReaders {
-            bytesReader.Reset(noteBodyZippedBytes)
-            gzipReader.Reset(bytesReader)
-        } else {
-            bytesReader = bytes.NewReader(noteBodyZippedBytes)
-            gzipReader, err = gzip.NewReader(bytesReader)
+        // If title does not contain search string, search note body
+        if !strings.Contains(strings.ToLower(string(title)), strings.ToLower(search)) {
+            // Decompress note body data
+            valBody := columnPointers[len(cols)-1].(*interface{})
+            noteBodyZippedBytes, ok := (*valBody).([]byte)
+            if !ok {
+                continue
+            }
+            if gotReaders {
+                bytesReader.Reset(noteBodyZippedBytes)
+                gzipReader.Reset(bytesReader)
+            } else {
+                bytesReader = bytes.NewReader(noteBodyZippedBytes)
+                gzipReader, err = gzip.NewReader(bytesReader)
+                if err != nil {
+                    continue
+                }
+                gotReaders = true
+            }
+            body, err := ioutil.ReadAll(gzipReader)
             if err != nil {
                 continue
             }
-            gotReaders = true
-        }
-        body, err := ioutil.ReadAll(gzipReader)
-        if err != nil {
-            continue
-        }
-        if !strings.Contains(strings.ToLower(string(body)), strings.ToLower(search)) {
-            continue
+            // Omit note from results if neither title nor body contain search string
+            if !strings.Contains(strings.ToLower(string(body)), strings.ToLower(search)) {
+                continue
+            }
         }
         
         for i, colName := range cols {
