@@ -11,6 +11,7 @@ import (
     "compress/gzip"
     "io/ioutil"
     "golang.org/x/text/unicode/norm"
+    "unicode"
 
     _ "github.com/mattn/go-sqlite3"
     "github.com/sballin/alfred-search-notes-app/alfred"
@@ -90,6 +91,13 @@ type UserQuery struct {
     WordString string
 }
 
+func min(a, b int) int {
+    if a < b {
+        return a
+    }
+    return b
+}
+
 func Escape(s string) string {
     return strings.Replace(s, "'", "''", -1)
 }
@@ -152,22 +160,76 @@ func (lite LiteDB) Query(sqlQuery string, sqlArg string) ([]map[string]string, e
     return results, err
 }
 
-func (lite LiteDB) QueryThenSearch(q string, search string) ([]map[string]string, error) {
+func SafeUnicode(r rune) rune {
+    // Keep graphic characters and newlines
+    if unicode.IsGraphic(r) || r == '\n' {
+        return r
+    } else {
+        return -1
+    }
+}
+
+func SanitizeNoteData(noteBytes []byte) string {
+    magic := []byte{26, 16}
+    plaintextEnd := bytes.Index(noteBytes, magic)
+    footerLinksStart := bytes.LastIndex(noteBytes, magic)
+    if plaintextEnd != -1 && footerLinksStart != -1 {
+        footerLinks := noteBytes[footerLinksStart:]
+        footerLinks = bytes.ReplaceAll(footerLinks, []byte{42}, []byte("\n"))
+        footerLinks = bytes.ReplaceAll(footerLinks, []byte("http"), []byte("\nhttp"))
+        noteBytes = bytes.Join([][]byte{noteBytes[:plaintextEnd], footerLinks}, []byte("\n"))
+    }
+    body := string(noteBytes)
+    // Remove title from body
+    bodyStart := strings.Index(body, "\n")
+    if bodyStart > 0 {
+        body = body[bodyStart:]
+    }
+    body = strings.Map(SafeUnicode, body)
+    body = norm.NFC.String(strings.ToValidUTF8(body, ""))
+    return body
+}
+
+func BuildSubtitleAddition(body string, bodyLower string, searchLower string) string {
+    subtitleAddition := " | "
+    i := 0
+    j := 0
+    for i >= 0 && j >= 0 && len(subtitleAddition) < 300 {
+        j = strings.Index(bodyLower[i:], searchLower)
+        if j >= 0 {
+            // Include context around match up to rb or next newline
+            rb := min(len(body), i+j+len(searchLower)+25)
+            nextNewline := strings.Index(body[i+j:rb], "\n")
+            if nextNewline > 0 {
+                rb = i+j+nextNewline
+            }
+            match := strings.ToValidUTF8(strings.Trim(body[i+j:rb], " "), "")
+            subtitleAddition += "…" + match + "… "
+            i = rb
+        }
+    }
+    return subtitleAddition
+}
+
+func (lite LiteDB) QueryThenSearch(q string, search string) ([]map[string]string, error) {    
     results := []map[string]string{}
     rows, err := lite.db.Query(q)
     if err != nil {
         return results, err
     }
     defer rows.Close()
-
     cols, err := rows.Columns()
     if err != nil {
         return results, err
     }
     
-    gotReaders := false
-    var bytesReader *bytes.Reader
-    var gzipReader *gzip.Reader
+    searchLower := strings.ToLower(search)
+    dummyGzipHeader := []byte{31,139,8,0,0,0,0,0,0,19} // just to initialize gzipReader
+    bytesReader := bytes.NewReader(dummyGzipHeader)
+    gzipReader, err := gzip.NewReader(bytesReader)
+    if err != nil {
+        return results, err 
+    }
 
     for rows.Next() {
         m := map[string]string{}
@@ -180,37 +242,39 @@ func (lite LiteDB) QueryThenSearch(q string, search string) ([]map[string]string
             return results, err
         }
         
-        // Get note title
-        valTitle := columnPointers[0].(*interface{})
-        title, ok := (*valTitle).(string)
-        if !ok {
-            continue
-        }
-        // If title does not contain search string, search note body
-        if !strings.Contains(strings.ToLower(string(title)), strings.ToLower(search)) {
-            // Decompress note body data
-            valBody := columnPointers[len(cols)-1].(*interface{})
-            noteBodyZippedBytes, ok := (*valBody).([]byte)
+        subtitleAddition := ""
+        if len(search) > 0 {
+            // Get note title and check for search string
+            valTitle := columnPointers[0].(*interface{})
+            title, ok := (*valTitle).(string)
             if !ok {
                 continue
             }
-            if gotReaders {
-                bytesReader.Reset(noteBodyZippedBytes)
-                gzipReader.Reset(bytesReader)
-            } else {
-                bytesReader = bytes.NewReader(noteBodyZippedBytes)
-                gzipReader, err = gzip.NewReader(bytesReader)
-                if err != nil {
+            titleContains := strings.Contains(strings.ToLower(string(title)), searchLower)
+            // Decompress note body data
+            valBody := columnPointers[len(cols)-1].(*interface{})
+            noteDataZippedBytes, ok := (*valBody).([]byte)
+            if ok {
+                bytesReader.Reset(noteDataZippedBytes)
+                errReset := gzipReader.Reset(bytesReader)
+                if errReset == nil {
+                    noteBytes, errRead := ioutil.ReadAll(gzipReader)
+                    if errRead == nil {
+                        // Remove (junk?) data between end of note plaintext and start of web links in footer
+                        body := SanitizeNoteData(noteBytes)
+                        bodyLower := strings.ToLower(body)
+                        if strings.Contains(bodyLower, searchLower) {
+                            subtitleAddition = BuildSubtitleAddition(body, bodyLower, searchLower)
+                        } else if !titleContains {
+                            continue
+                        }
+                    } else if !titleContains {
+                        continue
+                    }
+                } else if !titleContains {
                     continue
                 }
-                gotReaders = true
-            }
-            body, err := ioutil.ReadAll(gzipReader)
-            if err != nil {
-                continue
-            }
-            // Omit note from results if neither title nor body contain search string
-            if !strings.Contains(strings.ToLower(string(body)), strings.ToLower(search)) {
+            } else if !titleContains {
                 continue
             }
         }
@@ -224,11 +288,12 @@ func (lite LiteDB) QueryThenSearch(q string, search string) ([]map[string]string
             val := columnPointers[i].(*interface{})
             s, ok := (*val).(string)
             if ok {
-                m[colName] = s
+                m[colName] = s 
             } else {
                 m[colName] = ""
             }
         }
+        m[SubtitleKey] += subtitleAddition
         results = append(results, m)
     }
     return results, err
