@@ -45,9 +45,11 @@ If you want to compile the binary yourself, you can go into the "search" folder 
 
 ## Contributors
 
-Thank you to all who have submitted pull requests, and to [drgrib](https://github.com/drgrib) for allowing me to build off the [alfred-bear](https://github.com/drgrib/alfred-bear) workflow.
+Thank you to 
 
-I'm very new to Go, so if you see anything that can be improved, don't hesitate to submit a pull request.
+* All who have submitted pull requests
+* drgrib for allowing me to build off the [alfred-bear](https://github.com/drgrib/alfred-bear) workflow
+* threeplanetssoftware for the [apple_cloud_notes_parser](https://github.com/threeplanetssoftware/apple_cloud_notes_parser) from which I copied the protobuf handling
 
 ## Donate
 

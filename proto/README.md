@@ -7,6 +7,7 @@ The notestore.proto file is copied from the [apple_cloud_notes_parser](https://g
 To get the protoc command, do
 
     brew install protobuf
+    go install google.golang.org/protobuf/cmd/protoc-gen-go
 
 Then in this folder, do
 
