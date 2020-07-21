@@ -24,13 +24,15 @@ const (
     SubtitleKey = "subtitle"
     ArgKey = "url"
     BodyKey = "noteBodyZipped"
+    TableTextKey = "tableText"
 
     NotesSQLTemplate = `
 SELECT 
     noteTitle AS title,
     folderTitle AS subtitle,
     'x-coredata://' || z_uuid || '/ICNote/p' || xcoreDataID AS url,
-    noteBodyZipped 
+    noteBodyZipped,
+    tableText
 FROM (
     SELECT
         c.ztitle1 AS noteTitle,
@@ -59,6 +61,14 @@ INNER JOIN (
         isRecentlyDeletedFolder != 1 AND
         zmarkedfordeletion != 1 
 ) AS folders ON noteFolderID = folderID
+LEFT JOIN (
+    SELECT 
+        GROUP_CONCAT(zsummary, '') AS tableText,
+        znote
+    FROM ziccloudsyncingobject
+    WHERE ztypeuti = 'com.apple.notes.table'
+    GROUP BY znote
+) AS tables ON znote = xcoreDataID
 LEFT JOIN (
     SELECT z_uuid FROM z_metadata
 )
@@ -170,6 +180,8 @@ func SafeUnicode(r rune) rune {
 }
 
 func SanitizeNoteData(noteBytes []byte) string {
+    // Remove object substitution character
+    noteBytes = bytes.ReplaceAll(noteBytes, []byte{239, 191, 188}, []byte(""))
     magic := []byte{26, 16}
     plaintextEnd := bytes.Index(noteBytes, magic)
     footerLinksStart := bytes.LastIndex(noteBytes, magic)
@@ -224,8 +236,8 @@ func (lite LiteDB) QueryThenSearch(q string, search string) ([]map[string]string
     }
     
     searchLower := strings.ToLower(search)
-    dummyGzipHeader := []byte{31,139,8,0,0,0,0,0,0,19} // just to initialize gzipReader
-    bytesReader := bytes.NewReader(dummyGzipHeader)
+    gzipHeader := []byte{31,139,8,0,0,0,0,0,0,19}
+    bytesReader := bytes.NewReader(gzipHeader)
     gzipReader, err := gzip.NewReader(bytesReader)
     if err != nil {
         return results, err 
@@ -252,7 +264,7 @@ func (lite LiteDB) QueryThenSearch(q string, search string) ([]map[string]string
             }
             titleContains := strings.Contains(strings.ToLower(string(title)), searchLower)
             // Decompress note body data
-            valBody := columnPointers[len(cols)-1].(*interface{})
+            valBody := columnPointers[3].(*interface{})
             noteDataZippedBytes, ok := (*valBody).([]byte)
             if ok {
                 bytesReader.Reset(noteDataZippedBytes)
@@ -260,8 +272,15 @@ func (lite LiteDB) QueryThenSearch(q string, search string) ([]map[string]string
                 if errReset == nil {
                     noteBytes, errRead := ioutil.ReadAll(gzipReader)
                     if errRead == nil {
+                        // Get plaintext of any tables in this note
+                        valTableText := columnPointers[4].(*interface{})
+                        tableText, ok := (*valTableText).(string)
+                        if !ok {
+                            tableText = ""
+                        }
                         // Remove (junk?) data between end of note plaintext and start of web links in footer
                         body := SanitizeNoteData(noteBytes)
+                        body += tableText
                         bodyLower := strings.ToLower(body)
                         if strings.Contains(bodyLower, searchLower) {
                             subtitleAddition = BuildSubtitleAddition(body, bodyLower, searchLower)
