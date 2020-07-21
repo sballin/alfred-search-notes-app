@@ -10,11 +10,13 @@ import (
     "bytes"
     "compress/gzip"
     "io/ioutil"
+    "google.golang.org/protobuf/proto"
     "golang.org/x/text/unicode/norm"
     "unicode"
 
     _ "github.com/mattn/go-sqlite3"
     "github.com/sballin/alfred-search-notes-app/alfred"
+    notestore "github.com/sballin/alfred-search-notes-app/proto"
 )
 
 const (
@@ -179,24 +181,29 @@ func SafeUnicode(r rune) rune {
     }
 }
 
-func SanitizeNoteData(noteBytes []byte) string {
-    // Remove object substitution character
-    noteBytes = bytes.ReplaceAll(noteBytes, []byte{239, 191, 188}, []byte(""))
-    magic := []byte{26, 16}
-    plaintextEnd := bytes.Index(noteBytes, magic)
-    footerLinksStart := bytes.LastIndex(noteBytes, magic)
-    if plaintextEnd != -1 && footerLinksStart != -1 {
-        footerLinks := noteBytes[footerLinksStart:]
-        footerLinks = bytes.ReplaceAll(footerLinks, []byte{42}, []byte("\n"))
-        footerLinks = bytes.ReplaceAll(footerLinks, []byte("http"), []byte("\nhttp"))
-        noteBytes = bytes.Join([][]byte{noteBytes[:plaintextEnd], footerLinks}, []byte("\n"))
+func GetNoteBody(noteBytes []byte) string {
+    body := ""
+    note := &notestore.NoteStoreProto{}
+    err := proto.Unmarshal(noteBytes, note)
+    if err != nil {
+        return ""
     }
-    body := string(noteBytes)
+    if note.Document.Note.NoteText != nil {
+        body += *note.Document.Note.NoteText
+    }
+    for _, a := range note.Document.Note.AttributeRun {
+        if a.Link != nil {
+            body += "\n" + *a.Link
+        }
+    }
     // Remove title from body
     bodyStart := strings.Index(body, "\n")
     if bodyStart > 0 {
         body = body[bodyStart:]
     }
+    // Remove object substitution character
+    body = strings.ReplaceAll(body, string([]byte{239, 191, 188}), "")
+    // Remove any weird characters that might be left over
     body = strings.Map(SafeUnicode, body)
     body = norm.NFC.String(strings.ToValidUTF8(body, ""))
     return body
@@ -278,8 +285,8 @@ func (lite LiteDB) QueryThenSearch(q string, search string) ([]map[string]string
                         if !ok {
                             tableText = ""
                         }
-                        // Remove (junk?) data between end of note plaintext and start of web links in footer
-                        body := SanitizeNoteData(noteBytes)
+                        // Extract protobuf-format data from unzipped note
+                        body := GetNoteBody(noteBytes)
                         body += tableText
                         bodyLower := strings.ToLower(body)
                         if strings.Contains(bodyLower, searchLower) {
