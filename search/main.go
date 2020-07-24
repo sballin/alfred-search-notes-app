@@ -190,30 +190,30 @@ func GetNoteBody(noteBytes []byte) string {
     }
     if note.Document.Note.NoteText != nil {
         body += *note.Document.Note.NoteText
-    }
-    for _, a := range note.Document.Note.AttributeRun {
-        if a.Link != nil {
-            body += "\n" + *a.Link
+        for _, a := range note.Document.Note.AttributeRun {
+            if a.Link != nil {
+                body += "\n" + *a.Link
+            }
         }
+        // Remove title from body
+        bodyStart := strings.Index(body, "\n")
+        if bodyStart > 0 {
+            body = body[bodyStart:]
+        }
+        // Remove object substitution character
+        body = strings.ReplaceAll(body, string([]byte{239, 191, 188}), "")
+        // Remove any weird characters that might be left over
+        body = strings.Map(SafeUnicode, body)
+        body = norm.NFC.String(strings.ToValidUTF8(body, ""))
     }
-    // Remove title from body
-    bodyStart := strings.Index(body, "\n")
-    if bodyStart > 0 {
-        body = body[bodyStart:]
-    }
-    // Remove object substitution character
-    body = strings.ReplaceAll(body, string([]byte{239, 191, 188}), "")
-    // Remove any weird characters that might be left over
-    body = strings.Map(SafeUnicode, body)
-    body = norm.NFC.String(strings.ToValidUTF8(body, ""))
     return body
 }
 
 func BuildSubtitleAddition(body string, bodyLower string, searchLower string) string {
-    subtitleAddition := " | "
+    subtitleAddition := " | …"
     i := 0
     j := 0
-    for i >= 0 && j >= 0 && len(subtitleAddition) < 300 {
+    for i >= 0 && j >= 0 && len(subtitleAddition) < 400 {
         j = strings.Index(bodyLower[i:], searchLower)
         if j >= 0 {
             // Include context around match up to rb or next newline
@@ -223,7 +223,7 @@ func BuildSubtitleAddition(body string, bodyLower string, searchLower string) st
                 rb = i+j+nextNewline
             }
             match := strings.ToValidUTF8(strings.Trim(body[i+j:rb], " "), "")
-            subtitleAddition += "…" + match + "… "
+            subtitleAddition += match + "…"
             i = rb
         }
     }
