@@ -50,6 +50,7 @@ Thank you to
 * All who have submitted pull requests
 * drgrib for allowing me to build off the [alfred-bear](https://github.com/drgrib/alfred-bear) workflow
 * threeplanetssoftware for the [apple_cloud_notes_parser](https://github.com/threeplanetssoftware/apple_cloud_notes_parser) from which I copied the protobuf handling
+* [lslz627](https://github.com/lslz627) for help with protobuf and tables
 
 ## Donate
 
