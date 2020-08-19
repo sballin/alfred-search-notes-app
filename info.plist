@@ -358,8 +358,8 @@ property NSCharacterSet : a reference to current application's NSCharacterSet
 
 on alfred_script(q)	tell application "Notes"
 		-- Get note id which is first item in q
-		set q to text 1 thru ((offset of "?" in q)-1) of q		set noteName to name of note id q
-		set the clipboard to noteName		set noteName to (NSString's stringWithString:noteName)		set noteName to (noteName's stringByAddingPercentEncodingWithAllowedCharacters:(NSCharacterSet's URLPathAllowedCharacterSet)) as text		
+		set q to text 1 thru ((offset of "?" in q)-1) of q		set noteName to name of note id q in default account
+		set the clipboard to noteName		set noteName to (NSString's stringWithString:noteName)		set noteName to (noteName's stringByAddingPercentEncodingWithAllowedCharacters:(NSCharacterSet's URLPathAllowedCharacterSet)) as text
 		set noteUrl to "notes://" &amp; noteName
 		set the clipboard to noteUrl	end tell
 end alfred_script</string>
@@ -681,7 +681,7 @@ or create note</string>
 		<string>1</string>
 	</dict>
 	<key>version</key>
-	<string>3.1.0</string>
+	<string>3.1.1</string>
 	<key>webaddress</key>
 	<string>https://github.com/sballin/alfred-search-notes-app</string>
 </dict>
