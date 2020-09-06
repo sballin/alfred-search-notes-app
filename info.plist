@@ -288,9 +288,9 @@ end alfred_script</string>
 				<key>runningsubtext</key>
 				<string>Getting notes...</string>
 				<key>script</key>
-				<string>search/search title "$@" 2&gt;&gt; error_log.txt
+				<string>workflow/search/search title "$@" 2&gt;&gt; workflow/error_log.txt
 if [[ $? != 0 ]]; then
-    osascript handle_error.scpt
+    osascript workflow/handle_error.scpt
 fi
 </string>
 				<key>scriptargtype</key>
@@ -401,9 +401,9 @@ end alfred_script</string>
 				<key>runningsubtext</key>
 				<string>Getting notes...</string>
 				<key>script</key>
-				<string>search/search body "$@" 2&gt;&gt; error_log.txt
+				<string>workflow/search/search body "$@" 2&gt;&gt; workflow/error_log.txt
 if [[ $? != 0 ]]; then
-    osascript handle_error.scpt
+    osascript workflow/handle_error.scpt
 fi
 </string>
 				<key>scriptargtype</key>
@@ -434,7 +434,7 @@ fi
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>python update.py 2&gt;&gt; error_log.txt</string>
+				<string>python workflow/update.py 2&gt;&gt; error_log.txt</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -497,9 +497,9 @@ end alfred_script</string>
 				<key>runningsubtext</key>
 				<string>Getting folders...</string>
 				<key>script</key>
-				<string>search/search folder "$@" 2&gt;&gt; error_log.txt
+				<string>workflow/search/search folder "$@" 2&gt;&gt; workflow/error_log.txt
 if [[ $? != 0 ]]; then
-    osascript handle_error.scpt
+    osascript workflow/handle_error.scpt
 fi
 </string>
 				<key>scriptargtype</key>
