@@ -74,7 +74,6 @@ LEFT JOIN (
 LEFT JOIN (
     SELECT z_uuid FROM z_metadata
 )
-%s -- either blank to get all notes or WHERE titles/folders like...
 ORDER BY %s
 `
 
@@ -230,9 +229,9 @@ func BuildSubtitleAddition(body string, bodyLower string, searchLower string) st
     return subtitleAddition
 }
 
-func (lite LiteDB) QueryThenSearch(q string, search string) ([]map[string]string, error) {    
+func (lite LiteDB) QueryThenSearch(sqlQuery string, search string, scope string) ([]map[string]string, error) {    
     results := []map[string]string{}
-    rows, err := lite.db.Query(q)
+    rows, err := lite.db.Query(sqlQuery)
     if err != nil {
         return results, err
     }
@@ -243,12 +242,17 @@ func (lite LiteDB) QueryThenSearch(q string, search string) ([]map[string]string
     }
     
     searchLower := strings.ToLower(search)
+    searchFolders := false
+    if (os.Getenv("searchFolders") != "0") {
+        searchFolders = true
+    }
+    
     gzipHeader := []byte{31,139,8,0,0,0,0,0,0,19}
     bytesReader := bytes.NewReader(gzipHeader)
     gzipReader, err := gzip.NewReader(bytesReader)
     if err != nil {
         return results, err 
-    }
+    }   
 
     for rows.Next() {
         m := map[string]string{}
@@ -261,50 +265,60 @@ func (lite LiteDB) QueryThenSearch(q string, search string) ([]map[string]string
             return results, err
         }
         
+        scopeText := ""
         subtitleAddition := ""
         if len(search) > 0 {
-            // Get note title and check for search string
+            // Add note title to search scope
             valTitle := columnPointers[0].(*interface{})
             title, ok := (*valTitle).(string)
             if !ok {
                 continue
             }
-            titleContains := strings.Contains(strings.ToLower(string(title)), searchLower)
-            // Decompress note body data
-            valBody := columnPointers[3].(*interface{})
-            noteDataZippedBytes, ok := (*valBody).([]byte)
-            if ok {
-                bytesReader.Reset(noteDataZippedBytes)
-                errReset := gzipReader.Reset(bytesReader)
-                if errReset == nil {
-                    noteBytes, errRead := ioutil.ReadAll(gzipReader)
-                    if errRead == nil {
-                        // Get plaintext of any tables in this note
-                        valTableText := columnPointers[4].(*interface{})
-                        tableText, ok := (*valTableText).(string)
-                        if !ok {
-                            tableText = ""
-                        }
-                        // Extract protobuf-format data from unzipped note
-                        body := GetNoteBody(noteBytes)
-                        body += tableText
-                        bodyLower := strings.ToLower(body)
-                        if strings.Contains(bodyLower, searchLower) {
-                            subtitleAddition = BuildSubtitleAddition(body, bodyLower, searchLower)
-                        } else if !titleContains {
-                            continue
-                        }
-                    } else if !titleContains {
-                        continue
-                    }
-                } else if !titleContains {
-                    continue
+            scopeText = strings.ToLower(string(title))
+            if searchFolders == true {
+                // Add note folder name to search scope
+                valFolder := columnPointers[1].(*interface{})
+                folder, ok := (*valFolder).(string)
+                if !ok {
+                    folder = ""
                 }
-            } else if !titleContains {
+                scopeText += " " + strings.ToLower(string(folder))
+            }
+            if scope == "body" {
+                // Decompress note body data
+                valBody := columnPointers[3].(*interface{})
+                noteDataZippedBytes, ok := (*valBody).([]byte)
+                if ok {
+                    bytesReader.Reset(noteDataZippedBytes)
+                    errReset := gzipReader.Reset(bytesReader)
+                    if errReset == nil {
+                        noteBytes, errRead := ioutil.ReadAll(gzipReader)
+                        if errRead == nil {
+                            // Get plaintext of any tables in this note
+                            valTableText := columnPointers[4].(*interface{})
+                            tableText, ok := (*valTableText).(string)
+                            if !ok {
+                                tableText = ""
+                            }
+                            // Extract protobuf-format data from unzipped note and add table text
+                            body := GetNoteBody(noteBytes) + tableText
+                            bodyLower := strings.ToLower(body)
+                            // Add body text to search scope
+                            scopeText += " " + bodyLower
+                            // Prepare result summary for subtitle string
+                            if strings.Contains(bodyLower, searchLower) {
+                                subtitleAddition = BuildSubtitleAddition(body, bodyLower, searchLower)
+                            }
+                        }
+                    }
+                }
+            }
+            if !strings.Contains(scopeText, searchLower) {
                 continue
             }
         }
         
+        // If we get here, the note contains a match. Add it to the Alfred results.
         for i, colName := range cols {
             // Don't add note body data to future alfred row
             if colName == BodyKey {
@@ -365,33 +379,6 @@ func GetOrderPreference() string {
     }
 }
 
-func GetSearchTitleRows(litedb LiteDB, userQuery UserQuery) ([]map[string]string, error) {
-    likeString := "%%" + userQuery.WordString + "%%"
-    orderBy := GetOrderPreference()
-    var where string
-    if (os.Getenv("searchFolders") != "0") {
-        where = "WHERE (lower(folderTitle) || ' ' || lower(noteTitle)) LIKE lower(?)"
-    } else {
-        where = "WHERE lower(noteTitle) LIKE lower(?)"
-    }
-    rows, err := litedb.Query(fmt.Sprintf(NotesSQLTemplate, where, orderBy), likeString)
-    if err != nil {
-        return nil, err
-    }
-    return rows, nil
-}
-
-func GetSearchBodyRows(litedb LiteDB, userQuery UserQuery) ([]map[string]string, error) {
-    orderBy := GetOrderPreference()
-    where := ""
-    rows, err := litedb.QueryThenSearch(fmt.Sprintf(NotesSQLTemplate, where, orderBy), userQuery.WordString)
-    if err != nil {
-        return nil, err
-    }   
-
-    return rows, nil
-}
-
 func GetSearchFolderRows(litedb LiteDB, userQuery UserQuery) ([]map[string]string, error) {
     likeString := "%%" + userQuery.WordString + "%%"
     rows, err := litedb.Query(FoldersSQLTemplate, likeString)
@@ -414,9 +401,11 @@ func main() {
         
         userQuery := ParseUserQuery(os.Args[2])
         searchRows := []map[string]string{}
+        orderBy := GetOrderPreference()
+        notesSQL := fmt.Sprintf(NotesSQLTemplate, orderBy)
             
         if os.Args[1] == "title" {
-            searchRows, err = GetSearchTitleRows(litedb, userQuery)
+            searchRows, err = litedb.QueryThenSearch(notesSQL, userQuery.WordString, "title")
             PanicOnErr(err)
             
             if len(searchRows) == 0 {
@@ -425,7 +414,7 @@ func main() {
                 alfred.Add(*createItem)
             }
         } else if os.Args[1] == "body" {
-            searchRows, err = GetSearchBodyRows(litedb, userQuery)
+            searchRows, err = litedb.QueryThenSearch(notesSQL, userQuery.WordString, "body")
             PanicOnErr(err)
         } else if os.Args[1] == "folder" {
             searchRows, err = GetSearchFolderRows(litedb, userQuery)
