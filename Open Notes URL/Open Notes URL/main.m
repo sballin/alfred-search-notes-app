@@ -1,6 +1,6 @@
 //
 //  main.m
-//  Note Opener
+//  Open Notes URL
 //
 //  Created by Sean on 12/5/18.
 //  Copyright © 2018 Sean Ballinger. All rights reserved.

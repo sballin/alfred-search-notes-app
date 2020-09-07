@@ -19,7 +19,7 @@
 *   **enter** to open the note/folder or create a new note if none was found
 *   **shift+enter** to search for your Alfred query using the Notes in-app search 
 *   **cmd+enter** to copy the note body to the clipboard
-*   **alt+enter** to copy a notes:// URL to the clipboard that can be opened with the included `Note Opener/Note Opener.app`
+*   **alt+enter** to copy a notes:// URL to the clipboard that can be opened with the included `Open Notes URL/Open Notes URL.app`
 
 ## Install
 
@@ -43,7 +43,7 @@ By default, the workflow checks Github for updates every 24 hours. This can be d
 
 ### Compile
 
-If you want to compile the binary yourself, you can go into the "search" folder and do `go build`.
+If you want to compile the binary yourself, you can go into the "search" folder and do `make`.
 
 ## Contributors
 

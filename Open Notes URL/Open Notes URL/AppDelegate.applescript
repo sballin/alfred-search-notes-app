@@ -1,6 +1,6 @@
 --
 --  AppDelegate.applescript
---  Note Opener
+--  Open Notes URL
 --
 --  Created by Sean on 12/5/18.
 --  Copyright © 2018 Sean Ballinger. All rights reserved.
@@ -12,9 +12,8 @@ script AppDelegate
     -- IBOutlets
     property theWindow : missing value
     
-    use scripting additions
-    
     use framework "Foundation"
+    use scripting additions
     property NSString : a reference to current application's NSString
     property NSCharacterSet : a reference to current application's NSCharacterSet
     
@@ -31,33 +30,20 @@ script AppDelegate
     
     -- Handler that runs when the URL is clicked
     on handleGetURLEvent_(ev)
-        set noteURL to (ev's paramDescriptorForKeyword_(7.57935405E+8)) as string
-        
-        set noteName to (NSString's stringWithString:noteURL)
-        set noteName to (noteName's stringByRemovingPercentEncoding) as text
-        set noteName to text 9 thru (count of noteName) of noteName
-        
         tell application "Notes"
             activate
-            
-            set noteRefs to a reference to every note in default account
-            set noteNames to name of noteRefs
-            
-            set noteFound to false
-            repeat with i from 1 to count of noteRefs
-                if item i of noteNames contains noteName
-                    set noteFound to true
-                    show item i of noteRefs
-                    exit repeat
-                end if
-            end repeat
-        
-            if noteFound is false
-                display dialog "No note with title \"" & noteName & "\" was found."
-            end if
+            try
+                set noteURL to (ev's paramDescriptorForKeyword_(7.57935405E+8)) as string
+                set noteName to (NSString's stringWithString:noteURL)
+                set noteName to (noteName's stringByRemovingPercentEncoding) as text
+                set noteName to text 9 thru (count of noteName) of noteName
+                show (first note in default account whose name is noteName)
+            on error errorMessage number errorNumber
+                set alertMessage to errorMessage & " (" & errorNumber & ")"
+                display alert "Open Notes URL error" message alertMessage as critical
+            end try
         end tell
         quit
     end handleGetURLEvent_
     
 end script
-

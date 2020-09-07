@@ -2,3 +2,4 @@
 xcuserdata/
 error_log.txt
 __pycache__/
+*.app
