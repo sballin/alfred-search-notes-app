@@ -434,7 +434,7 @@ fi
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>python workflow/update.py 2&gt;&gt; error_log.txt</string>
+				<string>python update.py 2&gt;&gt; error_log.txt</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
