@@ -229,7 +229,14 @@ func BuildSubtitleAddition(body string, bodyLower string, searchLower string) st
     return subtitleAddition
 }
 
-func (lite LiteDB) QueryThenSearch(sqlQuery string, search string, scope string) ([]map[string]string, error) {    
+func (lite LiteDB) GetResults(search string, scope string) ([]map[string]string, error) {    
+    // Format SQL query
+    sqlQuery := fmt.Sprintf(NotesSQLTemplate, GetOrderPreference())
+    if scope == "folder" {
+        sqlQuery = FoldersSQLTemplate
+    }
+    
+    // Run query to get all results
     results := []map[string]string{}
     rows, err := lite.db.Query(sqlQuery)
     if err != nil {
@@ -250,9 +257,9 @@ func (lite LiteDB) QueryThenSearch(sqlQuery string, search string, scope string)
     gzipHeader := []byte{31,139,8,0,0,0,0,0,0,19}
     bytesReader := bytes.NewReader(gzipHeader)
     gzipReader, err := gzip.NewReader(bytesReader)
-    if err != nil {
+    if err != nil && scope == "body" {
         return results, err 
-    }   
+    }
 
     for rows.Next() {
         m := map[string]string{}
@@ -262,27 +269,27 @@ func (lite LiteDB) QueryThenSearch(sqlQuery string, search string, scope string)
             columnPointers[i] = &columns[i]
         }
         if err := rows.Scan(columnPointers...); err != nil {
-            return results, err
+            continue
         }
         
         scopeText := ""
         subtitleAddition := ""
         if len(search) > 0 {
-            // Add note title to search scope
+            // Add note/folder title to search scope
             valTitle := columnPointers[0].(*interface{})
             title, ok := (*valTitle).(string)
             if !ok {
                 continue
             }
-            scopeText = strings.ToLower(string(title))
+            scopeText = strings.ToLower(title)
             if searchFolders == true {
-                // Add note folder name to search scope
+                // Add folder of note object to search scope (this field is empty for folder objects)
                 valFolder := columnPointers[1].(*interface{})
                 folder, ok := (*valFolder).(string)
                 if !ok {
                     folder = ""
                 }
-                scopeText += " " + strings.ToLower(string(folder))
+                scopeText += " " + strings.ToLower(folder)
             }
             if scope == "body" {
                 // Decompress note body data
@@ -318,7 +325,7 @@ func (lite LiteDB) QueryThenSearch(sqlQuery string, search string, scope string)
             }
         }
         
-        // If we get here, the note contains a match. Add it to the Alfred results.
+        // If we get here, the note/folder contains a match. Add it to the Alfred results.
         for i, colName := range cols {
             // Don't add note body data to future alfred row
             if colName == BodyKey {
@@ -379,15 +386,6 @@ func GetOrderPreference() string {
     }
 }
 
-func GetSearchFolderRows(litedb LiteDB, userQuery UserQuery) ([]map[string]string, error) {
-    likeString := "%%" + userQuery.WordString + "%%"
-    rows, err := litedb.Query(FoldersSQLTemplate, likeString)
-    if err != nil {
-        return nil, err
-    }
-    return rows, nil
-}
-
 func PanicOnErr(err error) {
     if err != nil {
         panic(err)
@@ -399,26 +397,16 @@ func main() {
         litedb, err := NewNotesDB()
         PanicOnErr(err)
         
+        scope := os.Args[1]
         userQuery := ParseUserQuery(os.Args[2])
-        searchRows := []map[string]string{}
-        orderBy := GetOrderPreference()
-        notesSQL := fmt.Sprintf(NotesSQLTemplate, orderBy)
-            
-        if os.Args[1] == "title" {
-            searchRows, err = litedb.QueryThenSearch(notesSQL, userQuery.WordString, "title")
+        
+        searchRows, err := litedb.GetResults(userQuery.WordString, scope)
+        PanicOnErr(err)
+        
+        if scope == "title" && len(searchRows) == 0 {
+            createItem, err := CreateNoteItem(userQuery)
             PanicOnErr(err)
-            
-            if len(searchRows) == 0 {
-                createItem, err := CreateNoteItem(userQuery)
-                PanicOnErr(err)
-                alfred.Add(*createItem)
-            }
-        } else if os.Args[1] == "body" {
-            searchRows, err = litedb.QueryThenSearch(notesSQL, userQuery.WordString, "body")
-            PanicOnErr(err)
-        } else if os.Args[1] == "folder" {
-            searchRows, err = GetSearchFolderRows(litedb, userQuery)
-            PanicOnErr(err)
+            alfred.Add(*createItem)
         }
         
         if len(searchRows) > 0 {
