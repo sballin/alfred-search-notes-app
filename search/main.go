@@ -89,7 +89,7 @@ LEFT JOIN (
 WHERE 
     title IS NOT NULL AND 
     zmarkedfordeletion != 1 AND
-    lower(title) LIKE lower(?)
+    zneedsinitialfetchfromcloud != 1 -- some phantom folders can show up in the results
 ORDER BY title ASC
 `)
 
