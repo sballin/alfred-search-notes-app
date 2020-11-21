@@ -19,7 +19,7 @@
 *   **enter** to open the note/folder or create a new note if none was found
 *   **shift+enter** to search for your Alfred query using the Notes in-app search 
 *   **cmd+enter** to copy the note body to the clipboard
-*   **alt+enter** to copy a notes:// URL to the clipboard that can be opened with the included `Open Notes URL/Open Notes URL.app`
+*   **alt+enter** to copy a note:// URL to the clipboard that can be opened with the included `Open Notes URL/Open Notes URL.app`
 
 ## Install
 

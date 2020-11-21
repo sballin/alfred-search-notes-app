@@ -360,7 +360,7 @@ on alfred_script(q)	tell application "Notes"
 		-- Get note id which is first item in q
 		set q to text 1 thru ((offset of "?" in q)-1) of q		set noteName to name of note id q in default account
 		set the clipboard to noteName		set noteName to (NSString's stringWithString:noteName)		set noteName to (noteName's stringByAddingPercentEncodingWithAllowedCharacters:(NSCharacterSet's URLPathAllowedCharacterSet)) as text
-		set noteUrl to "notes://" &amp; noteName
+		set noteUrl to "note://" &amp; noteName
 		set the clipboard to noteUrl	end tell
 end alfred_script</string>
 				<key>cachescript</key>
@@ -630,7 +630,7 @@ or create note</string>
 		<key>6740BCB6-6818-49E2-A88A-9D19EA132F08</key>
 		<dict>
 			<key>note</key>
-			<string>⌥ Copy notes:// URL</string>
+			<string>⌥ Copy note:// URL</string>
 			<key>xpos</key>
 			<integer>590</integer>
 			<key>ypos</key>
@@ -680,6 +680,8 @@ or create note</string>
 		<key>sortByDate</key>
 		<string>1</string>
 	</dict>
+	<key>variablesdontexport</key>
+	<array/>
 	<key>version</key>
 	<string>3.1.2</string>
 	<key>webaddress</key>

@@ -36,7 +36,7 @@ script AppDelegate
                 set noteURL to (ev's paramDescriptorForKeyword_(7.57935405E+8)) as string
                 set noteName to (NSString's stringWithString:noteURL)
                 set noteName to (noteName's stringByRemovingPercentEncoding) as text
-                set noteName to text 9 thru (count of noteName) of noteName
+                set noteName to text 8 thru (count of noteName) of noteName
                 show (first note in default account whose name is noteName)
             on error errorMessage number errorNumber
                 set alertMessage to errorMessage & " (" & errorNumber & ")"
