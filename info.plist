@@ -288,7 +288,7 @@ end alfred_script</string>
 				<key>runningsubtext</key>
 				<string>Getting notes...</string>
 				<key>script</key>
-				<string>search/search title "$@" 2&gt;&gt; error_log.txt
+				<string>search_notes/search_notes title "$@" 2&gt;&gt; error_log.txt
 if [[ $? != 0 ]]; then
     osascript handle_error.scpt
 fi
@@ -401,7 +401,7 @@ end alfred_script</string>
 				<key>runningsubtext</key>
 				<string>Getting notes...</string>
 				<key>script</key>
-				<string>search/search body "$@" 2&gt;&gt; error_log.txt
+				<string>search_notes/search_notes body "$@" 2&gt;&gt; error_log.txt
 if [[ $? != 0 ]]; then
     osascript handle_error.scpt
 fi
@@ -497,7 +497,7 @@ end alfred_script</string>
 				<key>runningsubtext</key>
 				<string>Getting folders...</string>
 				<key>script</key>
-				<string>search/search folder "$@" 2&gt;&gt; error_log.txt
+				<string>search_notes/search_notes folder "$@" 2&gt;&gt; error_log.txt
 if [[ $? != 0 ]]; then
     osascript handle_error.scpt
 fi
@@ -575,7 +575,9 @@ https://github.com/sballin/alfred-search-notes-app
 
 Required Setup
 --------------
-Authorize the "search" binary to run on your computer: right-click the Search Notes workflow, click "Open in Finder", open the "search" folder, right-click the "search" binary, click "Open", and after it runs once in Terminal you're done.
+1. Try searching for a note
+2. When an error message appears, press the "Open System Preferences" button
+3. Near the bottom of the pane click the "Open Anyway" button for the "search_notes" binary
 
 
 Environment Variables
@@ -680,8 +682,6 @@ or create note</string>
 		<key>sortByDate</key>
 		<string>1</string>
 	</dict>
-	<key>variablesdontexport</key>
-	<array/>
 	<key>version</key>
 	<string>3.1.2</string>
 	<key>webaddress</key>

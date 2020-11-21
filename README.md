@@ -27,9 +27,11 @@ If you're on macOS Catalina with Alfred 4, download the [latest version](https:/
 
 ### Required setup
 
-The "search" binary needs to be manually authorized to run on your computer. See Apple's [instructions](https://support.apple.com/en-gb/guide/mac-help/mh40616/mac) or the image below. Note that it is necessary to right-click the binary (not double-click or command-down) and press Open in the dialog window that pops up.
+1. Try searching for a note
+2. When an error message appears, press the "Open System Preferences" button
+3. Near the bottom of the pane click the "Open Anyway" button for the "search_notes" binary
 
-<img src="https://user-images.githubusercontent.com/2719004/83973596-a50f1f00-a8b5-11ea-9edd-73299d6facf6.png" width="890">
+<img src="https://user-images.githubusercontent.com/2719004/99889399-af826280-2c22-11eb-84dc-0c7972010dfa.png" width="890">
 
 This workflow currently doesn't support notes stored with Google or other internet accounts. Please make sure either iCloud or On My Mac is selected as the default account in the preferences of Notes.app.
 
