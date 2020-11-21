@@ -403,7 +403,7 @@ func main() {
         searchRows, err := litedb.GetResults(userQuery.WordString, scope)
         PanicOnErr(err)
         
-        if scope == "title" && len(searchRows) == 0 {
+        if (scope == "title" || scope == "body") && len(searchRows) == 0 {
             createItem, err := CreateNoteItem(userQuery)
             PanicOnErr(err)
             alfred.Add(*createItem)

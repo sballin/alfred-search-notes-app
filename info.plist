@@ -582,9 +582,8 @@ Required Setup
 
 Environment Variables
 ---------------------
-searchFolders: 1 = return all notes from any folder matching the search query, 0 = don't
-
-sortByDate: 1 = most recently modified note first, 0 = alphabetical order</string>
+- searchFolders: 1 = return all notes from any folder matching the search query, 0 = don't
+- sortByDate: 1 = most recently modified note first, 0 = alphabetical order</string>
 	<key>uidata</key>
 	<dict>
 		<key>060809AF-8160-439A-85F9-D672664E3A1A</key>
@@ -683,7 +682,7 @@ or create note</string>
 		<string>1</string>
 	</dict>
 	<key>version</key>
-	<string>3.1.2</string>
+	<string>3.1.3</string>
 	<key>webaddress</key>
 	<string>https://github.com/sballin/alfred-search-notes-app</string>
 </dict>
