@@ -352,16 +352,45 @@ fi
 			<key>config</key>
 			<dict>
 				<key>applescript</key>
-				<string>use framework "Foundation"
-use scripting additions -- fixes errors due to previous lineproperty NSString : a reference to current application's NSString
-property NSCharacterSet : a reference to current application's NSCharacterSet
-
-on alfred_script(q)	tell application "Notes"
-		-- Get note id which is first item in q
-		set q to text 1 thru ((offset of "?" in q)-1) of q		set noteName to name of note id q in default account
-		set the clipboard to noteName		set noteName to (NSString's stringWithString:noteName)		set noteName to (noteName's stringByAddingPercentEncodingWithAllowedCharacters:(NSCharacterSet's URLPathAllowedCharacterSet)) as text
-		set noteUrl to "note://" &amp; noteName
-		set the clipboard to noteUrl	end tell
+				<string>on alfred_script(q)
+    tell application "Notes"
+        activate
+        set noteID to text 1 thru ((offset of "?" in q)-1) of q
+        show note id noteID in default account
+        show note id noteID in default account
+        tell application "System Events"
+            tell process "Notes"
+                try
+                    set email to "sean.ballinger+alfred@gmail.com"
+                    -- Click File &gt; Share in iCloud &gt; Note...
+                    click menu item 1 of menu 1 of (menu item 4 of menu 3 of menu bar 1)
+                    -- Wait until share dialog appears
+                    repeat until (subrole of window 1 is "AXSystemDialog")
+                        delay 0.1
+                    end repeat
+                    -- Click "Copy Link" option
+                    click button 3 of group 1 of scroll area 1 of group 1 of window 1
+                    -- Keep entering email adddress until "Share" button is enabled
+                    repeat until (enabled of button 2 of window 1 is true)
+                        set value of text field 1 of group 1 of group 1 of window 1 to email
+                        delay 0.1
+                    end repeat
+                    -- Click "Share" button
+                    click button 2 of window 1
+                on error
+                    -- Click File &gt; Manage Shared Note
+                    click menu item 4 of menu 3 of menu bar 1
+                    repeat until (exists sheet 1 of window 1)
+                        delay 0.1
+                    end repeat
+                    -- Click "Copy Link" button
+                    click button 1 of group 1 of group 1 of sheet 1 of window 1
+                    -- Enter to close sheet
+                    key code 36
+                end try
+            end tell
+        end tell
+    end tell
 end alfred_script</string>
 				<key>cachescript</key>
 				<true/>
@@ -681,6 +710,8 @@ or create note</string>
 		<key>sortByDate</key>
 		<string>1</string>
 	</dict>
+	<key>variablesdontexport</key>
+	<array/>
 	<key>version</key>
 	<string>3.1.3</string>
 	<key>webaddress</key>
