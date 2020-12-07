@@ -65,7 +65,7 @@
 				<key>modifiers</key>
 				<integer>524288</integer>
 				<key>modifiersubtext</key>
-				<string>Copy notes:// URL</string>
+				<string>Copy note URL</string>
 				<key>vitoclose</key>
 				<false/>
 			</dict>
@@ -144,7 +144,7 @@
 				<key>modifiers</key>
 				<integer>524288</integer>
 				<key>modifiersubtext</key>
-				<string>Copy notes:// URL</string>
+				<string>Copy note URL</string>
 				<key>vitoclose</key>
 				<false/>
 			</dict>
@@ -353,45 +353,52 @@ fi
 			<key>config</key>
 			<dict>
 				<key>applescript</key>
-				<string>on alfred_script(q)
+				<string>use framework "Foundation"
+use scripting additions
+
+property NSMutableAttributedString : a reference to current application's NSMutableAttributedString
+property NSNull : a reference to current application's NSNull
+property NSDate : a reference to current application's NSDate
+property NSNumber : a reference to current application's NSNumber
+property NSPasteboardTypeRTF : a reference to current application's NSPasteboardTypeRTF
+property NSRTFTextDocumentType : a reference to current application's NSRTFTextDocumentType
+property NSString : a reference to current application's NSString
+property NSUTF8StringEncoding : a reference to current application's NSUTF8StringEncoding
+property NOTE_URL_PREFIX : "shortcuts://run-shortcut?name=NoteURL&amp;input="
+
+on HTMLToClipboard(HTMLContent)
+    set HTMLBody to ("&lt;html&gt;&lt;head&gt;&lt;meta charset=\"UTF-8\" /&gt;&lt;/head&gt;&lt;body&gt;" &amp; HTMLContent &amp; "&lt;/body&gt;&lt;/html&gt;")
+    set NSStringHTMLBody to NSString's stringWithString:HTMLBody
+    set HTMLBodyData to NSStringHTMLBody's dataUsingEncoding:NSUTF8StringEncoding
+    set attributedString to NSMutableAttributedString's alloc()
+    attributedString's initWithHTML:HTMLBodyData documentAttributes:NSNull
+    set range to {0, attributedString's |length|}
+    set RTF to (attributedString's RTFFromRange:range documentAttributes:{DocumentType:NSRTFTextDocumentType})
+    set pasteboard to current application's NSPasteboard's generalPasteboard()
+    pasteboard's clearContents()
+    pasteboard's setData:RTF forType:NSPasteboardTypeRTF
+end clipTextAndHtml
+
+on getNoteURI(noteID)
     tell application "Notes"
-        activate
-        set noteID to text 1 thru ((offset of "?" in q)-1) of q
-        show note id noteID in default account
-        show note id noteID in default account
-        tell application "System Events"
-            tell process "Notes"
-                try
-                    set email to "sean.ballinger+alfred@gmail.com"
-                    -- Click File &gt; Share in iCloud &gt; Note...
-                    click menu item 1 of menu 1 of (menu item 4 of menu 3 of menu bar 1)
-                    -- Wait until share dialog appears
-                    repeat until (subrole of window 1 is "AXSystemDialog")
-                        delay 0.1
-                    end repeat
-                    -- Click "Copy Link" option
-                    click button 3 of group 1 of scroll area 1 of group 1 of window 1
-                    -- Keep entering email adddress until "Share" button is enabled
-                    repeat until (enabled of button 2 of window 1 is true)
-                        set value of text field 1 of group 1 of group 1 of window 1 to email
-                        delay 0.1
-                    end repeat
-                    -- Click "Share" button
-                    click button 2 of window 1
-                on error
-                    -- Click File &gt; Manage Shared Note
-                    click menu item 4 of menu 3 of menu bar 1
-                    repeat until (exists sheet 1 of window 1)
-                        delay 0.1
-                    end repeat
-                    -- Click "Copy Link" button
-                    click button 1 of group 1 of group 1 of sheet 1 of window 1
-                    -- Enter to close sheet
-                    key code 36
-                end try
-            end tell
-        end tell
+        set noteCreated to (creation date) of note id noteID in default account
+        set cocoaDate to NSDate's dateWithTimeInterval:0 sinceDate:noteCreated
+        set doubleNoteTimestamp to cocoaDate's timeIntervalSince1970
+        set intNoteTimestamp to intValue of (NSNumber's numberWithDouble:doubleNoteTimestamp)
+        set stringNoteTimestamp to stringValue of (NSNumber's numberWithInt:intNoteTimestamp)
+        set URI to (my NOTE_URL_PREFIX) &amp; stringNoteTimestamp
+        return URI
     end tell
+end getNoteURI
+
+on alfred_script(q)
+    tell application "Notes"
+        set noteID to text 1 thru ((offset of "?" in q)-1) of q
+        set URI to (my getNoteURI(noteID))
+        set noteName to name of note id noteID in default account
+        set HTMLLink to "&lt;a href=\"" &amp; URI &amp; "\"&gt;" &amp; noteName &amp; "&lt;/a&gt;"
+    end tell
+    my HTMLToClipboard(HTMLLink)
 end alfred_script</string>
 				<key>cachescript</key>
 				<true/>
@@ -664,7 +671,7 @@ or create note</string>
 		<key>6740BCB6-6818-49E2-A88A-9D19EA132F08</key>
 		<dict>
 			<key>note</key>
-			<string>⌥ Copy note:// URL</string>
+			<string>⌥ Copy note URL</string>
 			<key>xpos</key>
 			<integer>590</integer>
 			<key>ypos</key>
@@ -714,10 +721,8 @@ or create note</string>
 		<key>sortByDate</key>
 		<string>1</string>
 	</dict>
-	<key>variablesdontexport</key>
-	<array/>
 	<key>version</key>
-	<string>3.1.3</string>
+	<string>3.1.4</string>
 	<key>webaddress</key>
 	<string>https://github.com/sballin/alfred-search-notes-app</string>
 </dict>

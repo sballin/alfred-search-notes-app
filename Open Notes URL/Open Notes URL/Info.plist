@@ -27,7 +27,7 @@
 			<string>in.sball.NoteOpener</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>note</string>
+				<string>shortcuts</string>
 			</array>
 		</dict>
 	</array>

@@ -1,11 +1,3 @@
---
---  AppDelegate.applescript
---  Open Notes URL
---
---  Created by Sean on 12/5/18.
---  Copyright © 2018 Sean Ballinger. All rights reserved.
---
-
 script AppDelegate
     property parent : class "NSObject"
     
@@ -16,6 +8,7 @@ script AppDelegate
     use scripting additions
     property NSString : a reference to current application's NSString
     property NSCharacterSet : a reference to current application's NSCharacterSet
+    property NSDate : a reference to current application's NSDate
     
     -- Insert code here to initialize your application before any files are opened
     on applicationWillFinishLaunching_(aNotification)
@@ -34,10 +27,11 @@ script AppDelegate
             activate
             try
                 set noteURL to (ev's paramDescriptorForKeyword_(7.57935405E+8)) as string
-                set noteName to (NSString's stringWithString:noteURL)
-                set noteName to (noteName's stringByRemovingPercentEncoding) as text
-                set noteName to text 8 thru (count of noteName) of noteName
-                show (first note in default account whose name is noteName)
+                set timestampArg to characters 45 thru -1 of noteURL as text
+                set stringTimestamp to (NSString's stringWithString:timestampArg)
+                set doubleTimestamp to stringTimestamp's doubleValue
+                set creationDate to (NSDate's dateWithTimeIntervalSince1970:doubleTimestamp) as date
+                show first note in default account whose creation date ≥ creationDate and creation date < (creationDate + 1)
             on error errorMessage number errorNumber
                 set alertMessage to errorMessage & " (" & errorNumber & ")"
                 display alert "Open Notes URL error" message alertMessage as critical
