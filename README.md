@@ -31,8 +31,7 @@ If you're on macOS Catalina with Alfred 4, download the [latest version](https:/
 2. When an error message appears, make sure to click "Cancel" in the first dialog, then click "Open System Preferences" in the second dialog
 3. Near the bottom of the pane click the "Open Anyway" button for the "search_notes" binary
 
-<img src="https://user-images.githubusercontent.com/2719004/101306597-536b3100-3813-11eb-861e-8cbf74277255.png" width="890">
-<img src="https://user-images.githubusercontent.com/2719004/99889399-af826280-2c22-11eb-84dc-0c7972010dfa.png" width="890">
+<img src="https://user-images.githubusercontent.com/2719004/101677975-4a54ac80-3a2b-11eb-9607-491f03439294.png" width="890">
 
 This workflow currently doesn't support notes stored with Google or other internet accounts. Please make sure either iCloud or On My Mac is selected as the default account in the preferences of Notes.app.
 
@@ -51,7 +50,7 @@ You can generate links to any of your notes and use them on macOS or iOS.
     * Copy note URL [shortcut](https://www.icloud.com/shortcuts/556aba9692d64694b7073345ea224dc2) (see image below for usage instructions)
     * Open note URL [shortcut](https://www.icloud.com/shortcuts/825f1ac1d09149689c9d2406c24aef9e) works automatically when clicking a link
 
-<img src="https://user-images.githubusercontent.com/2719004/101307089-a4c7f000-3814-11eb-89cf-f2673b86c543.png" width="890">
+<img src="https://user-images.githubusercontent.com/2719004/101677973-49bc1600-3a2b-11eb-89cd-583dd468cd0c.png" width="890">
 
 ## Updates
 
