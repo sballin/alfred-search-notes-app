@@ -4,8 +4,6 @@
 <dict>
 	<key>bundleid</key>
 	<string>in.sball.searchnotes</string>
-	<key>category</key>
-	<string>Tools</string>
 	<key>connections</key>
 	<dict>
 		<key>060809AF-8160-439A-85F9-D672664E3A1A</key>
@@ -26,6 +24,19 @@
 			<dict>
 				<key>destinationuid</key>
 				<string>5BC84589-FA2A-459F-982A-54B612C9BA7F</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>3EF87700-0B31-434E-B143-43695494355F</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>6740BCB6-6818-49E2-A88A-9D19EA132F08</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -94,7 +105,7 @@
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>0B8A749B-E2E7-4B1B-9711-1C77A495BD97</string>
+				<string>7F3AA046-7770-41C7-B1A8-921CE3E6AA2B</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -118,6 +129,19 @@
 			<dict>
 				<key>destinationuid</key>
 				<string>4D8E3444-14C2-4D0E-A8C1-AA67988AE358</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>7F3AA046-7770-41C7-B1A8-921CE3E6AA2B</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>0B8A749B-E2E7-4B1B-9711-1C77A495BD97</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -161,6 +185,19 @@
 			<dict>
 				<key>destinationuid</key>
 				<string>4D8E3444-14C2-4D0E-A8C1-AA67988AE358</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>BACC5B3A-17D2-485C-93C4-761C19813FF3</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>3EF87700-0B31-434E-B143-43695494355F</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -218,11 +255,9 @@
 				<key>focusedappvariablename</key>
 				<string></string>
 				<key>hotkey</key>
-				<integer>49</integer>
+				<integer>0</integer>
 				<key>hotmod</key>
-				<integer>1572864</integer>
-				<key>hotstring</key>
-				<string>Space</string>
+				<integer>0</integer>
 				<key>leftcursor</key>
 				<false/>
 				<key>modsmode</key>
@@ -326,11 +361,9 @@ fi
 				<key>focusedappvariablename</key>
 				<string></string>
 				<key>hotkey</key>
-				<integer>37</integer>
+				<integer>0</integer>
 				<key>hotmod</key>
-				<integer>1048576</integer>
-				<key>hotstring</key>
-				<string>L</string>
+				<integer>0</integer>
 				<key>leftcursor</key>
 				<false/>
 				<key>modsmode</key>
@@ -348,6 +381,27 @@ fi
 			<string>060809AF-8160-439A-85F9-D672664E3A1A</string>
 			<key>version</key>
 			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>count</key>
+				<integer>1</integer>
+				<key>keychar</key>
+				<string>v</string>
+				<key>keycode</key>
+				<integer>-1</integer>
+				<key>keymod</key>
+				<integer>1048576</integer>
+				<key>overridewithargument</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.dispatchkeycombo</string>
+			<key>uid</key>
+			<string>7F3AA046-7770-41C7-B1A8-921CE3E6AA2B</string>
+			<key>version</key>
+			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -396,7 +450,7 @@ on alfred_script(q)
         set noteID to text 1 thru ((offset of "?" in q)-1) of q
         set URI to (my getNoteURI(noteID))
         set noteName to name of note id noteID in default account
-        set HTMLLink to "&lt;a href=\"" &amp; URI &amp; "\"&gt;" &amp; noteName &amp; "&lt;/a&gt;"
+        set HTMLLink to "&lt;a href=\"" &amp; URI &amp; "\"&gt;" &amp; noteName &amp; "&lt;/a&gt;&amp;zwnj;"
     end tell
     my HTMLToClipboard(HTMLLink)
 end alfred_script</string>
@@ -409,6 +463,30 @@ end alfred_script</string>
 			<string>6740BCB6-6818-49E2-A88A-9D19EA132F08</string>
 			<key>version</key>
 			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>wfd=$alfred_preferences/workflows/$alfred_workflow_uid
+python "$wfd/update.py" 2&gt;&gt; "$wfd/error_log.txt"</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string>update.py</string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>0B8A749B-E2E7-4B1B-9711-1C77A495BD97</string>
+			<key>version</key>
+			<integer>2</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -463,30 +541,6 @@ fi
 			<string>B9ECD7D6-EA33-4E2E-AE3E-4E22EEDD6097</string>
 			<key>version</key>
 			<integer>3</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>concurrently</key>
-				<false/>
-				<key>escaping</key>
-				<integer>102</integer>
-				<key>script</key>
-				<string>wfd=$alfred_preferences/workflows/$alfred_workflow_uid
-python "$wfd/update.py" 2&gt;&gt; "$wfd/error_log.txt"</string>
-				<key>scriptargtype</key>
-				<integer>1</integer>
-				<key>scriptfile</key>
-				<string>update.py</string>
-				<key>type</key>
-				<integer>0</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.script</string>
-			<key>uid</key>
-			<string>0B8A749B-E2E7-4B1B-9711-1C77A495BD97</string>
-			<key>version</key>
-			<integer>2</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -606,6 +660,77 @@ end alfred_script</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>focusedappvariable</key>
+				<true/>
+				<key>focusedappvariablename</key>
+				<string>focusedapp</string>
+				<key>keyword</key>
+				<string>[[</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.snippet</string>
+			<key>uid</key>
+			<string>BACC5B3A-17D2-485C-93C4-761C19813FF3</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>alfredfiltersresults</key>
+				<false/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<false/>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>escaping</key>
+				<integer>68</integer>
+				<key>keyword</key>
+				<string>nl</string>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<true/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>2</integer>
+				<key>runningsubtext</key>
+				<string>Getting notes...</string>
+				<key>script</key>
+				<string>wfd=$alfred_preferences/workflows/$alfred_workflow_uid
+"$wfd/search_notes/search_notes" title "$@" 2&gt;&gt; "$wfd/error_log.txt"
+if [[ $? != 0 ]]; then
+    osascript "$wfd/handle_error.scpt"
+fi
+</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string>cmd/search_titles/search_titles</string>
+				<key>subtext</key>
+				<string></string>
+				<key>title</key>
+				<string>Search notes</string>
+				<key>type</key>
+				<integer>0</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>3EF87700-0B31-434E-B143-43695494355F</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
 	</array>
 	<key>readme</key>
 	<string>Instructions and Help
@@ -638,9 +763,9 @@ Environment Variables
 			<key>note</key>
 			<string>Check for updates once every 24 hours</string>
 			<key>xpos</key>
-			<integer>795</integer>
+			<integer>1000</integer>
 			<key>ypos</key>
-			<integer>280</integer>
+			<integer>215</integer>
 		</dict>
 		<key>1A6D4810-ABAF-4604-9639-CC1327A279B7</key>
 		<dict>
@@ -648,6 +773,15 @@ Environment Variables
 			<integer>35</integer>
 			<key>ypos</key>
 			<integer>60</integer>
+		</dict>
+		<key>3EF87700-0B31-434E-B143-43695494355F</key>
+		<dict>
+			<key>note</key>
+			<string>Search linked note by title</string>
+			<key>xpos</key>
+			<integer>225</integer>
+			<key>ypos</key>
+			<integer>540</integer>
 		</dict>
 		<key>4D8E3444-14C2-4D0E-A8C1-AA67988AE358</key>
 		<dict>
@@ -686,6 +820,15 @@ or create note</string>
 			<key>ypos</key>
 			<integer>395</integer>
 		</dict>
+		<key>7F3AA046-7770-41C7-B1A8-921CE3E6AA2B</key>
+		<dict>
+			<key>note</key>
+			<string>Paste to frontmost app</string>
+			<key>xpos</key>
+			<integer>755</integer>
+			<key>ypos</key>
+			<integer>210</integer>
+		</dict>
 		<key>B9ECD7D6-EA33-4E2E-AE3E-4E22EEDD6097</key>
 		<dict>
 			<key>note</key>
@@ -694,6 +837,13 @@ or create note</string>
 			<integer>225</integer>
 			<key>ypos</key>
 			<integer>255</integer>
+		</dict>
+		<key>BACC5B3A-17D2-485C-93C4-761C19813FF3</key>
+		<dict>
+			<key>xpos</key>
+			<integer>45</integer>
+			<key>ypos</key>
+			<integer>540</integer>
 		</dict>
 		<key>CE746687-24FD-4E5C-841F-0D4826E007C4</key>
 		<dict>
@@ -724,7 +874,7 @@ or create note</string>
 	<key>variablesdontexport</key>
 	<array/>
 	<key>version</key>
-	<string>3.2.0</string>
+	<string>3.3.0</string>
 	<key>webaddress</key>
 	<string>https://github.com/sballin/alfred-search-notes-app</string>
 </dict>
