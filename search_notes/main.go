@@ -12,6 +12,8 @@ import (
     "io/ioutil"
     "google.golang.org/protobuf/proto"
     "golang.org/x/text/unicode/norm"
+    "golang.org/x/text/search"
+    "golang.org/x/text/language"
     "unicode"
 
     _ "github.com/mattn/go-sqlite3"
@@ -19,15 +21,15 @@ import (
     notestore "github.com/sballin/alfred-search-notes-app/proto"
 )
 
+var matcher = search.New(language.Und, search.Loose)
+
 const (
     DbPath = "~/Library/Group Containers/group.com.apple.notes/NoteStore.sqlite"
-
     TitleKey  = "title"
     SubtitleKey = "subtitle"
     ArgKey = "url"
     BodyKey = "noteBodyZipped"
     TableTextKey = "tableText"
-
     NotesSQLTemplate = `
 SELECT 
     noteTitle AS title,
@@ -208,15 +210,16 @@ func GetNoteBody(noteBytes []byte) string {
     return body
 }
 
-func BuildSubtitleAddition(body string, bodyLower string, searchLower string) string {
+func BuildSubtitleAddition(body string, search string) string {
     subtitleAddition := " | …"
     i := 0
     j := 0
+    k := 0
     for i >= 0 && j >= 0 && len(subtitleAddition) < 400 {
-        j = strings.Index(bodyLower[i:], searchLower)
+        j, k = matcher.IndexString(body[i:], search)
         if j >= 0 {
             // Include context around match up to rb or next newline
-            rb := min(len(body), i+j+len(searchLower)+25)
+            rb := min(len(body), i+k+25)
             nextNewline := strings.Index(body[i+j:rb], "\n")
             if nextNewline > 0 {
                 rb = i+j+nextNewline
@@ -248,7 +251,6 @@ func (lite LiteDB) GetResults(search string, scope string) ([]map[string]string,
         return results, err
     }
     
-    searchLower := strings.ToLower(search)
     searchFolders := false
     if (os.Getenv("searchFolders") != "0") {
         searchFolders = true
@@ -281,7 +283,7 @@ func (lite LiteDB) GetResults(search string, scope string) ([]map[string]string,
             if !ok {
                 continue
             }
-            scopeText = strings.ToLower(title)
+            scopeText = title
             if searchFolders == true {
                 // Add folder of note object to search scope (this field is empty for folder objects)
                 valFolder := columnPointers[1].(*interface{})
@@ -289,7 +291,7 @@ func (lite LiteDB) GetResults(search string, scope string) ([]map[string]string,
                 if !ok {
                     folder = ""
                 }
-                scopeText += " " + strings.ToLower(folder)
+                scopeText += " " + folder
             }
             if scope == "body" {
                 // Decompress note body data
@@ -309,18 +311,19 @@ func (lite LiteDB) GetResults(search string, scope string) ([]map[string]string,
                             }
                             // Extract protobuf-format data from unzipped note and add table text
                             body := GetNoteBody(noteBytes) + tableText
-                            bodyLower := strings.ToLower(body)
                             // Add body text to search scope
-                            scopeText += " " + bodyLower
+                            scopeText += " " + body
                             // Prepare result summary for subtitle string
-                            if strings.Contains(bodyLower, searchLower) {
-                                subtitleAddition = BuildSubtitleAddition(body, bodyLower, searchLower)
+                            firstMatch, _ := matcher.IndexString(body, search)
+                            if firstMatch >= 0 {
+                                subtitleAddition = BuildSubtitleAddition(body, search)
                             }
                         }
                     }
                 }
             }
-            if !strings.Contains(scopeText, searchLower) {
+            firstMatch, _ := matcher.IndexString(scopeText, search)
+            if firstMatch == -1 {
                 continue
             }
         }
