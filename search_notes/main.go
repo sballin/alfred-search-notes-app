@@ -403,10 +403,15 @@ func main() {
         searchRows, err := litedb.GetResults(userQuery.WordString, scope)
         PanicOnErr(err)
         
-        if (scope == "title" || scope == "body") && len(searchRows) == 0 {
+        if os.Getenv("fallbackCreateNew") == "1" && (scope == "title" || scope == "body") && len(searchRows) == 0 {
             createItem, err := CreateNoteItem(userQuery)
             PanicOnErr(err)
             alfred.Add(*createItem)
+        }
+        
+        if os.Getenv("fallbackSearchBody") == "1" && scope == "title" && len(searchRows) == 0 {
+            searchRows, err = litedb.GetResults(userQuery.WordString, "body")
+            PanicOnErr(err)
         }
         
         if len(searchRows) > 0 {
