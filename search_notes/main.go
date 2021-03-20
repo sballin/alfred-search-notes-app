@@ -210,12 +210,12 @@ func GetNoteBody(noteBytes []byte) string {
     return body
 }
 
-func BuildSubtitleAddition(body string, search string) string {
-    subtitleAddition := " | …"
+func SubtitleMatchSummary(body string, search string) string {
+    matchSummary := " | …"
     i := 0
     j := 0
     k := 0
-    for i >= 0 && j >= 0 && len(subtitleAddition) < 400 {
+    for i >= 0 && j >= 0 && len(matchSummary) < 400 {
         j, k = matcher.IndexString(body[i:], search)
         if j >= 0 {
             // Include context around match up to rb or next newline
@@ -225,11 +225,11 @@ func BuildSubtitleAddition(body string, search string) string {
                 rb = i+j+nextNewline
             }
             match := strings.ToValidUTF8(strings.Trim(body[i+j:rb], " "), "")
-            subtitleAddition += match + "…"
+            matchSummary += match + "…"
             i = rb
         }
     }
-    return subtitleAddition
+    return matchSummary
 }
 
 func (lite LiteDB) GetResults(search string, scope string) ([]map[string]string, error) {    
@@ -275,7 +275,7 @@ func (lite LiteDB) GetResults(search string, scope string) ([]map[string]string,
         }
         
         scopeText := ""
-        subtitleAddition := ""
+        matchSummary := ""
         if len(search) > 0 {
             // Add note/folder title to search scope
             valTitle := columnPointers[0].(*interface{})
@@ -316,7 +316,7 @@ func (lite LiteDB) GetResults(search string, scope string) ([]map[string]string,
                             // Prepare result summary for subtitle string
                             firstMatch, _ := matcher.IndexString(body, search)
                             if firstMatch >= 0 {
-                                subtitleAddition = BuildSubtitleAddition(body, search)
+                                matchSummary = SubtitleMatchSummary(body, search)
                             }
                         }
                     }
@@ -343,7 +343,7 @@ func (lite LiteDB) GetResults(search string, scope string) ([]map[string]string,
                 m[colName] = ""
             }
         }
-        m[SubtitleKey] += subtitleAddition
+        m[SubtitleKey] += matchSummary
         results = append(results, m)
     }
     return results, err

@@ -727,6 +727,8 @@ or create note</string>
 		<key>sortByDate</key>
 		<string>1</string>
 	</dict>
+	<key>variablesdontexport</key>
+	<array/>
 	<key>version</key>
 	<string>3.2.0</string>
 	<key>webaddress</key>
