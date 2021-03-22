@@ -34,6 +34,32 @@
 				<false/>
 			</dict>
 		</array>
+		<key>2A3C974B-57DF-4601-8EFC-4158CAA2005A</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>A057AD2C-473A-4823-8624-8891E5C187F6</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>2B0DABFD-B5B3-4733-A2E0-0676B6128E95</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>0B8A749B-E2E7-4B1B-9711-1C77A495BD97</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>4D8E3444-14C2-4D0E-A8C1-AA67988AE358</key>
 		<array>
 			<dict>
@@ -118,6 +144,19 @@
 			<dict>
 				<key>destinationuid</key>
 				<string>4D8E3444-14C2-4D0E-A8C1-AA67988AE358</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>A057AD2C-473A-4823-8624-8891E5C187F6</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>2B0DABFD-B5B3-4733-A2E0-0676B6128E95</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -288,10 +327,10 @@ end alfred_script</string>
 				<key>runningsubtext</key>
 				<string>Getting notes...</string>
 				<key>script</key>
-				<string>wfd=$alfred_preferences/workflows/$alfred_workflow_uid
-"$wfd/search_notes/search_notes" title "$@" 2&gt;&gt; "$wfd/error_log.txt"
+				<string>workflow_dir=$alfred_preferences/workflows/$alfred_workflow_uid
+"$workflow_dir/search_notes/search_notes" title "$@" 2&gt;&gt; "$workflow_dir/error_log.txt"
 if [[ $? != 0 ]]; then
-    osascript "$wfd/handle_error.scpt"
+    osascript "$workflow_dir/handle_error.scpt"
 fi
 </string>
 				<key>scriptargtype</key>
@@ -396,7 +435,7 @@ on alfred_script(q)
         set noteID to text 1 thru ((offset of "?" in q)-1) of q
         set URI to (my getNoteURI(noteID))
         set noteName to name of note id noteID in default account
-        set HTMLLink to "&lt;a href=\"" &amp; URI &amp; "\"&gt;" &amp; noteName &amp; "&lt;/a&gt;"
+        set HTMLLink to "&lt;a href=\"" &amp; URI &amp; "\"&gt;" &amp; noteName &amp; "&lt;/a&gt; "
     end tell
     my HTMLToClipboard(HTMLLink)
 end alfred_script</string>
@@ -438,10 +477,10 @@ end alfred_script</string>
 				<key>runningsubtext</key>
 				<string>Getting notes...</string>
 				<key>script</key>
-				<string>wfd=$alfred_preferences/workflows/$alfred_workflow_uid
-"$wfd/search_notes/search_notes" body "$@" 2&gt;&gt; "$wfd/error_log.txt"
+				<string>workflow_dir=$alfred_preferences/workflows/$alfred_workflow_uid
+"$workflow_dir/search_notes/search_notes" body "$@" 2&gt;&gt; "$workflow_dir/error_log.txt"
 if [[ $? != 0 ]]; then
-    osascript "$wfd/handle_error.scpt"
+    osascript "$workflow_dir/handle_error.scpt"
 fi
 </string>
 				<key>scriptargtype</key>
@@ -472,8 +511,8 @@ fi
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>wfd=$alfred_preferences/workflows/$alfred_workflow_uid
-python "$wfd/update.py" 2&gt;&gt; "$wfd/error_log.txt"</string>
+				<string>workflow_dir=$alfred_preferences/workflows/$alfred_workflow_uid
+/usr/bin/python2 "$workflow_dir/update.py" 2&gt;&gt; "$workflow_dir/error_log.txt"</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -536,10 +575,10 @@ end alfred_script</string>
 				<key>runningsubtext</key>
 				<string>Getting folders...</string>
 				<key>script</key>
-				<string>wfd=$alfred_preferences/workflows/$alfred_workflow_uid
-"$wfd/search_notes/search_notes" folder "$@" 2&gt;&gt; "$wfd/error_log.txt"
+				<string>workflow_dir=$alfred_preferences/workflows/$alfred_workflow_uid
+"$workflow_dir/search_notes/search_notes" folder "$@" 2&gt;&gt; "$workflow_dir/error_log.txt"
 if [[ $? != 0 ]]; then
-    osascript "$wfd/handle_error.scpt"
+    osascript "$workflow_dir/handle_error.scpt"
 fi
 </string>
 				<key>scriptargtype</key>
@@ -606,6 +645,137 @@ end alfred_script</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>alfredfiltersresults</key>
+				<false/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<false/>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>escaping</key>
+				<integer>68</integer>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<true/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>2</integer>
+				<key>runningsubtext</key>
+				<string>Getting notes...</string>
+				<key>script</key>
+				<string>workflow_dir=$alfred_preferences/workflows/$alfred_workflow_uid
+"$workflow_dir/search_notes/search_notes" title "$@" 2&gt;&gt; "$workflow_dir/error_log.txt"
+if [[ $? != 0 ]]; then
+    osascript "$workflow_dir/handle_error.scpt"
+fi
+</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string>cmd/search_titles/search_titles</string>
+				<key>subtext</key>
+				<string></string>
+				<key>title</key>
+				<string>Search notes</string>
+				<key>type</key>
+				<integer>0</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>A057AD2C-473A-4823-8624-8891E5C187F6</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>focusedappvariable</key>
+				<false/>
+				<key>focusedappvariablename</key>
+				<string></string>
+				<key>keyword</key>
+				<string>[[[</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.snippet</string>
+			<key>uid</key>
+			<string>2A3C974B-57DF-4601-8EFC-4158CAA2005A</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>applescript</key>
+				<string>use framework "Foundation"
+use scripting additions
+
+property NSMutableAttributedString : a reference to current application's NSMutableAttributedString
+property NSNull : a reference to current application's NSNull
+property NSDate : a reference to current application's NSDate
+property NSNumber : a reference to current application's NSNumber
+property NSPasteboardTypeRTF : a reference to current application's NSPasteboardTypeRTF
+property NSRTFTextDocumentType : a reference to current application's NSRTFTextDocumentType
+property NSString : a reference to current application's NSString
+property NSUTF8StringEncoding : a reference to current application's NSUTF8StringEncoding
+property NOTE_URL_PREFIX : "shortcuts://run-shortcut?name=NoteURL&amp;input="
+
+on HTMLToClipboard(HTMLContent)
+    set HTMLBody to ("&lt;html&gt;&lt;head&gt;&lt;meta charset=\"UTF-8\" /&gt;&lt;/head&gt;&lt;body&gt;" &amp; HTMLContent &amp; "&lt;/body&gt;&lt;/html&gt;")
+    set NSStringHTMLBody to NSString's stringWithString:HTMLBody
+    set HTMLBodyData to NSStringHTMLBody's dataUsingEncoding:NSUTF8StringEncoding
+    set attributedString to NSMutableAttributedString's alloc()
+    attributedString's initWithHTML:HTMLBodyData documentAttributes:NSNull
+    set range to {0, attributedString's |length|}
+    set RTF to (attributedString's RTFFromRange:range documentAttributes:{DocumentType:NSRTFTextDocumentType})
+    set pasteboard to current application's NSPasteboard's generalPasteboard()
+    pasteboard's clearContents()
+    pasteboard's setData:RTF forType:NSPasteboardTypeRTF
+    tell application "System Events" to keystroke "v" using command down
+end clipTextAndHtml
+
+on getNoteURI(noteID)
+    tell application "Notes"
+        set noteCreated to (creation date) of note id noteID in default account
+        set cocoaDate to NSDate's dateWithTimeInterval:0 sinceDate:noteCreated
+        set doubleNoteTimestamp to cocoaDate's timeIntervalSince1970
+        set intNoteTimestamp to intValue of (NSNumber's numberWithDouble:doubleNoteTimestamp)
+        set stringNoteTimestamp to stringValue of (NSNumber's numberWithInt:intNoteTimestamp)
+        set URI to (my NOTE_URL_PREFIX) &amp; stringNoteTimestamp
+        return URI
+    end tell
+end getNoteURI
+
+on alfred_script(q)
+    tell application "Notes"
+        set noteID to text 1 thru ((offset of "?" in q)-1) of q
+        set URI to (my getNoteURI(noteID))
+        set noteName to name of note id noteID in default account
+        set HTMLLink to "&lt;a href=\"" &amp; URI &amp; "\"&gt;" &amp; noteName &amp; "&lt;/a&gt; "
+    end tell
+    my HTMLToClipboard(HTMLLink)
+end alfred_script</string>
+				<key>cachescript</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.applescript</string>
+			<key>uid</key>
+			<string>2B0DABFD-B5B3-4733-A2E0-0676B6128E95</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
 	</array>
 	<key>readme</key>
 	<string>Instructions and Help
@@ -631,25 +801,41 @@ Environment Variables
 		<key>060809AF-8160-439A-85F9-D672664E3A1A</key>
 		<dict>
 			<key>xpos</key>
-			<integer>35</integer>
+			<integer>25</integer>
 			<key>ypos</key>
-			<integer>170</integer>
+			<integer>135</integer>
 		</dict>
 		<key>0B8A749B-E2E7-4B1B-9711-1C77A495BD97</key>
 		<dict>
 			<key>note</key>
 			<string>Check for updates once every 24 hours</string>
 			<key>xpos</key>
-			<integer>795</integer>
+			<integer>815</integer>
 			<key>ypos</key>
-			<integer>280</integer>
+			<integer>310</integer>
 		</dict>
 		<key>1A6D4810-ABAF-4604-9639-CC1327A279B7</key>
 		<dict>
 			<key>xpos</key>
-			<integer>35</integer>
+			<integer>25</integer>
 			<key>ypos</key>
-			<integer>60</integer>
+			<integer>25</integer>
+		</dict>
+		<key>2A3C974B-57DF-4601-8EFC-4158CAA2005A</key>
+		<dict>
+			<key>xpos</key>
+			<integer>25</integer>
+			<key>ypos</key>
+			<integer>595</integer>
+		</dict>
+		<key>2B0DABFD-B5B3-4733-A2E0-0676B6128E95</key>
+		<dict>
+			<key>note</key>
+			<string>Paste note link</string>
+			<key>xpos</key>
+			<integer>580</integer>
+			<key>ypos</key>
+			<integer>595</integer>
 		</dict>
 		<key>4D8E3444-14C2-4D0E-A8C1-AA67988AE358</key>
 		<dict>
@@ -657,63 +843,72 @@ Environment Variables
 			<string>Show note/folder 
 or create note</string>
 			<key>xpos</key>
-			<integer>590</integer>
+			<integer>580</integer>
 			<key>ypos</key>
-			<integer>480</integer>
+			<integer>445</integer>
 		</dict>
 		<key>5BC84589-FA2A-459F-982A-54B612C9BA7F</key>
 		<dict>
 			<key>note</key>
 			<string>Search note titles</string>
 			<key>xpos</key>
-			<integer>225</integer>
+			<integer>215</integer>
 			<key>ypos</key>
-			<integer>115</integer>
+			<integer>80</integer>
 		</dict>
 		<key>6740BCB6-6818-49E2-A88A-9D19EA132F08</key>
 		<dict>
 			<key>note</key>
 			<string>⌥ Copy note URL</string>
 			<key>xpos</key>
-			<integer>590</integer>
+			<integer>580</integer>
 			<key>ypos</key>
-			<integer>210</integer>
+			<integer>175</integer>
 		</dict>
 		<key>6F3DD843-22EF-4A97-BAF8-511894B5202D</key>
 		<dict>
 			<key>note</key>
 			<string>Search folder names</string>
 			<key>xpos</key>
-			<integer>225</integer>
+			<integer>215</integer>
 			<key>ypos</key>
-			<integer>395</integer>
+			<integer>360</integer>
+		</dict>
+		<key>A057AD2C-473A-4823-8624-8891E5C187F6</key>
+		<dict>
+			<key>note</key>
+			<string>Search note titles</string>
+			<key>xpos</key>
+			<integer>215</integer>
+			<key>ypos</key>
+			<integer>595</integer>
 		</dict>
 		<key>B9ECD7D6-EA33-4E2E-AE3E-4E22EEDD6097</key>
 		<dict>
 			<key>note</key>
 			<string>Search note bodies</string>
 			<key>xpos</key>
-			<integer>225</integer>
+			<integer>215</integer>
 			<key>ypos</key>
-			<integer>255</integer>
+			<integer>220</integer>
 		</dict>
 		<key>CE746687-24FD-4E5C-841F-0D4826E007C4</key>
 		<dict>
 			<key>note</key>
 			<string>⇧ Search in Notes toolbar</string>
 			<key>xpos</key>
-			<integer>590</integer>
+			<integer>580</integer>
 			<key>ypos</key>
-			<integer>60</integer>
+			<integer>25</integer>
 		</dict>
 		<key>DC692798-E272-4547-BE83-4B63B823E456</key>
 		<dict>
 			<key>note</key>
 			<string>⌘ Copy note body</string>
 			<key>xpos</key>
-			<integer>590</integer>
+			<integer>580</integer>
 			<key>ypos</key>
-			<integer>345</integer>
+			<integer>310</integer>
 		</dict>
 	</dict>
 	<key>variables</key>
@@ -727,8 +922,6 @@ or create note</string>
 		<key>sortByDate</key>
 		<string>1</string>
 	</dict>
-	<key>variablesdontexport</key>
-	<array/>
 	<key>version</key>
 	<string>3.2.0</string>
 	<key>webaddress</key>
