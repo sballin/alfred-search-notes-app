@@ -14,6 +14,7 @@ Steps to reproduce the behavior:
 
 **Info**
  - macOS version:
+ - CPU: Intel or Apple (M1)?
  - Alfred version:
  - Workflow version:
  - In System Preferences > Security & Privacy > Privacy, there are checkmarks for Accessibility > Alfred 4, Full Disk Access > Alfred 4, Automation > Alfred 4 > Notes, and Automation > Alfred 4 > System Events?
