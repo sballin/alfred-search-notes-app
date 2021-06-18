@@ -355,7 +355,7 @@ func RowToItem(row map[string]string, userQuery UserQuery) alfred.Item {
         Title:        row[TitleKey],
         Subtitle:     row[SubtitleKey],
         Arg:          row[ArgKey] + "," + Escape(userQuery.WordString),
-        QuicklookURL: nil,
+        QuicklookURL: " ",
     }
 }
 
