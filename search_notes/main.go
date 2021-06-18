@@ -34,7 +34,7 @@ const (
 SELECT 
     noteTitle AS title,
     folderTitle AS subtitle,
-    'x-coredata://' || z_uuid || '/ICNote/p' || xcoreDataID AS url,
+    'x-coredata://' || z_uuid || '/ICNote/p' || xcoreDataID || ',' || 'x-coredata://' || z_uuid || '/ICAccount/p' || accountID AS url,
     noteBodyZipped,
     tableText
 FROM (
@@ -43,6 +43,7 @@ FROM (
         c.zfolder AS noteFolderID,
         c.zmodificationdate1 AS modDate,
         c.z_pk AS xcoredataID,
+        c.zaccount3 AS accountID,
         n.zdata AS noteBodyZipped
     FROM 
         ziccloudsyncingobject AS c
@@ -83,7 +84,7 @@ ORDER BY %s
 SELECT 
     ztitle2 AS title,
     '' AS subtitle,
-    'x-coredata://' || z_uuid || '/ICFolder/p' || z_pk AS url
+    'x-coredata://' || z_uuid || '/ICFolder/p' || z_pk || ',' || 'x-coredata://' || z_uuid || '/ICAccount/p' || zaccount4 AS url
 FROM ziccloudsyncingobject
 LEFT JOIN (
     SELECT z_uuid FROM z_metadata
@@ -353,7 +354,7 @@ func RowToItem(row map[string]string, userQuery UserQuery) alfred.Item {
     return alfred.Item{
         Title:        row[TitleKey],
         Subtitle:     row[SubtitleKey],
-        Arg:          row[ArgKey] + "?" + Escape(userQuery.WordString),
+        Arg:          row[ArgKey] + "," + Escape(userQuery.WordString),
         QuicklookURL: nil,
     }
 }

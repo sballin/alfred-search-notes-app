@@ -280,10 +280,14 @@
 			<key>config</key>
 			<dict>
 				<key>applescript</key>
-				<string>on alfred_script(q)
-	tell application "System Events"		tell process "Notes"			set frontmost to true			click menu item 1 of menu of menu item 16 of menu 4 of menu bar 1 -- Edit, Find, Note List Search…
-			-- Get user search query which is second half of q
-			set userQuery to text ((offset of "?" in q)+1) thru -1 of q
+				<string>-- This script takes "URLs" of format "itemID,accountID,userQuery" or just "userQuery"
+
+on alfred_script(q)
+	tell application "System Events"		tell process "Notes"
+			-- Get search string 
+			set remainder to text ((offset of "," in q)+1) thru -1 of q
+			set userQuery to text ((offset of "," in remainder)+1) thru -1 of remainder
+			-- Enter the string in the Notes search bar			set frontmost to true			click menu item 1 of menu of menu item 16 of menu 4 of menu bar 1 -- Edit, Find, Note List Search…
 			set clipboardOld to the clipboard
 			set the clipboard to userQuery			click menu item 6 of menu 4 of menu bar 1 -- Edit, Paste
 			delay 0.1
@@ -531,10 +535,13 @@ fi
 			<key>config</key>
 			<dict>
 				<key>applescript</key>
-				<string>on alfred_script(q)
-	-- Get note id which is first item in q
-	set q to text 1 thru ((offset of "?" in q)-1) of q
-	tell application "Notes" to get plaintext of note id q in default account	set body to text (paragraph 2) thru -1 of the result
+				<string>-- This script takes "URLs" of format "itemID,accountID,userQuery"
+
+on alfred_script(q)
+	set noteID to text 1 thru ((offset of "," in q)-1) of q
+	set remainder to text ((offset of "," in q)+1) thru -1 of q
+	set accountID to text 1 thru ((offset of "," in remainder)-1) of remainder
+	tell application "Notes" to get plaintext of note id noteID in account id accountID	set body to text (paragraph 2) thru -1 of the result
 	set the clipboard to body
 end alfred_script</string>
 				<key>cachescript</key>
@@ -605,27 +612,30 @@ fi
 			<key>config</key>
 			<dict>
 				<key>applescript</key>
-				<string>-- Some commands need to run twice otherwise they fail when toolbar search is active
+				<string>-- This script takes "URLs" of format "itemID,accountID,userQuery" or just "userQuery"
+-- Some commands need to run twice, otherwise they fail when toolbar search is active
 
 on alfred_script(q)
 	tell application "Notes"
 		if q contains "/ICNote/p" then
-			-- Show user requested note
-			-- Get note id which is first item in q
-			set noteID to text 1 thru ((offset of "?" in q)-1) of q
-			show note id noteID in default account
-			show note id noteID in default account
+			-- Show user-requested note
+			set noteID to text 1 thru ((offset of "," in q)-1) of q
+			set remainder to text ((offset of "," in q)+1) thru -1 of q
+			set accountID to text 1 thru ((offset of "," in remainder)-1) of remainder
+			show note id noteID in account id accountID
+			show note id noteID in account id accountID
 		else if q contains "/ICFolder/p" then
-			-- Show user requested folder
-			-- Get folder id which is first item in q
-			set folderID to text 1 thru ((offset of "?" in q)-1) of q
-			show folder id folderID in default account
-			show folder id folderID in default account
+			-- Show user-requested folder
+			set folderID to text 1 thru ((offset of "," in q)-1) of q
+			set remainder to text ((offset of "," in q)+1) thru -1 of q
+			set accountID to text 1 thru ((offset of "," in remainder)-1) of remainder
+			show folder id folderID in account id accountID
+			show folder id folderID in account id accountID
 		else
+			-- Move focus from any other folder/state to default "Notes" folder
+			show default folder in default account
+			show default folder in default account
 			-- Create new note from user query
-			-- Move from any other folder/state to default "Notes" folder
-			show default folder in default account
-			show default folder in default account
 			tell application "System Events"				tell process "Notes"					click menu item 1 of menu 3 of menu bar 1 -- File, New Note
 					set clipboardOld to the clipboard
 					set the clipboard to q					click menu item 6 of menu 4 of menu bar 1 -- Edit, Paste
@@ -914,9 +924,9 @@ or create note</string>
 	<key>variables</key>
 	<dict>
 		<key>fallbackCreateNew</key>
-		<string>0</string>
-		<key>fallbackSearchBody</key>
 		<string>1</string>
+		<key>fallbackSearchBody</key>
+		<string>0</string>
 		<key>searchFolders</key>
 		<string>1</string>
 		<key>sortByDate</key>
