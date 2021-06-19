@@ -632,18 +632,18 @@ on alfred_script(q)
 			show folder id folderID in account id accountID
 			show folder id folderID in account id accountID
 		else
-			-- Move focus from any other folder/state to default "Notes" folder
-			show default folder in default account
-			show default folder in default account
 			-- Create new note from user query
-			tell application "System Events"				tell process "Notes"					click menu item 1 of menu 3 of menu bar 1 -- File, New Note
-					set clipboardOld to the clipboard
-					set the clipboard to q					click menu item 6 of menu 4 of menu bar 1 -- Edit, Paste
-					click menu item 1 of menu 5 of menu bar 1 -- Format, Title
-					key code {36, 36} -- press enter twice
-					delay 0.1
-					set the clipboard to clipboardOld				end tell			end tell
-		end if	end tell
+			tell default account to make new note at default folder with properties {body:"&lt;div&gt;&lt;h1&gt;" &amp; q &amp; "&lt;/h1&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;"}
+			show first note in default account
+			show first note in default account
+			tell application "System Events"
+				tell process "Notes"
+					set focused of text area of scroll area of group 1 of splitter group 1 of splitter group 1 of window 1 to true
+					key code {125,125} -- down, down
+				end tell
+			end tell
+		end if
+	end tell
 end alfred_script</string>
 				<key>cachescript</key>
 				<true/>
