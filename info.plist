@@ -21,6 +21,19 @@
 				<false/>
 			</dict>
 		</array>
+		<key>092EA403-A1D7-49DA-B8DD-8D785DDAB3B9</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>0B8A749B-E2E7-4B1B-9711-1C77A495BD97</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>1A6D4810-ABAF-4604-9639-CC1327A279B7</key>
 		<array>
 			<dict>
@@ -121,6 +134,19 @@
 			<dict>
 				<key>destinationuid</key>
 				<string>0B8A749B-E2E7-4B1B-9711-1C77A495BD97</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>69AB99D4-3231-4959-828B-383C93051FCC</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>092EA403-A1D7-49DA-B8DD-8D785DDAB3B9</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -510,30 +536,6 @@ fi
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>concurrently</key>
-				<false/>
-				<key>escaping</key>
-				<integer>102</integer>
-				<key>script</key>
-				<string>workflow_dir=$alfred_preferences/workflows/$alfred_workflow_uid
-/usr/bin/python2 "$workflow_dir/update.py" 2&gt;&gt; "$workflow_dir/error_log.txt"</string>
-				<key>scriptargtype</key>
-				<integer>1</integer>
-				<key>scriptfile</key>
-				<string>update.py</string>
-				<key>type</key>
-				<integer>0</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.script</string>
-			<key>uid</key>
-			<string>0B8A749B-E2E7-4B1B-9711-1C77A495BD97</string>
-			<key>version</key>
-			<integer>2</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
 				<key>applescript</key>
 				<string>-- This script takes "URLs" of format "itemID,accountID,userQuery"
 
@@ -611,6 +613,30 @@ fi
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>workflow_dir=$alfred_preferences/workflows/$alfred_workflow_uid
+/usr/bin/python2 "$workflow_dir/update.py" 2&gt;&gt; "$workflow_dir/error_log.txt"</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string>update.py</string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>0B8A749B-E2E7-4B1B-9711-1C77A495BD97</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>applescript</key>
 				<string>-- This script takes "URLs" of format "itemID,accountID,userQuery" or just "userQuery"
 -- Some commands need to run twice, otherwise they fail when toolbar search is active
@@ -652,6 +678,57 @@ end alfred_script</string>
 			<string>alfred.workflow.action.applescript</string>
 			<key>uid</key>
 			<string>4D8E3444-14C2-4D0E-A8C1-AA67988AE358</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>0</integer>
+				<key>keyword</key>
+				<string>nc</string>
+				<key>subtext</key>
+				<string>Create new note</string>
+				<key>text</key>
+				<string>{query}</string>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>69AB99D4-3231-4959-828B-383C93051FCC</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>applescript</key>
+				<string>-- Some commands need to run twice, otherwise they fail when toolbar search is active
+
+on alfred_script(q)
+	tell application "Notes"
+		-- Create new note from user query
+		tell default account to make new note at default folder with properties {body:"&lt;div&gt;&lt;h1&gt;" &amp; q &amp; "&lt;/h1&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;"}
+		show first note in default account
+		show first note in default account
+		tell application "System Events"
+			tell process "Notes"
+				set focused of text area of scroll area of group 1 of splitter group 1 of splitter group 1 of window 1 to true
+				key code {125,125} -- down, down
+			end tell
+		end tell
+	end tell
+end alfred_script</string>
+				<key>cachescript</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.applescript</string>
+			<key>uid</key>
+			<string>092EA403-A1D7-49DA-B8DD-8D785DDAB3B9</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -815,6 +892,15 @@ Environment Variables
 			<key>ypos</key>
 			<integer>135</integer>
 		</dict>
+		<key>092EA403-A1D7-49DA-B8DD-8D785DDAB3B9</key>
+		<dict>
+			<key>note</key>
+			<string>Create new note</string>
+			<key>xpos</key>
+			<integer>580</integer>
+			<key>ypos</key>
+			<integer>630</integer>
+		</dict>
 		<key>0B8A749B-E2E7-4B1B-9711-1C77A495BD97</key>
 		<dict>
 			<key>note</key>
@@ -822,7 +908,7 @@ Environment Variables
 			<key>xpos</key>
 			<integer>815</integer>
 			<key>ypos</key>
-			<integer>310</integer>
+			<integer>380</integer>
 		</dict>
 		<key>1A6D4810-ABAF-4604-9639-CC1327A279B7</key>
 		<dict>
@@ -836,7 +922,7 @@ Environment Variables
 			<key>xpos</key>
 			<integer>25</integer>
 			<key>ypos</key>
-			<integer>595</integer>
+			<integer>765</integer>
 		</dict>
 		<key>2B0DABFD-B5B3-4733-A2E0-0676B6128E95</key>
 		<dict>
@@ -845,7 +931,7 @@ Environment Variables
 			<key>xpos</key>
 			<integer>580</integer>
 			<key>ypos</key>
-			<integer>595</integer>
+			<integer>765</integer>
 		</dict>
 		<key>4D8E3444-14C2-4D0E-A8C1-AA67988AE358</key>
 		<dict>
@@ -875,6 +961,15 @@ or create note</string>
 			<key>ypos</key>
 			<integer>175</integer>
 		</dict>
+		<key>69AB99D4-3231-4959-828B-383C93051FCC</key>
+		<dict>
+			<key>note</key>
+			<string>Create new note</string>
+			<key>xpos</key>
+			<integer>215</integer>
+			<key>ypos</key>
+			<integer>630</integer>
+		</dict>
 		<key>6F3DD843-22EF-4A97-BAF8-511894B5202D</key>
 		<dict>
 			<key>note</key>
@@ -891,7 +986,7 @@ or create note</string>
 			<key>xpos</key>
 			<integer>215</integer>
 			<key>ypos</key>
-			<integer>595</integer>
+			<integer>765</integer>
 		</dict>
 		<key>B9ECD7D6-EA33-4E2E-AE3E-4E22EEDD6097</key>
 		<dict>
