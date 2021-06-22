@@ -358,11 +358,12 @@ end alfred_script</string>
 				<string>Getting notes...</string>
 				<key>script</key>
 				<string>workflow_dir=$alfred_preferences/workflows/$alfred_workflow_uid
-"$workflow_dir/search_notes/search_notes" title "$@" 2&gt;&gt; "$workflow_dir/error_log.txt"
+out=`"$workflow_dir/search_notes/search_notes" title "$@" 2&gt;&amp;1`
 if [[ $? != 0 ]]; then
-    osascript "$workflow_dir/handle_error.scpt"
-fi
-</string>
+	osascript "$workflow_dir/handle_error.scpt" "$out"
+else
+	echo $out
+fi</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -514,11 +515,12 @@ end alfred_script</string>
 				<string>Getting notes...</string>
 				<key>script</key>
 				<string>workflow_dir=$alfred_preferences/workflows/$alfred_workflow_uid
-"$workflow_dir/search_notes/search_notes" body "$@" 2&gt;&gt; "$workflow_dir/error_log.txt"
+out=`"$workflow_dir/search_notes/search_notes" body "$@" 2&gt;&amp;1`
 if [[ $? != 0 ]]; then
-    osascript "$workflow_dir/handle_error.scpt"
-fi
-</string>
+	osascript "$workflow_dir/handle_error.scpt" "$out"
+else
+	echo $out
+fi</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -596,11 +598,12 @@ end alfred_script</string>
 				<string>Getting folders...</string>
 				<key>script</key>
 				<string>workflow_dir=$alfred_preferences/workflows/$alfred_workflow_uid
-"$workflow_dir/search_notes/search_notes" folder "$@" 2&gt;&gt; "$workflow_dir/error_log.txt"
+out=`"$workflow_dir/search_notes/search_notes" folder "$@" 2&gt;&amp;1`
 if [[ $? != 0 ]]; then
-    osascript "$workflow_dir/handle_error.scpt"
-fi
-</string>
+	osascript "$workflow_dir/handle_error.scpt" "$out"
+else
+	echo $out
+fi</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -849,11 +852,12 @@ end alfred_script</string>
 				<string>Getting notes...</string>
 				<key>script</key>
 				<string>workflow_dir=$alfred_preferences/workflows/$alfred_workflow_uid
-"$workflow_dir/search_notes/search_notes" title "$@" 2&gt;&gt; "$workflow_dir/error_log.txt"
+out=`"$workflow_dir/search_notes/search_notes" title "$@" 2&gt;&amp;1`
 if [[ $? != 0 ]]; then
-    osascript "$workflow_dir/handle_error.scpt"
-fi
-</string>
+	osascript "$workflow_dir/handle_error.scpt" "$out"
+else
+	echo $out
+fi</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
