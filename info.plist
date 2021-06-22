@@ -34,6 +34,19 @@
 				<false/>
 			</dict>
 		</array>
+		<key>14902FD8-DA9B-4C0E-A2F0-3BE5848F032D</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>AB623BD1-CD19-46E1-AFE2-A60E1FEC35CE</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>1A6D4810-ABAF-4604-9639-CC1327A279B7</key>
 		<array>
 			<dict>
@@ -271,6 +284,51 @@
 	<string>Search Notes</string>
 	<key>objects</key>
 	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>workflow_dir=$alfred_preferences/workflows/$alfred_workflow_uid
+xattr -rd com.apple.quarantine "$workflow_dir"</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string>update.py</string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>AB623BD1-CD19-46E1-AFE2-A60E1FEC35CE</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>2</integer>
+				<key>keyword</key>
+				<string>authnotes</string>
+				<key>subtext</key>
+				<string></string>
+				<key>text</key>
+				<string>Authorize search_notes binary</string>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>14902FD8-DA9B-4C0E-A2F0-3BE5848F032D</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
 		<dict>
 			<key>config</key>
 			<dict>
@@ -922,7 +980,7 @@ Environment Variables
 			<key>xpos</key>
 			<integer>25</integer>
 			<key>ypos</key>
-			<integer>135</integer>
+			<integer>280</integer>
 		</dict>
 		<key>092EA403-A1D7-49DA-B8DD-8D785DDAB3B9</key>
 		<dict>
@@ -931,23 +989,32 @@ Environment Variables
 			<key>xpos</key>
 			<integer>580</integer>
 			<key>ypos</key>
-			<integer>595</integer>
+			<integer>740</integer>
 		</dict>
 		<key>0B8A749B-E2E7-4B1B-9711-1C77A495BD97</key>
 		<dict>
 			<key>note</key>
-			<string>Check for updates once every 24 hours</string>
+			<string>Check for updates if more than 24 hours since last check</string>
 			<key>xpos</key>
 			<integer>815</integer>
 			<key>ypos</key>
-			<integer>380</integer>
+			<integer>525</integer>
+		</dict>
+		<key>14902FD8-DA9B-4C0E-A2F0-3BE5848F032D</key>
+		<dict>
+			<key>note</key>
+			<string>Authorize search_notes binary</string>
+			<key>xpos</key>
+			<integer>265</integer>
+			<key>ypos</key>
+			<integer>20</integer>
 		</dict>
 		<key>1A6D4810-ABAF-4604-9639-CC1327A279B7</key>
 		<dict>
 			<key>xpos</key>
 			<integer>25</integer>
 			<key>ypos</key>
-			<integer>25</integer>
+			<integer>170</integer>
 		</dict>
 		<key>2A3C974B-57DF-4601-8EFC-4158CAA2005A</key>
 		<dict>
@@ -956,7 +1023,7 @@ Environment Variables
 			<key>xpos</key>
 			<integer>25</integer>
 			<key>ypos</key>
-			<integer>730</integer>
+			<integer>875</integer>
 		</dict>
 		<key>4D8E3444-14C2-4D0E-A8C1-AA67988AE358</key>
 		<dict>
@@ -966,7 +1033,7 @@ or create note</string>
 			<key>xpos</key>
 			<integer>580</integer>
 			<key>ypos</key>
-			<integer>445</integer>
+			<integer>590</integer>
 		</dict>
 		<key>5BC84589-FA2A-459F-982A-54B612C9BA7F</key>
 		<dict>
@@ -975,7 +1042,7 @@ or create note</string>
 			<key>xpos</key>
 			<integer>265</integer>
 			<key>ypos</key>
-			<integer>80</integer>
+			<integer>225</integer>
 		</dict>
 		<key>6740BCB6-6818-49E2-A88A-9D19EA132F08</key>
 		<dict>
@@ -984,7 +1051,7 @@ or create note</string>
 			<key>xpos</key>
 			<integer>580</integer>
 			<key>ypos</key>
-			<integer>175</integer>
+			<integer>320</integer>
 		</dict>
 		<key>69AB99D4-3231-4959-828B-383C93051FCC</key>
 		<dict>
@@ -993,7 +1060,7 @@ or create note</string>
 			<key>xpos</key>
 			<integer>265</integer>
 			<key>ypos</key>
-			<integer>595</integer>
+			<integer>740</integer>
 		</dict>
 		<key>6F3DD843-22EF-4A97-BAF8-511894B5202D</key>
 		<dict>
@@ -1002,7 +1069,7 @@ or create note</string>
 			<key>xpos</key>
 			<integer>265</integer>
 			<key>ypos</key>
-			<integer>360</integer>
+			<integer>505</integer>
 		</dict>
 		<key>A057AD2C-473A-4823-8624-8891E5C187F6</key>
 		<dict>
@@ -1011,7 +1078,16 @@ or create note</string>
 			<key>xpos</key>
 			<integer>265</integer>
 			<key>ypos</key>
-			<integer>730</integer>
+			<integer>875</integer>
+		</dict>
+		<key>AB623BD1-CD19-46E1-AFE2-A60E1FEC35CE</key>
+		<dict>
+			<key>note</key>
+			<string>Authorize search_notes binary</string>
+			<key>xpos</key>
+			<integer>580</integer>
+			<key>ypos</key>
+			<integer>20</integer>
 		</dict>
 		<key>B9ECD7D6-EA33-4E2E-AE3E-4E22EEDD6097</key>
 		<dict>
@@ -1020,7 +1096,7 @@ or create note</string>
 			<key>xpos</key>
 			<integer>265</integer>
 			<key>ypos</key>
-			<integer>220</integer>
+			<integer>365</integer>
 		</dict>
 		<key>CE746687-24FD-4E5C-841F-0D4826E007C4</key>
 		<dict>
@@ -1029,7 +1105,7 @@ or create note</string>
 			<key>xpos</key>
 			<integer>580</integer>
 			<key>ypos</key>
-			<integer>25</integer>
+			<integer>170</integer>
 		</dict>
 		<key>DC692798-E272-4547-BE83-4B63B823E456</key>
 		<dict>
@@ -1038,7 +1114,7 @@ or create note</string>
 			<key>xpos</key>
 			<integer>580</integer>
 			<key>ypos</key>
-			<integer>310</integer>
+			<integer>455</integer>
 		</dict>
 		<key>E91B4B80-CB26-4BC2-B808-5EC8A43F3E25</key>
 		<dict>
@@ -1047,7 +1123,7 @@ or create note</string>
 			<key>xpos</key>
 			<integer>580</integer>
 			<key>ypos</key>
-			<integer>730</integer>
+			<integer>875</integer>
 		</dict>
 	</dict>
 	<key>variables</key>
