@@ -60,19 +60,6 @@
 				<false/>
 			</dict>
 		</array>
-		<key>2B0DABFD-B5B3-4733-A2E0-0676B6128E95</key>
-		<array>
-			<dict>
-				<key>destinationuid</key>
-				<string>0B8A749B-E2E7-4B1B-9711-1C77A495BD97</string>
-				<key>modifiers</key>
-				<integer>0</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
-		</array>
 		<key>4D8E3444-14C2-4D0E-A8C1-AA67988AE358</key>
 		<array>
 			<dict>
@@ -104,7 +91,7 @@
 				<key>modifiers</key>
 				<integer>524288</integer>
 				<key>modifiersubtext</key>
-				<string>Copy note URL</string>
+				<string>Copy link to note</string>
 				<key>vitoclose</key>
 				<false/>
 			</dict>
@@ -182,7 +169,7 @@
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>2B0DABFD-B5B3-4733-A2E0-0676B6128E95</string>
+				<string>E91B4B80-CB26-4BC2-B808-5EC8A43F3E25</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -209,7 +196,7 @@
 				<key>modifiers</key>
 				<integer>524288</integer>
 				<key>modifiersubtext</key>
-				<string>Copy note URL</string>
+				<string>Copy link to note</string>
 				<key>vitoclose</key>
 				<false/>
 			</dict>
@@ -248,6 +235,19 @@
 			</dict>
 		</array>
 		<key>DC692798-E272-4547-BE83-4B63B823E456</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>0B8A749B-E2E7-4B1B-9711-1C77A495BD97</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>E91B4B80-CB26-4BC2-B808-5EC8A43F3E25</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
@@ -422,7 +422,9 @@ fi
 			<key>config</key>
 			<dict>
 				<key>applescript</key>
-				<string>use framework "Foundation"
+				<string>-- This script takes "URLs" of format "itemID,accountID,userQuery" or just "userQuery"
+
+use framework "Foundation"
 use scripting additions
 
 property NSMutableAttributedString : a reference to current application's NSMutableAttributedString
@@ -436,38 +438,42 @@ property NSUTF8StringEncoding : a reference to current application's NSUTF8Strin
 property NOTE_URL_PREFIX : "shortcuts://run-shortcut?name=NoteURL&amp;input="
 
 on HTMLToClipboard(HTMLContent)
-    set HTMLBody to ("&lt;html&gt;&lt;head&gt;&lt;meta charset=\"UTF-8\" /&gt;&lt;/head&gt;&lt;body&gt;" &amp; HTMLContent &amp; "&lt;/body&gt;&lt;/html&gt;")
-    set NSStringHTMLBody to NSString's stringWithString:HTMLBody
-    set HTMLBodyData to NSStringHTMLBody's dataUsingEncoding:NSUTF8StringEncoding
-    set attributedString to NSMutableAttributedString's alloc()
-    attributedString's initWithHTML:HTMLBodyData documentAttributes:NSNull
-    set range to {0, attributedString's |length|}
-    set RTF to (attributedString's RTFFromRange:range documentAttributes:{DocumentType:NSRTFTextDocumentType})
-    set pasteboard to current application's NSPasteboard's generalPasteboard()
-    pasteboard's clearContents()
-    pasteboard's setData:RTF forType:NSPasteboardTypeRTF
+	set HTMLBody to ("&lt;html&gt;&lt;head&gt;&lt;meta charset=\"UTF-8\" /&gt;&lt;/head&gt;&lt;body&gt;" &amp; HTMLContent &amp; "&lt;/body&gt;&lt;/html&gt;")
+	set NSStringHTMLBody to NSString's stringWithString:HTMLBody
+	set HTMLBodyData to NSStringHTMLBody's dataUsingEncoding:NSUTF8StringEncoding
+	set attributedString to NSMutableAttributedString's alloc()
+	attributedString's initWithHTML:HTMLBodyData documentAttributes:NSNull
+	set range to {0, attributedString's |length|}
+	set RTF to (attributedString's RTFFromRange:range documentAttributes:{DocumentType:NSRTFTextDocumentType})
+	set pasteboard to current application's NSPasteboard's generalPasteboard()
+	pasteboard's clearContents()
+	pasteboard's setData:RTF forType:NSPasteboardTypeRTF
 end clipTextAndHtml
 
 on getNoteURI(noteID)
-    tell application "Notes"
-        set noteCreated to (creation date) of note id noteID in default account
-        set cocoaDate to NSDate's dateWithTimeInterval:0 sinceDate:noteCreated
-        set doubleNoteTimestamp to cocoaDate's timeIntervalSince1970
-        set intNoteTimestamp to intValue of (NSNumber's numberWithDouble:doubleNoteTimestamp)
-        set stringNoteTimestamp to stringValue of (NSNumber's numberWithInt:intNoteTimestamp)
-        set URI to (my NOTE_URL_PREFIX) &amp; stringNoteTimestamp
-        return URI
-    end tell
+	tell application "Notes"
+		try
+			set noteCreated to (creation date) of note id noteID in default account
+		on error errMsg
+			display alert "This workflow can only create links to notes in the default account." message errMsg
+		end try
+		set cocoaDate to NSDate's dateWithTimeInterval:0 sinceDate:noteCreated
+		set doubleNoteTimestamp to cocoaDate's timeIntervalSince1970
+		set intNoteTimestamp to intValue of (NSNumber's numberWithDouble:doubleNoteTimestamp)
+		set stringNoteTimestamp to stringValue of (NSNumber's numberWithInt:intNoteTimestamp)
+		set URI to (my NOTE_URL_PREFIX) &amp; stringNoteTimestamp
+		return URI
+	end tell
 end getNoteURI
 
 on alfred_script(q)
-    tell application "Notes"
-        set noteID to text 1 thru ((offset of "?" in q)-1) of q
-        set URI to (my getNoteURI(noteID))
-        set noteName to name of note id noteID in default account
-        set HTMLLink to "&lt;a href=\"" &amp; URI &amp; "\"&gt;" &amp; noteName &amp; "&lt;/a&gt; "
-    end tell
-    my HTMLToClipboard(HTMLLink)
+	tell application "Notes"
+		set noteID to text 1 thru ((offset of "," in q)-1) of q
+		set URI to (my getNoteURI(noteID))
+		set noteName to name of note id noteID in default account
+		set HTMLLink to "&lt;a href=\"" &amp; URI &amp; "\"&gt;" &amp; noteName &amp; "&lt;/a&gt; "
+	end tell
+	my HTMLToClipboard(HTMLLink)
 end alfred_script</string>
 				<key>cachescript</key>
 				<true/>
@@ -538,12 +544,17 @@ fi
 			<dict>
 				<key>applescript</key>
 				<string>-- This script takes "URLs" of format "itemID,accountID,userQuery"
+-- accountID can be the string "null", if so the default account is used
 
 on alfred_script(q)
 	set noteID to text 1 thru ((offset of "," in q)-1) of q
 	set remainder to text ((offset of "," in q)+1) thru -1 of q
 	set accountID to text 1 thru ((offset of "," in remainder)-1) of remainder
-	tell application "Notes" to get plaintext of note id noteID in account id accountID	set body to text (paragraph 2) thru -1 of the result
+	if accountID is "null" then
+		tell application "Notes" to get plaintext of note id noteID in default account
+	else
+		tell application "Notes" to get plaintext of note id noteID in account id accountID
+	end if	set body to text (paragraph 2) thru -1 of the result
 	set the clipboard to body
 end alfred_script</string>
 				<key>cachescript</key>
@@ -639,6 +650,7 @@ fi
 			<dict>
 				<key>applescript</key>
 				<string>-- This script takes "URLs" of format "itemID,accountID,userQuery" or just "userQuery"
+-- accountID can be the string "null", if so the default account is used
 -- Some commands need to run twice, otherwise they fail when toolbar search is active
 
 on alfred_script(q)
@@ -648,15 +660,25 @@ on alfred_script(q)
 			set noteID to text 1 thru ((offset of "," in q)-1) of q
 			set remainder to text ((offset of "," in q)+1) thru -1 of q
 			set accountID to text 1 thru ((offset of "," in remainder)-1) of remainder
-			show note id noteID in account id accountID
-			show note id noteID in account id accountID
+			if accountID is "null" then
+				show note id noteID in default account
+				show note id noteID in default account
+			else
+				show note id noteID in account id accountID
+				show note id noteID in account id accountID
+			end if 
 		else if q contains "/ICFolder/p" then
 			-- Show user-requested folder
 			set folderID to text 1 thru ((offset of "," in q)-1) of q
 			set remainder to text ((offset of "," in q)+1) thru -1 of q
 			set accountID to text 1 thru ((offset of "," in remainder)-1) of remainder
-			show folder id folderID in account id accountID
-			show folder id folderID in account id accountID
+			if accountID is "null" then
+				show folder id folderID in default account
+				show folder id folderID in default account
+			else
+				show folder id folderID in account id accountID
+				show folder id folderID in account id accountID
+			end if 
 		else
 			-- Create new note from user query
 			tell default account to make new note at default folder with properties {body:"&lt;div&gt;&lt;h1&gt;" &amp; q &amp; "&lt;/h1&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;"}
@@ -689,9 +711,9 @@ end alfred_script</string>
 				<key>keyword</key>
 				<string>nc</string>
 				<key>subtext</key>
-				<string>Create new note</string>
+				<string></string>
 				<key>text</key>
-				<string>{query}</string>
+				<string>Create new note '{query}'</string>
 				<key>withspace</key>
 				<true/>
 			</dict>
@@ -729,6 +751,74 @@ end alfred_script</string>
 			<string>alfred.workflow.action.applescript</string>
 			<key>uid</key>
 			<string>092EA403-A1D7-49DA-B8DD-8D785DDAB3B9</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>applescript</key>
+				<string>-- This script takes "URLs" of format "itemID,accountID,userQuery" or just "userQuery"
+
+use framework "Foundation"
+use scripting additions
+
+property NSMutableAttributedString : a reference to current application's NSMutableAttributedString
+property NSNull : a reference to current application's NSNull
+property NSDate : a reference to current application's NSDate
+property NSNumber : a reference to current application's NSNumber
+property NSPasteboardTypeRTF : a reference to current application's NSPasteboardTypeRTF
+property NSRTFTextDocumentType : a reference to current application's NSRTFTextDocumentType
+property NSString : a reference to current application's NSString
+property NSUTF8StringEncoding : a reference to current application's NSUTF8StringEncoding
+property NOTE_URL_PREFIX : "shortcuts://run-shortcut?name=NoteURL&amp;input="
+
+on HTMLToClipboard(HTMLContent)
+	set HTMLBody to ("&lt;html&gt;&lt;head&gt;&lt;meta charset=\"UTF-8\" /&gt;&lt;/head&gt;&lt;body&gt;" &amp; HTMLContent &amp; "&lt;/body&gt;&lt;/html&gt;")
+	set NSStringHTMLBody to NSString's stringWithString:HTMLBody
+	set HTMLBodyData to NSStringHTMLBody's dataUsingEncoding:NSUTF8StringEncoding
+	set attributedString to NSMutableAttributedString's alloc()
+	attributedString's initWithHTML:HTMLBodyData documentAttributes:NSNull
+	set range to {0, attributedString's |length|}
+	set RTF to (attributedString's RTFFromRange:range documentAttributes:{DocumentType:NSRTFTextDocumentType})
+	set pasteboard to current application's NSPasteboard's generalPasteboard()
+	pasteboard's clearContents()
+	pasteboard's setData:RTF forType:NSPasteboardTypeRTF
+end clipTextAndHtml
+
+on getNoteURI(noteID)
+	tell application "Notes"
+		try
+			set noteCreated to (creation date) of note id noteID in default account
+		on error errMsg
+			display alert "This workflow can only create links to notes in the default account." message errMsg
+		end try
+		set cocoaDate to NSDate's dateWithTimeInterval:0 sinceDate:noteCreated
+		set doubleNoteTimestamp to cocoaDate's timeIntervalSince1970
+		set intNoteTimestamp to intValue of (NSNumber's numberWithDouble:doubleNoteTimestamp)
+		set stringNoteTimestamp to stringValue of (NSNumber's numberWithInt:intNoteTimestamp)
+		set URI to (my NOTE_URL_PREFIX) &amp; stringNoteTimestamp
+		return URI
+	end tell
+end getNoteURI
+
+on alfred_script(q)
+	tell application "Notes"
+		set noteID to text 1 thru ((offset of "," in q)-1) of q
+		set URI to (my getNoteURI(noteID))
+		set noteName to name of note id noteID in default account
+		set HTMLLink to "&lt;a href=\"" &amp; URI &amp; "\"&gt;" &amp; noteName &amp; "&lt;/a&gt; "
+	end tell
+	my HTMLToClipboard(HTMLLink)
+	tell application "System Events" to keystroke "v" using command down
+end alfred_script</string>
+				<key>cachescript</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.applescript</string>
+			<key>uid</key>
+			<string>E91B4B80-CB26-4BC2-B808-5EC8A43F3E25</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -801,68 +891,6 @@ fi
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>applescript</key>
-				<string>use framework "Foundation"
-use scripting additions
-
-property NSMutableAttributedString : a reference to current application's NSMutableAttributedString
-property NSNull : a reference to current application's NSNull
-property NSDate : a reference to current application's NSDate
-property NSNumber : a reference to current application's NSNumber
-property NSPasteboardTypeRTF : a reference to current application's NSPasteboardTypeRTF
-property NSRTFTextDocumentType : a reference to current application's NSRTFTextDocumentType
-property NSString : a reference to current application's NSString
-property NSUTF8StringEncoding : a reference to current application's NSUTF8StringEncoding
-property NOTE_URL_PREFIX : "shortcuts://run-shortcut?name=NoteURL&amp;input="
-
-on HTMLToClipboard(HTMLContent)
-    set HTMLBody to ("&lt;html&gt;&lt;head&gt;&lt;meta charset=\"UTF-8\" /&gt;&lt;/head&gt;&lt;body&gt;" &amp; HTMLContent &amp; "&lt;/body&gt;&lt;/html&gt;")
-    set NSStringHTMLBody to NSString's stringWithString:HTMLBody
-    set HTMLBodyData to NSStringHTMLBody's dataUsingEncoding:NSUTF8StringEncoding
-    set attributedString to NSMutableAttributedString's alloc()
-    attributedString's initWithHTML:HTMLBodyData documentAttributes:NSNull
-    set range to {0, attributedString's |length|}
-    set RTF to (attributedString's RTFFromRange:range documentAttributes:{DocumentType:NSRTFTextDocumentType})
-    set pasteboard to current application's NSPasteboard's generalPasteboard()
-    pasteboard's clearContents()
-    pasteboard's setData:RTF forType:NSPasteboardTypeRTF
-    tell application "System Events" to keystroke "v" using command down
-end clipTextAndHtml
-
-on getNoteURI(noteID)
-    tell application "Notes"
-        set noteCreated to (creation date) of note id noteID in default account
-        set cocoaDate to NSDate's dateWithTimeInterval:0 sinceDate:noteCreated
-        set doubleNoteTimestamp to cocoaDate's timeIntervalSince1970
-        set intNoteTimestamp to intValue of (NSNumber's numberWithDouble:doubleNoteTimestamp)
-        set stringNoteTimestamp to stringValue of (NSNumber's numberWithInt:intNoteTimestamp)
-        set URI to (my NOTE_URL_PREFIX) &amp; stringNoteTimestamp
-        return URI
-    end tell
-end getNoteURI
-
-on alfred_script(q)
-    tell application "Notes"
-        set noteID to text 1 thru ((offset of "?" in q)-1) of q
-        set URI to (my getNoteURI(noteID))
-        set noteName to name of note id noteID in default account
-        set HTMLLink to "&lt;a href=\"" &amp; URI &amp; "\"&gt;" &amp; noteName &amp; "&lt;/a&gt; "
-    end tell
-    my HTMLToClipboard(HTMLLink)
-end alfred_script</string>
-				<key>cachescript</key>
-				<true/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.applescript</string>
-			<key>uid</key>
-			<string>2B0DABFD-B5B3-4733-A2E0-0676B6128E95</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
 	</array>
 	<key>readme</key>
 	<string>Instructions and Help
@@ -899,7 +927,7 @@ Environment Variables
 			<key>xpos</key>
 			<integer>580</integer>
 			<key>ypos</key>
-			<integer>630</integer>
+			<integer>595</integer>
 		</dict>
 		<key>0B8A749B-E2E7-4B1B-9711-1C77A495BD97</key>
 		<dict>
@@ -919,19 +947,12 @@ Environment Variables
 		</dict>
 		<key>2A3C974B-57DF-4601-8EFC-4158CAA2005A</key>
 		<dict>
+			<key>note</key>
+			<string>Paste link to note</string>
 			<key>xpos</key>
 			<integer>25</integer>
 			<key>ypos</key>
-			<integer>765</integer>
-		</dict>
-		<key>2B0DABFD-B5B3-4733-A2E0-0676B6128E95</key>
-		<dict>
-			<key>note</key>
-			<string>Paste note link</string>
-			<key>xpos</key>
-			<integer>580</integer>
-			<key>ypos</key>
-			<integer>765</integer>
+			<integer>730</integer>
 		</dict>
 		<key>4D8E3444-14C2-4D0E-A8C1-AA67988AE358</key>
 		<dict>
@@ -948,14 +969,14 @@ or create note</string>
 			<key>note</key>
 			<string>Search note titles</string>
 			<key>xpos</key>
-			<integer>215</integer>
+			<integer>265</integer>
 			<key>ypos</key>
 			<integer>80</integer>
 		</dict>
 		<key>6740BCB6-6818-49E2-A88A-9D19EA132F08</key>
 		<dict>
 			<key>note</key>
-			<string>⌥ Copy note URL</string>
+			<string>⌥ Copy link to note</string>
 			<key>xpos</key>
 			<integer>580</integer>
 			<key>ypos</key>
@@ -966,16 +987,16 @@ or create note</string>
 			<key>note</key>
 			<string>Create new note</string>
 			<key>xpos</key>
-			<integer>215</integer>
+			<integer>265</integer>
 			<key>ypos</key>
-			<integer>630</integer>
+			<integer>595</integer>
 		</dict>
 		<key>6F3DD843-22EF-4A97-BAF8-511894B5202D</key>
 		<dict>
 			<key>note</key>
 			<string>Search folder names</string>
 			<key>xpos</key>
-			<integer>215</integer>
+			<integer>265</integer>
 			<key>ypos</key>
 			<integer>360</integer>
 		</dict>
@@ -984,16 +1005,16 @@ or create note</string>
 			<key>note</key>
 			<string>Search note titles</string>
 			<key>xpos</key>
-			<integer>215</integer>
+			<integer>265</integer>
 			<key>ypos</key>
-			<integer>765</integer>
+			<integer>730</integer>
 		</dict>
 		<key>B9ECD7D6-EA33-4E2E-AE3E-4E22EEDD6097</key>
 		<dict>
 			<key>note</key>
 			<string>Search note bodies</string>
 			<key>xpos</key>
-			<integer>215</integer>
+			<integer>265</integer>
 			<key>ypos</key>
 			<integer>220</integer>
 		</dict>
@@ -1015,6 +1036,15 @@ or create note</string>
 			<key>ypos</key>
 			<integer>310</integer>
 		</dict>
+		<key>E91B4B80-CB26-4BC2-B808-5EC8A43F3E25</key>
+		<dict>
+			<key>note</key>
+			<string>Paste link to note</string>
+			<key>xpos</key>
+			<integer>580</integer>
+			<key>ypos</key>
+			<integer>730</integer>
+		</dict>
 	</dict>
 	<key>variables</key>
 	<dict>
@@ -1027,6 +1057,8 @@ or create note</string>
 		<key>sortByDate</key>
 		<string>1</string>
 	</dict>
+	<key>variablesdontexport</key>
+	<array/>
 	<key>version</key>
 	<string>3.3.0</string>
 	<key>webaddress</key>

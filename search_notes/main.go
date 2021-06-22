@@ -30,13 +30,15 @@ const (
     ArgKey = "url"
     BodyKey = "noteBodyZipped"
     TableTextKey = "tableText"
+    HashtagTextKey = "hashtagText"
     NotesSQLTemplate = `
 SELECT 
     noteTitle AS title,
     folderTitle AS subtitle,
-    'x-coredata://' || z_uuid || '/ICNote/p' || xcoreDataID || ',' || 'x-coredata://' || z_uuid || '/ICAccount/p' || accountID AS url,
+    'x-coredata://' || z_uuid || '/ICNote/p' || xcoreDataID || ',' || IFNULL('x-coredata://' || z_uuid || '/ICAccount/p' || accountID, 'null') AS url,
     noteBodyZipped,
-    tableText
+    tableText,
+    hashtagText
 FROM (
     SELECT
         c.ztitle1 AS noteTitle,
@@ -75,6 +77,14 @@ LEFT JOIN (
     GROUP BY znote
 ) AS tables ON znote = xcoreDataID
 LEFT JOIN (
+    SELECT 
+        GROUP_CONCAT(zalttext, ' ') AS hashtagText,
+        znote1
+    FROM ziccloudsyncingobject
+    WHERE ztypeuti1 = 'com.apple.notes.inlinetextattachment.hashtag'
+    GROUP BY znote1
+) AS hashtags ON znote1 = xcoreDataID
+LEFT JOIN (
     SELECT z_uuid FROM z_metadata
 )
 ORDER BY %s
@@ -84,7 +94,7 @@ ORDER BY %s
 SELECT 
     ztitle2 AS title,
     '' AS subtitle,
-    'x-coredata://' || z_uuid || '/ICFolder/p' || z_pk || ',' || 'x-coredata://' || z_uuid || '/ICAccount/p' || zaccount4 AS url
+    'x-coredata://' || z_uuid || '/ICFolder/p' || z_pk || ',' || IFNULL('x-coredata://' || z_uuid || '/ICAccount/p' || zaccount4, 'null') AS url
 FROM ziccloudsyncingobject
 LEFT JOIN (
     SELECT z_uuid FROM z_metadata
@@ -310,8 +320,14 @@ func (lite LiteDB) GetResults(search string, scope string) ([]map[string]string,
                             if !ok {
                                 tableText = ""
                             }
+                            // Get text of any hashtags in this note
+                            valHashtagText := columnPointers[5].(*interface{})
+                            hashtagText, ok := (*valHashtagText).(string)
+                            if !ok {
+                                hashtagText = ""
+                            }
                             // Extract protobuf-format data from unzipped note and add table text
-                            body := GetNoteBody(noteBytes) + tableText
+                            body := hashtagText + " " + GetNoteBody(noteBytes) + " " + tableText
                             // Add body text to search scope
                             scopeText += " " + body
                             // Prepare result summary for subtitle string
