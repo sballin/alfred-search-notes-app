@@ -367,9 +367,13 @@ func (lite LiteDB) GetResults(search string, scope string) ([]map[string]string,
 }
 
 func RowToItem(row map[string]string, userQuery UserQuery) alfred.Item {
+    var subtitle = row[SubtitleKey]
+    if row[HashtagTextKey] != "" {
+        subtitle += " | " + row[HashtagTextKey]
+    }
     return alfred.Item{
         Title:        row[TitleKey],
-        Subtitle:     row[SubtitleKey],
+        Subtitle:     subtitle,
         Arg:          row[ArgKey] + "," + Escape(userQuery.WordString),
         QuicklookURL: " ",
     }
