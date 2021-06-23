@@ -34,19 +34,6 @@
 				<false/>
 			</dict>
 		</array>
-		<key>14902FD8-DA9B-4C0E-A2F0-3BE5848F032D</key>
-		<array>
-			<dict>
-				<key>destinationuid</key>
-				<string>AB623BD1-CD19-46E1-AFE2-A60E1FEC35CE</string>
-				<key>modifiers</key>
-				<integer>0</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
-		</array>
 		<key>1A6D4810-ABAF-4604-9639-CC1327A279B7</key>
 		<array>
 			<dict>
@@ -287,51 +274,6 @@
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>concurrently</key>
-				<false/>
-				<key>escaping</key>
-				<integer>102</integer>
-				<key>script</key>
-				<string>workflow_dir=$alfred_preferences/workflows/$alfred_workflow_uid
-xattr -rd com.apple.quarantine "$workflow_dir"</string>
-				<key>scriptargtype</key>
-				<integer>1</integer>
-				<key>scriptfile</key>
-				<string>update.py</string>
-				<key>type</key>
-				<integer>0</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.script</string>
-			<key>uid</key>
-			<string>AB623BD1-CD19-46E1-AFE2-A60E1FEC35CE</string>
-			<key>version</key>
-			<integer>2</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>argumenttype</key>
-				<integer>2</integer>
-				<key>keyword</key>
-				<string>authnotes</string>
-				<key>subtext</key>
-				<string></string>
-				<key>text</key>
-				<string>Authorize search_notes binary</string>
-				<key>withspace</key>
-				<false/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.input.keyword</string>
-			<key>uid</key>
-			<string>14902FD8-DA9B-4C0E-A2F0-3BE5848F032D</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
 				<key>action</key>
 				<integer>0</integer>
 				<key>argument</key>
@@ -426,6 +368,10 @@ end alfred_script</string>
 				<string>Getting notes...</string>
 				<key>script</key>
 				<string>workflow_dir=$alfred_preferences/workflows/$alfred_workflow_uid
+if [[ ! -f "$workflow_dir/authorized" ]]; then
+	xattr -rd com.apple.quarantine "$workflow_dir"
+	touch "$workflow_dir/authorized"
+fi
 out=`"$workflow_dir/search_notes/search_notes" title "$@" 2&gt;&amp;1`
 if [[ $? != 0 ]]; then
 	osascript "$workflow_dir/handle_error.scpt" "$out"
@@ -583,6 +529,10 @@ end alfred_script</string>
 				<string>Getting notes...</string>
 				<key>script</key>
 				<string>workflow_dir=$alfred_preferences/workflows/$alfred_workflow_uid
+if [[ ! -f "$workflow_dir/authorized" ]]; then
+	xattr -rd com.apple.quarantine "$workflow_dir"
+	touch "$workflow_dir/authorized"
+fi
 out=`"$workflow_dir/search_notes/search_notes" body "$@" 2&gt;&amp;1`
 if [[ $? != 0 ]]; then
 	osascript "$workflow_dir/handle_error.scpt" "$out"
@@ -671,6 +621,10 @@ end alfred_script</string>
 				<string>Getting folders...</string>
 				<key>script</key>
 				<string>workflow_dir=$alfred_preferences/workflows/$alfred_workflow_uid
+if [[ ! -f "$workflow_dir/authorized" ]]; then
+	xattr -rd com.apple.quarantine "$workflow_dir"
+	touch "$workflow_dir/authorized"
+fi
 out=`"$workflow_dir/search_notes/search_notes" folder "$@" 2&gt;&amp;1`
 if [[ $? != 0 ]]; then
 	osascript "$workflow_dir/handle_error.scpt" "$out"
@@ -706,7 +660,7 @@ fi</string>
 				<integer>102</integer>
 				<key>script</key>
 				<string>workflow_dir=$alfred_preferences/workflows/$alfred_workflow_uid
-/usr/bin/python2 "$workflow_dir/update.py" 2&gt;&gt; "$workflow_dir/error_log.txt"</string>
+/usr/bin/python2 "$workflow_dir/update.py"</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -933,6 +887,10 @@ end alfred_script</string>
 				<string>Getting notes...</string>
 				<key>script</key>
 				<string>workflow_dir=$alfred_preferences/workflows/$alfred_workflow_uid
+if [[ ! -f "$workflow_dir/authorized" ]]; then
+	xattr -rd com.apple.quarantine "$workflow_dir"
+	touch "$workflow_dir/authorized"
+fi
 out=`"$workflow_dir/search_notes/search_notes" title "$@" 2&gt;&amp;1`
 if [[ $? != 0 ]]; then
 	osascript "$workflow_dir/handle_error.scpt" "$out"
@@ -1023,15 +981,6 @@ Environment Variables
 			<key>ypos</key>
 			<integer>525</integer>
 		</dict>
-		<key>14902FD8-DA9B-4C0E-A2F0-3BE5848F032D</key>
-		<dict>
-			<key>note</key>
-			<string>Authorize search_notes binary</string>
-			<key>xpos</key>
-			<integer>265</integer>
-			<key>ypos</key>
-			<integer>20</integer>
-		</dict>
 		<key>1A6D4810-ABAF-4604-9639-CC1327A279B7</key>
 		<dict>
 			<key>xpos</key>
@@ -1102,15 +1051,6 @@ or create note</string>
 			<integer>265</integer>
 			<key>ypos</key>
 			<integer>875</integer>
-		</dict>
-		<key>AB623BD1-CD19-46E1-AFE2-A60E1FEC35CE</key>
-		<dict>
-			<key>note</key>
-			<string>Authorize search_notes binary</string>
-			<key>xpos</key>
-			<integer>580</integer>
-			<key>ypos</key>
-			<integer>20</integer>
 		</dict>
 		<key>B9ECD7D6-EA33-4E2E-AE3E-4E22EEDD6097</key>
 		<dict>
