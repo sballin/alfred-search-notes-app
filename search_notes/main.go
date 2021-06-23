@@ -285,6 +285,21 @@ func (lite LiteDB) GetResults(search string, scope string) ([]map[string]string,
             continue
         }
         
+        hashtagText, ok := "", false
+        // columnPointers[5] is out of bounds for "folder" case
+        if scope != "folder" {
+            // Get text of any hashtags in this note
+            valHashtagText := columnPointers[5].(*interface{})
+            hashtagText, ok = (*valHashtagText).(string)
+            if !ok {
+                hashtagText = ""
+            }
+            // Add space for correct formatting of subtitle string
+            if hashtagText != "" {
+                hashtagText = " " + hashtagText
+            }
+        }
+        
         scopeText := ""
         matchSummary := ""
         if len(search) > 0 {
@@ -304,6 +319,9 @@ func (lite LiteDB) GetResults(search string, scope string) ([]map[string]string,
                 }
                 scopeText += " " + folder
             }
+            // if scope == "hashtag" {
+            //     scopeText = strings.Replace(hashtagText, "#", "", -1)
+            // }
             if scope == "body" {
                 // Decompress note body data
                 valBody := columnPointers[3].(*interface{})
@@ -319,12 +337,6 @@ func (lite LiteDB) GetResults(search string, scope string) ([]map[string]string,
                             tableText, ok := (*valTableText).(string)
                             if !ok {
                                 tableText = ""
-                            }
-                            // Get text of any hashtags in this note
-                            valHashtagText := columnPointers[5].(*interface{})
-                            hashtagText, ok := (*valHashtagText).(string)
-                            if !ok {
-                                hashtagText = ""
                             }
                             // Extract protobuf-format data from unzipped note and add table text
                             body := hashtagText + " " + GetNoteBody(noteBytes) + " " + tableText
@@ -360,20 +372,20 @@ func (lite LiteDB) GetResults(search string, scope string) ([]map[string]string,
                 m[colName] = ""
             }
         }
+        
+        // Add additional text to subtitle string
+        m[SubtitleKey] += hashtagText
         m[SubtitleKey] += matchSummary
+        
         results = append(results, m)
     }
     return results, err
 }
 
 func RowToItem(row map[string]string, userQuery UserQuery) alfred.Item {
-    var subtitle = row[SubtitleKey]
-    if row[HashtagTextKey] != "" {
-        subtitle += " | " + row[HashtagTextKey]
-    }
     return alfred.Item{
         Title:        row[TitleKey],
-        Subtitle:     subtitle,
+        Subtitle:     row[SubtitleKey],
         Arg:          row[ArgKey] + "," + Escape(userQuery.WordString),
         QuicklookURL: " ",
     }
