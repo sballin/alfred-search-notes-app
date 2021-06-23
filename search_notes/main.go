@@ -319,41 +319,53 @@ func (lite LiteDB) GetResults(search string, scope string) ([]map[string]string,
                 }
                 scopeText += " " + folder
             }
-            // if scope == "hashtag" {
-            //     scopeText = strings.Replace(hashtagText, "#", "", -1)
-            // }
-            if scope == "body" {
-                // Decompress note body data
-                valBody := columnPointers[3].(*interface{})
-                noteDataZippedBytes, ok := (*valBody).([]byte)
-                if ok {
-                    bytesReader.Reset(noteDataZippedBytes)
-                    errReset := gzipReader.Reset(bytesReader)
-                    if errReset == nil {
-                        noteBytes, errRead := ioutil.ReadAll(gzipReader)
-                        if errRead == nil {
-                            // Get plaintext of any tables in this note
-                            valTableText := columnPointers[4].(*interface{})
-                            tableText, ok := (*valTableText).(string)
-                            if !ok {
-                                tableText = ""
-                            }
-                            // Extract protobuf-format data from unzipped note and add table text
-                            body := hashtagText + " " + GetNoteBody(noteBytes) + " " + tableText
-                            // Add body text to search scope
-                            scopeText += " " + body
-                            // Prepare result summary for subtitle string
-                            firstMatch, _ := matcher.IndexString(body, search)
-                            if firstMatch >= 0 {
-                                matchSummary = SubtitleMatchSummary(body, search)
+            if scope == "hashtag" {
+                // Return notes matching every hash tag provided
+                searchTags := strings.Split(search, " ")
+                containsSearchTag := true
+                for _, searchTag := range searchTags {
+                    firstMatch, _ := matcher.IndexString(hashtagText, "#" + searchTag)
+                    if firstMatch == -1 {
+                        containsSearchTag = false
+                    }
+                }
+                if !containsSearchTag {
+                    continue
+                }
+            } else {
+                if scope == "body" {
+                    // Decompress note body data
+                    valBody := columnPointers[3].(*interface{})
+                    noteDataZippedBytes, ok := (*valBody).([]byte)
+                    if ok {
+                        bytesReader.Reset(noteDataZippedBytes)
+                        errReset := gzipReader.Reset(bytesReader)
+                        if errReset == nil {
+                            noteBytes, errRead := ioutil.ReadAll(gzipReader)
+                            if errRead == nil {
+                                // Get plaintext of any tables in this note
+                                valTableText := columnPointers[4].(*interface{})
+                                tableText, ok := (*valTableText).(string)
+                                if !ok {
+                                    tableText = ""
+                                }
+                                // Extract protobuf-format data from unzipped note and add table text
+                                body := hashtagText + " " + GetNoteBody(noteBytes) + " " + tableText
+                                // Add body text to search scope
+                                scopeText += " " + body
+                                // Prepare result summary for subtitle string
+                                firstMatch, _ := matcher.IndexString(body, search)
+                                if firstMatch >= 0 {
+                                    matchSummary = SubtitleMatchSummary(body, search)
+                                }
                             }
                         }
                     }
                 }
-            }
-            firstMatch, _ := matcher.IndexString(scopeText, search)
-            if firstMatch == -1 {
-                continue
+                firstMatch, _ := matcher.IndexString(scopeText, search)
+                if firstMatch == -1 {
+                    continue
+                }
             }
         }
         
