@@ -349,15 +349,19 @@
 			<key>config</key>
 			<dict>
 				<key>applescript</key>
-				<string>-- This script takes "URLs" of format "itemID,accountID,userQuery" or just "userQuery"
+				<string>-- This script takes "URLs" of format "identifier,itemID,accountID,userQuery" or just "userQuery"
 
 on alfred_script(q)
 	try
 		tell application "System Events"
 			tell process "Notes"
 				-- Get search string 
-				set remainder to text ((offset of "," in q)+1) thru -1 of q
-				set userQuery to text ((offset of "," in remainder)+1) thru -1 of remainder
+				if q contains "/ICNote/p" or q contains "/ICFolder/p" then
+					set AppleScript's text item delimiters to ","
+					set userQuery to text from text item 4 to text item -1 of q
+				else
+					set userQuery to q
+				end if
 				-- Enter the string in the Notes search bar
 				set frontmost to true
 				click menu item 1 of menu of menu item 16 of menu 4 of menu bar 1 -- Edit, Find, Note List Search…
@@ -671,18 +675,19 @@ fi</string>
 			<key>config</key>
 			<dict>
 				<key>applescript</key>
-				<string>-- This script takes "URLs" of format "itemID,accountID,userQuery"
+				<string>-- This script takes "URLs" of format "identifier,itemID,accountID,userQuery"
 -- accountID can be the string "null", if so the default account is used
 
 on alfred_script(q)
 	try
-		set noteID to text 1 thru ((offset of "," in q)-1) of q
-		set remainder to text ((offset of "," in q)+1) thru -1 of q
-		set accountID to text 1 thru ((offset of "," in remainder)-1) of remainder
+		set AppleScript's text item delimiters to ","
+		set identifier to text item 1 of q
+		set itemID to text item 2 of q
+		set accountID to text item 3 of q
 		if accountID is "null" then
-			tell application "Notes" to get plaintext of note id noteID in default account
+			tell application "Notes" to get plaintext of note id itemID in default account
 		else
-			tell application "Notes" to get plaintext of note id noteID in account id accountID
+			tell application "Notes" to get plaintext of note id itemID in account id accountID
 		end if
 		set body to text (paragraph 2) thru -1 of the result
 		set the clipboard to body
@@ -789,36 +794,31 @@ fi</string>
 			<key>config</key>
 			<dict>
 				<key>applescript</key>
-				<string>-- This script takes "URLs" of format "itemID,accountID,userQuery" or just "userQuery"
+				<string>-- This script takes "URLs" of format "identifier,itemID,accountID,userQuery" or just "userQuery"
 -- accountID can be the string "null", if so the default account is used
 -- Some commands need to run twice, otherwise they fail when toolbar search is active
 
 on alfred_script(q)
 	try
+		if q contains "/ICNote/p" or q contains "/ICFolder/p" then 
+			set AppleScript's text item delimiters to ","
+			set identifier to text item 1 of q
+			set itemID to text item 2 of q
+			set accountID to text item 3 of q
+		end if
 		tell application "Notes"
 			if q contains "/ICNote/p" then
 				-- Show user-requested note
-				set noteID to text 1 thru ((offset of "," in q)-1) of q
-				set remainder to text ((offset of "," in q)+1) thru -1 of q
-				set accountID to text 1 thru ((offset of "," in remainder)-1) of remainder
-				if accountID is "null" then
-					show note id noteID in default account
-					show note id noteID in default account
-				else
-					show note id noteID in account id accountID
-					show note id noteID in account id accountID
-				end if 
+				open location "notes://showNote?identifier=" &amp; identifier
+				open location "notes://showNote?identifier=" &amp; identifier
 			else if q contains "/ICFolder/p" then
 				-- Show user-requested folder
-				set folderID to text 1 thru ((offset of "," in q)-1) of q
-				set remainder to text ((offset of "," in q)+1) thru -1 of q
-				set accountID to text 1 thru ((offset of "," in remainder)-1) of remainder
 				if accountID is "null" then
-					show folder id folderID in default account
-					show folder id folderID in default account
+					show folder id itemID in default account
+					show folder id itemID in default account
 				else
-					show folder id folderID in account id accountID
-					show folder id folderID in account id accountID
+					show folder id itemID in account id accountID
+					show folder id itemID in account id accountID
 				end if 
 			else
 				-- Create new note from user query

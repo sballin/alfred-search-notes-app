@@ -35,7 +35,7 @@ const (
 SELECT 
     noteTitle AS title,
     folderTitle AS subtitle,
-    'x-coredata://' || z_uuid || '/ICNote/p' || xcoreDataID || ',' || IFNULL('x-coredata://' || z_uuid || '/ICAccount/p' || accountID, 'null') AS url,
+    identifier || ',x-coredata://' || z_uuid || '/ICNote/p' || xcoreDataID || ',' || IFNULL('x-coredata://' || z_uuid || '/ICAccount/p' || accountID, 'null') AS url,
     noteBodyZipped,
     tableText,
     hashtagText
@@ -46,6 +46,7 @@ FROM (
         c.zmodificationdate1 AS modDate,
         c.z_pk AS xcoredataID,
         c.zaccount3 AS accountID,
+        c.zidentifier AS identifier,
         n.zdata AS noteBodyZipped
     FROM 
         ziccloudsyncingobject AS c
@@ -94,7 +95,7 @@ ORDER BY %s
 SELECT 
     ztitle2 AS title,
     '' AS subtitle,
-    'x-coredata://' || z_uuid || '/ICFolder/p' || z_pk || ',' || IFNULL('x-coredata://' || z_uuid || '/ICAccount/p' || zaccount4, 'null') AS url
+    zidentifier || ',x-coredata://' || z_uuid || '/ICFolder/p' || z_pk || ',' || IFNULL('x-coredata://' || z_uuid || '/ICAccount/p' || zaccount4, 'null') AS url
 FROM ziccloudsyncingobject
 LEFT JOIN (
     SELECT z_uuid FROM z_metadata
