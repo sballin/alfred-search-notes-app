@@ -547,20 +547,17 @@ fi</string>
 			<key>config</key>
 			<dict>
 				<key>applescript</key>
-				<string>-- This script takes "URLs" of format "itemID,accountID,userQuery" or just "userQuery"
+				<string>-- This script takes "URLs" of format "identifier,itemID,accountID,userQuery"
 
 use framework "Foundation"
 use scripting additions
 
 property NSMutableAttributedString : a reference to current application's NSMutableAttributedString
 property NSNull : a reference to current application's NSNull
-property NSDate : a reference to current application's NSDate
-property NSNumber : a reference to current application's NSNumber
 property NSPasteboardTypeRTF : a reference to current application's NSPasteboardTypeRTF
 property NSRTFTextDocumentType : a reference to current application's NSRTFTextDocumentType
 property NSString : a reference to current application's NSString
 property NSUTF8StringEncoding : a reference to current application's NSUTF8StringEncoding
-property NOTE_URL_PREFIX : "shortcuts://run-shortcut?name=NoteURL&amp;input="
 
 on HTMLToClipboard(HTMLContent)
 	set HTMLBody to ("&lt;html&gt;&lt;head&gt;&lt;meta charset=\"UTF-8\" /&gt;&lt;/head&gt;&lt;body&gt;" &amp; HTMLContent &amp; "&lt;/body&gt;&lt;/html&gt;")
@@ -575,30 +572,24 @@ on HTMLToClipboard(HTMLContent)
 	pasteboard's setData:RTF forType:NSPasteboardTypeRTF
 end clipTextAndHtml
 
-on getNoteURI(noteID)
-	tell application "Notes"
-		try
-			set noteCreated to (creation date) of note id noteID in default account
-		on error errMsg
-			display alert "This workflow can only create links to notes in the default account." message errMsg
-		end try
-		set cocoaDate to NSDate's dateWithTimeInterval:0 sinceDate:noteCreated
-		set doubleNoteTimestamp to cocoaDate's timeIntervalSince1970
-		set intNoteTimestamp to intValue of (NSNumber's numberWithDouble:doubleNoteTimestamp)
-		set stringNoteTimestamp to stringValue of (NSNumber's numberWithInt:intNoteTimestamp)
-		set URI to (my NOTE_URL_PREFIX) &amp; stringNoteTimestamp
-		return URI
-	end tell
-end getNoteURI
-
 on alfred_script(q)
-	tell application "Notes"
-		set noteID to text 1 thru ((offset of "," in q)-1) of q
-		set URI to (my getNoteURI(noteID))
-		set noteName to name of note id noteID in default account
-		set HTMLLink to "&lt;a href=\"" &amp; URI &amp; "\"&gt;" &amp; noteName &amp; "&lt;/a&gt; "
-	end tell
-	my HTMLToClipboard(HTMLLink)
+	try
+		set AppleScript's text item delimiters to ","
+		set identifier to text item 1 of q
+		set itemID to text item 2 of q
+		set accountID to text item 3 of q
+		tell application "Notes"
+			if accountID is "null" then
+				set noteName to name of note id itemID in default account
+			else
+				set noteName to name of note id itemID in account id accountID
+			end if
+			set HTMLLink to "&lt;a href=\"notes://showNote?identifier=" &amp; identifier &amp; "\"&gt;" &amp; noteName &amp; "&lt;/a&gt; (&lt;a href=\"mobilenotes://showNote?identifier=" &amp; identifier &amp; "\"&gt;iOS&lt;/a&gt;)"
+		end tell
+		my HTMLToClipboard(HTMLLink)
+	on error errorMessage number errorNumber
+		display alert "Copy Link to Note Error" message (errorNumber as string &amp; ": " &amp; errorMessage) as critical
+	end try
 end alfred_script</string>
 				<key>cachescript</key>
 				<true/>
@@ -906,20 +897,17 @@ end alfred_script</string>
 			<key>config</key>
 			<dict>
 				<key>applescript</key>
-				<string>-- This script takes "URLs" of format "itemID,accountID,userQuery" or just "userQuery"
+				<string>-- This script takes "URLs" of format "identifier,itemID,accountID,userQuery"
 
 use framework "Foundation"
 use scripting additions
 
 property NSMutableAttributedString : a reference to current application's NSMutableAttributedString
 property NSNull : a reference to current application's NSNull
-property NSDate : a reference to current application's NSDate
-property NSNumber : a reference to current application's NSNumber
 property NSPasteboardTypeRTF : a reference to current application's NSPasteboardTypeRTF
 property NSRTFTextDocumentType : a reference to current application's NSRTFTextDocumentType
 property NSString : a reference to current application's NSString
 property NSUTF8StringEncoding : a reference to current application's NSUTF8StringEncoding
-property NOTE_URL_PREFIX : "shortcuts://run-shortcut?name=NoteURL&amp;input="
 
 on HTMLToClipboard(HTMLContent)
 	set HTMLBody to ("&lt;html&gt;&lt;head&gt;&lt;meta charset=\"UTF-8\" /&gt;&lt;/head&gt;&lt;body&gt;" &amp; HTMLContent &amp; "&lt;/body&gt;&lt;/html&gt;")
@@ -934,31 +922,25 @@ on HTMLToClipboard(HTMLContent)
 	pasteboard's setData:RTF forType:NSPasteboardTypeRTF
 end clipTextAndHtml
 
-on getNoteURI(noteID)
-	tell application "Notes"
-		try
-			set noteCreated to (creation date) of note id noteID in default account
-		on error errMsg
-			display alert "This workflow can only create links to notes in the default account." message errMsg
-		end try
-		set cocoaDate to NSDate's dateWithTimeInterval:0 sinceDate:noteCreated
-		set doubleNoteTimestamp to cocoaDate's timeIntervalSince1970
-		set intNoteTimestamp to intValue of (NSNumber's numberWithDouble:doubleNoteTimestamp)
-		set stringNoteTimestamp to stringValue of (NSNumber's numberWithInt:intNoteTimestamp)
-		set URI to (my NOTE_URL_PREFIX) &amp; stringNoteTimestamp
-		return URI
-	end tell
-end getNoteURI
-
 on alfred_script(q)
-	tell application "Notes"
-		set noteID to text 1 thru ((offset of "," in q)-1) of q
-		set URI to (my getNoteURI(noteID))
-		set noteName to name of note id noteID in default account
-		set HTMLLink to "&lt;a href=\"" &amp; URI &amp; "\"&gt;" &amp; noteName &amp; "&lt;/a&gt; "
-	end tell
-	my HTMLToClipboard(HTMLLink)
-	tell application "System Events" to keystroke "v" using command down
+	try
+		set AppleScript's text item delimiters to ","
+		set identifier to text item 1 of q
+		set itemID to text item 2 of q
+		set accountID to text item 3 of q
+		tell application "Notes"
+			if accountID is "null" then
+				set noteName to name of note id itemID in default account
+			else
+				set noteName to name of note id itemID in account id accountID
+			end if
+			set HTMLLink to "&lt;a href=\"notes://showNote?identifier=" &amp; identifier &amp; "\"&gt;" &amp; noteName &amp; "&lt;/a&gt; (&lt;a href=\"mobilenotes://showNote?identifier=" &amp; identifier &amp; "\"&gt;iOS&lt;/a&gt;)"
+		end tell
+		my HTMLToClipboard(HTMLLink)
+		tell application "System Events" to keystroke "v" using command down
+	on error errorMessage number errorNumber
+		display alert "Copy Link to Note Error" message (errorNumber as string &amp; ": " &amp; errorMessage) as critical
+	end try
 end alfred_script</string>
 				<key>cachescript</key>
 				<true/>
