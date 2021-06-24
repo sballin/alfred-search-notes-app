@@ -1058,7 +1058,7 @@ Environment Variables
 ---------------------
 - fallbackCreateNew: 1 = offer to create a new note if none was found, 0 = don't
 - fallbackSearchBody: 1 = if a title search returns no results, search note bodies too, 0 = don't
-- searchFolders: 1 = return all notes from any folder matching the search query, 0 = don't
+- searchFolders: in title search, 1 = return all notes from any folder matching the search query, 0 = don't
 - sortByDate: 1 = most recently modified note first, 0 = alphabetical order</string>
 	<key>uidata</key>
 	<dict>
@@ -1207,16 +1207,14 @@ or create note</string>
 	<key>variables</key>
 	<dict>
 		<key>fallbackCreateNew</key>
-		<string>1</string>
-		<key>fallbackSearchBody</key>
 		<string>0</string>
+		<key>fallbackSearchBody</key>
+		<string>1</string>
 		<key>searchFolders</key>
 		<string>1</string>
 		<key>sortByDate</key>
 		<string>1</string>
 	</dict>
-	<key>variablesdontexport</key>
-	<array/>
 	<key>version</key>
 	<string>3.3.0</string>
 	<key>webaddress</key>
