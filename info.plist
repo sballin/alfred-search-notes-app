@@ -802,6 +802,18 @@ on alfred_script(q)
 				-- Show user-requested note
 				open location "notes://showNote?identifier=" &amp; identifier
 				open location "notes://showNote?identifier=" &amp; identifier
+				-- Compatibility with macOS &lt; 11 which does not support notes://
+				set OSVersion to system version of (system info)
+				set mainVersion to text 1 thru ((offset of "." in OSVersion) - 1) of OSVersion as number
+				if mainVersion &lt; 11 then
+					if accountID is "null" then
+						show note id itemID in default account
+						show note id itemID in default account
+					else
+						show note id itemID in account id accountID
+						show note id itemID in account id accountID
+					end if 
+				end if
 			else if q contains "/ICFolder/p" then
 				-- Show user-requested folder
 				if accountID is "null" then
