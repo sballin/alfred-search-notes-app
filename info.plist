@@ -359,6 +359,7 @@ on alfred_script(q)
 				if q contains "/ICNote/p" or q contains "/ICFolder/p" then
 					set AppleScript's text item delimiters to ","
 					set userQuery to text from text item 4 to text item -1 of q
+					set AppleScript's text item delimiters to ""
 				else
 					set userQuery to q
 				end if
@@ -373,7 +374,7 @@ on alfred_script(q)
 			end tell
 		end tell
 	on error errorMessage number errorNumber
-		display alert "Search in Notes Toolbar Error" message (errorNumber as string &amp; ": " &amp; errorMessage) as critical
+		display alert "Search in Notes Toolbar Error" message (errorNumber as string &amp; ": " &amp; errorMessage &amp; "\n\nInput: " &amp; q) as critical
 	end try
 end alfred_script</string>
 				<key>cachescript</key>
@@ -414,16 +415,27 @@ end alfred_script</string>
 				<key>runningsubtext</key>
 				<string>Getting notes...</string>
 				<key>script</key>
-				<string>workflow_dir=$alfred_preferences/workflows/$alfred_workflow_uid
+				<string>scope="title"
+workflow_dir="$alfred_preferences/workflows/$alfred_workflow_uid"
+search_notes="$workflow_dir/search_notes/search_notes"
 if [[ ! -f "$workflow_dir/authorized" ]]; then
 	xattr -rd com.apple.quarantine "$workflow_dir"
 	touch "$workflow_dir/authorized"
 fi
-out=`"$workflow_dir/search_notes/search_notes" title "$@" 2&gt;&amp;1`
+out=`"$search_notes" $scope "$@" 2&gt;&amp;1`
 if [[ $? != 0 ]]; then
-	xattrs=`xattr "$workflow_dir/search_notes/search_notes"`
-	nls=$'\n\n'
-	osascript "$workflow_dir/handle_error.scpt" "${out}${nls}xattrs: ${xattrs}"
+	nl=$'\n'
+	notes_db="$HOME/Library/Group Containers/group.com.apple.notes/NoteStore.sqlite"
+	macos="macOS: $(sw_vers -productVersion)${nl}"
+	alf_version="Alfred: ${alfred_version}${nl}"
+	workflow_version="Workflow: ${alfred_workflow_version}${nl}"
+	cpu_arch="CPU: $(machine)${nl}"
+	bin_xattrs="Binary xattrs: $(xattr "$search_notes")${nl}"
+	db_xattrs="Notes DB xattrs: $(xattr "$notes_db")${nl}"
+	bin_info="Binary info: $(stat -f "%Mp%Lp %u/%Su %g/%Sg" "$search_notes")${nl}"
+	db_info="Notes DB info: $(stat -f "%Mp%Lp %u/%Su %g/%Sg" "$notes_db")${nl}"
+	alfred_query="Query: $scope '$@'${nl}"
+	osascript "$workflow_dir/handle_error.scpt" "Please copy this entire text if submitting an error report. You may need to scroll.${nl}${nl}${out}${nl}${nl}${macos}${alf_version}${workflow_version}${cpu_arch}${bin_xattrs}${db_xattrs}${bin_info}${db_info}${alfred_query}"
 else
 	echo $out
 fi</string>
@@ -510,16 +522,27 @@ fi</string>
 				<key>runningsubtext</key>
 				<string>Getting notes...</string>
 				<key>script</key>
-				<string>workflow_dir=$alfred_preferences/workflows/$alfred_workflow_uid
+				<string>scope="body"
+workflow_dir="$alfred_preferences/workflows/$alfred_workflow_uid"
+search_notes="$workflow_dir/search_notes/search_notes"
 if [[ ! -f "$workflow_dir/authorized" ]]; then
 	xattr -rd com.apple.quarantine "$workflow_dir"
 	touch "$workflow_dir/authorized"
 fi
-out=`"$workflow_dir/search_notes/search_notes" body "$@" 2&gt;&amp;1`
+out=`"$search_notes" $scope "$@" 2&gt;&amp;1`
 if [[ $? != 0 ]]; then
-	xattrs=`xattr "$workflow_dir/search_notes/search_notes"`
-	nls=$'\n\n'
-	osascript "$workflow_dir/handle_error.scpt" "${out}${nls}xattrs: ${xattrs}"
+	nl=$'\n'
+	notes_db="$HOME/Library/Group Containers/group.com.apple.notes/NoteStore.sqlite"
+	macos="macOS: $(sw_vers -productVersion)${nl}"
+	alf_version="Alfred: ${alfred_version}${nl}"
+	workflow_version="Workflow: ${alfred_workflow_version}${nl}"
+	cpu_arch="CPU: $(machine)${nl}"
+	bin_xattrs="Binary xattrs: $(xattr "$search_notes")${nl}"
+	db_xattrs="Notes DB xattrs: $(xattr "$notes_db")${nl}"
+	bin_info="Binary info: $(stat -f "%Mp%Lp %u/%Su %g/%Sg" "$search_notes")${nl}"
+	db_info="Notes DB info: $(stat -f "%Mp%Lp %u/%Su %g/%Sg" "$notes_db")${nl}"
+	alfred_query="Query: $scope '$@'${nl}"
+	osascript "$workflow_dir/handle_error.scpt" "Please copy this entire text if submitting an error report. You may need to scroll.${nl}${nl}${out}${nl}${nl}${macos}${alf_version}${workflow_version}${cpu_arch}${bin_xattrs}${db_xattrs}${bin_info}${db_info}${alfred_query}"
 else
 	echo $out
 fi</string>
@@ -578,6 +601,7 @@ on alfred_script(q)
 		set identifier to text item 1 of q
 		set itemID to text item 2 of q
 		set accountID to text item 3 of q
+		set AppleScript's text item delimiters to ""
 		tell application "Notes"
 			if accountID is "null" then
 				set noteName to name of note id itemID in default account
@@ -588,7 +612,7 @@ on alfred_script(q)
 		end tell
 		my HTMLToClipboard(HTMLLink)
 	on error errorMessage number errorNumber
-		display alert "Copy Link to Note Error" message (errorNumber as string &amp; ": " &amp; errorMessage) as critical
+		display alert "Copy Link to Note Error" message (errorNumber as string &amp; ": " &amp; errorMessage &amp; "\n\nInput: " &amp; q) as critical
 	end try
 end alfred_script</string>
 				<key>cachescript</key>
@@ -629,16 +653,27 @@ end alfred_script</string>
 				<key>runningsubtext</key>
 				<string>Getting folders...</string>
 				<key>script</key>
-				<string>workflow_dir=$alfred_preferences/workflows/$alfred_workflow_uid
+				<string>scope="folder"
+workflow_dir="$alfred_preferences/workflows/$alfred_workflow_uid"
+search_notes="$workflow_dir/search_notes/search_notes"
 if [[ ! -f "$workflow_dir/authorized" ]]; then
 	xattr -rd com.apple.quarantine "$workflow_dir"
 	touch "$workflow_dir/authorized"
 fi
-out=`"$workflow_dir/search_notes/search_notes" folder "$@" 2&gt;&amp;1`
+out=`"$search_notes" $scope "$@" 2&gt;&amp;1`
 if [[ $? != 0 ]]; then
-	xattrs=`xattr "$workflow_dir/search_notes/search_notes"`
-	nls=$'\n\n'
-	osascript "$workflow_dir/handle_error.scpt" "${out}${nls}xattrs: ${xattrs}"
+	nl=$'\n'
+	notes_db="$HOME/Library/Group Containers/group.com.apple.notes/NoteStore.sqlite"
+	macos="macOS: $(sw_vers -productVersion)${nl}"
+	alf_version="Alfred: ${alfred_version}${nl}"
+	workflow_version="Workflow: ${alfred_workflow_version}${nl}"
+	cpu_arch="CPU: $(machine)${nl}"
+	bin_xattrs="Binary xattrs: $(xattr "$search_notes")${nl}"
+	db_xattrs="Notes DB xattrs: $(xattr "$notes_db")${nl}"
+	bin_info="Binary info: $(stat -f "%Mp%Lp %u/%Su %g/%Sg" "$search_notes")${nl}"
+	db_info="Notes DB info: $(stat -f "%Mp%Lp %u/%Su %g/%Sg" "$notes_db")${nl}"
+	alfred_query="Query: $scope '$@'${nl}"
+	osascript "$workflow_dir/handle_error.scpt" "Please copy this entire text if submitting an error report. You may need to scroll.${nl}${nl}${out}${nl}${nl}${macos}${alf_version}${workflow_version}${cpu_arch}${bin_xattrs}${db_xattrs}${bin_info}${db_info}${alfred_query}"
 else
 	echo $out
 fi</string>
@@ -675,6 +710,7 @@ on alfred_script(q)
 		set identifier to text item 1 of q
 		set itemID to text item 2 of q
 		set accountID to text item 3 of q
+		set AppleScript's text item delimiters to ""
 		if accountID is "null" then
 			tell application "Notes" to get plaintext of note id itemID in default account
 		else
@@ -683,7 +719,7 @@ on alfred_script(q)
 		set body to text (paragraph 2) thru -1 of the result
 		set the clipboard to body
 	on error errorMessage number errorNumber
-		display alert "Copy Note Body Error" message (errorNumber as string &amp; ": " &amp; errorMessage) as critical
+		display alert "Copy Note Body Error" message (errorNumber as string &amp; ": " &amp; errorMessage &amp; "\n\nInput: " &amp; q) as critical
 	end try
 end alfred_script</string>
 				<key>cachescript</key>
@@ -748,16 +784,27 @@ end alfred_script</string>
 				<key>runningsubtext</key>
 				<string>Getting folders...</string>
 				<key>script</key>
-				<string>workflow_dir=$alfred_preferences/workflows/$alfred_workflow_uid
+				<string>scope="hashtag"
+workflow_dir="$alfred_preferences/workflows/$alfred_workflow_uid"
+search_notes="$workflow_dir/search_notes/search_notes"
 if [[ ! -f "$workflow_dir/authorized" ]]; then
 	xattr -rd com.apple.quarantine "$workflow_dir"
 	touch "$workflow_dir/authorized"
 fi
-out=`"$workflow_dir/search_notes/search_notes" hashtag "$@" 2&gt;&amp;1`
+out=`"$search_notes" $scope "$@" 2&gt;&amp;1`
 if [[ $? != 0 ]]; then
-	xattrs=`xattr "$workflow_dir/search_notes/search_notes"`
-	nls=$'\n\n'
-	osascript "$workflow_dir/handle_error.scpt" "${out}${nls}xattrs: ${xattrs}"
+	nl=$'\n'
+	notes_db="$HOME/Library/Group Containers/group.com.apple.notes/NoteStore.sqlite"
+	macos="macOS: $(sw_vers -productVersion)${nl}"
+	alf_version="Alfred: ${alfred_version}${nl}"
+	workflow_version="Workflow: ${alfred_workflow_version}${nl}"
+	cpu_arch="CPU: $(machine)${nl}"
+	bin_xattrs="Binary xattrs: $(xattr "$search_notes")${nl}"
+	db_xattrs="Notes DB xattrs: $(xattr "$notes_db")${nl}"
+	bin_info="Binary info: $(stat -f "%Mp%Lp %u/%Su %g/%Sg" "$search_notes")${nl}"
+	db_info="Notes DB info: $(stat -f "%Mp%Lp %u/%Su %g/%Sg" "$notes_db")${nl}"
+	alfred_query="Query: $scope '$@'${nl}"
+	osascript "$workflow_dir/handle_error.scpt" "Please copy this entire text if submitting an error report. You may need to scroll.${nl}${nl}${out}${nl}${nl}${macos}${alf_version}${workflow_version}${cpu_arch}${bin_xattrs}${db_xattrs}${bin_info}${db_info}${alfred_query}"
 else
 	echo $out
 fi</string>
@@ -796,6 +843,7 @@ on alfred_script(q)
 			set identifier to text item 1 of q
 			set itemID to text item 2 of q
 			set accountID to text item 3 of q
+			set AppleScript's text item delimiters to ""
 		end if
 		tell application "Notes"
 			if q contains "/ICNote/p" then
@@ -837,7 +885,7 @@ on alfred_script(q)
 			end if
 		end tell
 	on error errorMessage number errorNumber
-		display alert "Show Note Error" message (errorNumber as string &amp; ": " &amp; errorMessage) as critical
+		display alert "Show Note Error" message (errorNumber as string &amp; ": " &amp; errorMessage &amp; "\n\nInput: " &amp; q) as critical
 	end try
 end alfred_script</string>
 				<key>cachescript</key>
@@ -892,7 +940,7 @@ on alfred_script(q)
 			end tell
 		end tell
 	on error errorMessage number errorNumber
-		display alert "Create Note Error" message (errorNumber as string &amp; ": " &amp; errorMessage) as critical
+		display alert "Create Note Error" message (errorNumber as string &amp; ": " &amp; errorMessage &amp; "\n\nInput: " &amp; q) as critical
 	end try
 end alfred_script</string>
 				<key>cachescript</key>
@@ -940,6 +988,7 @@ on alfred_script(q)
 		set identifier to text item 1 of q
 		set itemID to text item 2 of q
 		set accountID to text item 3 of q
+		set AppleScript's text item delimiters to ""
 		tell application "Notes"
 			if accountID is "null" then
 				set noteName to name of note id itemID in default account
@@ -951,7 +1000,7 @@ on alfred_script(q)
 		my HTMLToClipboard(HTMLLink)
 		tell application "System Events" to keystroke "v" using command down
 	on error errorMessage number errorNumber
-		display alert "Copy Link to Note Error" message (errorNumber as string &amp; ": " &amp; errorMessage) as critical
+		display alert "Paste Link to Note Error" message (errorNumber as string &amp; ": " &amp; errorMessage &amp; "\n\nInput: " &amp; q) as critical
 	end try
 end alfred_script</string>
 				<key>cachescript</key>
@@ -990,16 +1039,27 @@ end alfred_script</string>
 				<key>runningsubtext</key>
 				<string>Getting notes...</string>
 				<key>script</key>
-				<string>workflow_dir=$alfred_preferences/workflows/$alfred_workflow_uid
+				<string>scope="title"
+workflow_dir="$alfred_preferences/workflows/$alfred_workflow_uid"
+search_notes="$workflow_dir/search_notes/search_notes"
 if [[ ! -f "$workflow_dir/authorized" ]]; then
 	xattr -rd com.apple.quarantine "$workflow_dir"
 	touch "$workflow_dir/authorized"
 fi
-out=`"$workflow_dir/search_notes/search_notes" title "$@" 2&gt;&amp;1`
+out=`"$search_notes" $scope "$@" 2&gt;&amp;1`
 if [[ $? != 0 ]]; then
-	xattrs=`xattr "$workflow_dir/search_notes/search_notes"`
-	nls=$'\n\n'
-	osascript "$workflow_dir/handle_error.scpt" "${out}${nls}xattrs: ${xattrs}"
+	nl=$'\n'
+	notes_db="$HOME/Library/Group Containers/group.com.apple.notes/NoteStore.sqlite"
+	macos="macOS: $(sw_vers -productVersion)${nl}"
+	alf_version="Alfred: ${alfred_version}${nl}"
+	workflow_version="Workflow: ${alfred_workflow_version}${nl}"
+	cpu_arch="CPU: $(machine)${nl}"
+	bin_xattrs="Binary xattrs: $(xattr "$search_notes")${nl}"
+	db_xattrs="Notes DB xattrs: $(xattr "$notes_db")${nl}"
+	bin_info="Binary info: $(stat -f "%Mp%Lp %u/%Su %g/%Sg" "$search_notes")${nl}"
+	db_info="Notes DB info: $(stat -f "%Mp%Lp %u/%Su %g/%Sg" "$notes_db")${nl}"
+	alfred_query="Query: $scope '$@'${nl}"
+	osascript "$workflow_dir/handle_error.scpt" "Please copy this entire text if submitting an error report. You may need to scroll.${nl}${nl}${out}${nl}${nl}${macos}${alf_version}${workflow_version}${cpu_arch}${bin_xattrs}${db_xattrs}${bin_info}${db_info}${alfred_query}"
 else
 	echo $out
 fi</string>
