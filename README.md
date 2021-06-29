@@ -19,38 +19,36 @@
 *   **enter** to open the note/folder or create a new note if none was found
 *   **shift+enter** to search for your Alfred query using the Notes in-app search 
 *   **cmd+enter** to copy the note body to the clipboard
-*   **alt+enter** to copy a note URL to the clipboard (see the section on [note linking](#note-linking))
+*   **alt+enter** to copy a link to the note to the clipboard
+
+### Note linking
+
+You can generate links to any of your notes and use them on macOS or iOS. Copy the note URL by pressing alt+enter on an Alfred result or paste it using the snippet. This will generate two links. The first one works on macOS Big Sur (11) and newer, and the second one works on iOS.
 
 ## Install
 
-If you're on macOS Catalina with Alfred 4, download the [latest version](https://github.com/sballin/alfred-search-notes-app/releases/latest/download/Search.Notes.alfredworkflow) of the workflow.
+Download the [latest version](https://github.com/sballin/alfred-search-notes-app/releases/latest/download/Search.Notes.alfredworkflow) of the workflow. Alfred version 4 is required.
 
 ### Required setup
 
 1. Try searching for a note
-2. When an error message appears, make sure to click "Cancel" in the first dialog, then click "Open System Preferences" in the second dialog
-3. Near the bottom of the pane click the "Open Anyway" button for the "search_notes" binary
+2. If a warning dialog appears (see image below), click "Cancel" rather than "Move to Trash". Then open System Preferences > Security & Privacy and click the "Open Anyway" button near the bottom
+4. Approve additional requests for permission as they appear
+5. If there are any other issues, make sure each of the required [permissions](#required-permissions), if present, is enabled
 
-<img src="https://user-images.githubusercontent.com/2719004/101677975-4a54ac80-3a2b-11eb-9607-491f03439294.png" width="890">
+<img src="https://user-images.githubusercontent.com/2719004/123869471-0b227600-d8ff-11eb-8c20-6537055b1336.png" width="890">
 
-This workflow currently doesn't support notes stored with Google or other internet accounts. Please make sure either iCloud or On My Mac is selected as the default account in the preferences of Notes.app.
+### Required permissions
+
+<img src="https://user-images.githubusercontent.com/2719004/123287623-db2d3a00-d4dc-11eb-9218-b61eac625a9b.png" width="890">
+
+### Email notes are not supported
+
+This workflow doesn't support notes stored with Google or other internet accounts. Please make sure either iCloud or On My Mac is selected as the default account in the preferences of Notes.app.
 
 ## Customize search behavior
 
 Result ordering and title+folder search behavior can be controlled using the [environment variables](https://www.alfredapp.com/help/workflows/advanced/variables/#environment).
-
-## Note linking
-
-You can generate links to any of your notes and use them on macOS or iOS.
-
-* macOS
-    * Copy note URL by pressing alt+enter on an Alfred result
-    * Open note URL with "Open Notes URL.app" (included with this workflow) which works automatically when clicking a link
-* iOS (must open these links on iOS to install)
-    * Copy note URL [shortcut](https://www.icloud.com/shortcuts/556aba9692d64694b7073345ea224dc2) (see image below for usage instructions)
-    * Open note URL [shortcut](https://www.icloud.com/shortcuts/825f1ac1d09149689c9d2406c24aef9e) works automatically when clicking a link
-
-<img src="https://user-images.githubusercontent.com/2719004/101677973-49bc1600-3a2b-11eb-89cd-583dd468cd0c.png" width="890">
 
 ## Updates
 
@@ -58,7 +56,7 @@ By default, the workflow checks Github for updates every 24 hours. This can be d
 
 ## Compile
 
-If you want to compile the binary yourself, you can go into the "search" folder and do `make`.
+If you want to compile the binary yourself, you can go into the "search_notes" folder and do `make`.
 
 ## Contributors
 
