@@ -40,7 +40,7 @@ Download the [latest version](https://github.com/sballin/alfred-search-notes-app
 
 ### Required permissions
 
-<img src="https://user-images.githubusercontent.com/2719004/123287623-db2d3a00-d4dc-11eb-9218-b61eac625a9b.png" width="890">
+<img src="https://user-images.githubusercontent.com/2719004/123890681-a3335600-d925-11eb-9b3b-ac077dc26ef8.png" width="600">
 
 ### Email notes are not supported
 
