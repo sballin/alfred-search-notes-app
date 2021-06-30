@@ -31,7 +31,7 @@ const (
     BodyKey = "noteBodyZipped"
     TableTextKey = "tableText"
     HashtagTextKey = "hashtagText"
-    NotesSQLTemplate = `
+    NotesWithHashtagsSQLTemplate = `
 SELECT 
     noteTitle AS title,
     folderTitle AS subtitle,
@@ -85,6 +85,57 @@ LEFT JOIN (
     WHERE ztypeuti1 = 'com.apple.notes.inlinetextattachment.hashtag'
     GROUP BY znote1
 ) AS hashtags ON znote1 = xcoreDataID
+LEFT JOIN (
+    SELECT z_uuid FROM z_metadata
+)
+ORDER BY %s
+`
+
+    NotesWithoutHashtagsSQLTemplate = `
+SELECT 
+    noteTitle AS title,
+    folderTitle AS subtitle,
+    identifier || ',x-coredata://' || z_uuid || '/ICNote/p' || xcoreDataID || ',' || IFNULL('x-coredata://' || z_uuid || '/ICAccount/p' || accountID, 'null') AS url,
+    noteBodyZipped,
+    tableText
+FROM (
+    SELECT
+        c.ztitle1 AS noteTitle,
+        c.zfolder AS noteFolderID,
+        c.zmodificationdate1 AS modDate,
+        c.z_pk AS xcoredataID,
+        c.zaccount3 AS accountID,
+        c.zidentifier AS identifier,
+        n.zdata AS noteBodyZipped
+    FROM 
+        ziccloudsyncingobject AS c
+        INNER JOIN zicnotedata AS n ON c.znotedata = n.z_pk -- note id (int) distinct from xcoredataID
+    WHERE 
+        noteTitle IS NOT NULL AND 
+        modDate IS NOT NULL AND
+        xcoredataID IS NOT NULL AND
+        noteBodyZipped IS NOT NULL AND
+        c.zmarkedfordeletion != 1
+) AS notes
+INNER JOIN (
+    SELECT
+        z_pk AS folderID,
+        ztitle2 AS folderTitle,
+        zfoldertype AS isRecentlyDeletedFolder
+    FROM ziccloudsyncingobject
+    WHERE 
+        folderTitle IS NOT NULL AND 
+        isRecentlyDeletedFolder != 1 AND
+        zmarkedfordeletion != 1 
+) AS folders ON noteFolderID = folderID
+LEFT JOIN (
+    SELECT 
+        GROUP_CONCAT(zsummary, '') AS tableText,
+        znote
+    FROM ziccloudsyncingobject
+    WHERE ztypeuti = 'com.apple.notes.table'
+    GROUP BY znote
+) AS tables ON znote = xcoreDataID
 LEFT JOIN (
     SELECT z_uuid FROM z_metadata
 )
@@ -246,16 +297,27 @@ func SubtitleMatchSummary(body string, search string) string {
 
 func (lite LiteDB) GetResults(search string, scope string) ([]map[string]string, error) {    
     // Format SQL query
-    sqlQuery := fmt.Sprintf(NotesSQLTemplate, GetOrderPreference())
+    sqlQuery := fmt.Sprintf(NotesWithHashtagsSQLTemplate, GetOrderPreference())
     if scope == "folder" {
         sqlQuery = FoldersSQLTemplate
     }
     
     // Run query to get all results
+    gotHashtags := true
     results := []map[string]string{}
     rows, err := lite.db.Query(sqlQuery)
     if err != nil {
-        return results, err
+        if scope != "folder" && scope != "hashtag" {
+            // Retry without hashtag support for macOS < 11.4
+            gotHashtags = false
+            sqlQuery = fmt.Sprintf(NotesWithoutHashtagsSQLTemplate, GetOrderPreference())
+            rows, err = lite.db.Query(sqlQuery)
+            if err != nil {
+                return results, err
+            }
+        } else {
+            return results, err
+        }
     }
     defer rows.Close()
     cols, err := rows.Columns()
@@ -288,7 +350,7 @@ func (lite LiteDB) GetResults(search string, scope string) ([]map[string]string,
         
         hashtagText, ok := "", false
         // columnPointers[5] is out of bounds for "folder" case
-        if scope != "folder" {
+        if scope != "folder" && gotHashtags {
             // Get text of any hashtags in this note
             valHashtagText := columnPointers[5].(*interface{})
             hashtagText, ok = (*valHashtagText).(string)

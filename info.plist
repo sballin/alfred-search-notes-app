@@ -1136,7 +1136,7 @@ Environment Variables
 			<key>xpos</key>
 			<integer>605</integer>
 			<key>ypos</key>
-			<integer>675</integer>
+			<integer>665</integer>
 		</dict>
 		<key>0B8A749B-E2E7-4B1B-9711-1C77A495BD97</key>
 		<dict>
@@ -1161,7 +1161,7 @@ Environment Variables
 			<key>xpos</key>
 			<integer>50</integer>
 			<key>ypos</key>
-			<integer>810</integer>
+			<integer>800</integer>
 		</dict>
 		<key>4D8E3444-14C2-4D0E-A8C1-AA67988AE358</key>
 		<dict>
@@ -1198,7 +1198,7 @@ or create note</string>
 			<key>xpos</key>
 			<integer>290</integer>
 			<key>ypos</key>
-			<integer>675</integer>
+			<integer>665</integer>
 		</dict>
 		<key>6F3DD843-22EF-4A97-BAF8-511894B5202D</key>
 		<dict>
@@ -1216,7 +1216,7 @@ or create note</string>
 			<key>xpos</key>
 			<integer>290</integer>
 			<key>ypos</key>
-			<integer>810</integer>
+			<integer>800</integer>
 		</dict>
 		<key>B9ECD7D6-EA33-4E2E-AE3E-4E22EEDD6097</key>
 		<dict>
@@ -1261,7 +1261,7 @@ or create note</string>
 			<key>xpos</key>
 			<integer>605</integer>
 			<key>ypos</key>
-			<integer>810</integer>
+			<integer>800</integer>
 		</dict>
 	</dict>
 	<key>variables</key>
@@ -1275,6 +1275,8 @@ or create note</string>
 		<key>sortByDate</key>
 		<string>1</string>
 	</dict>
+	<key>variablesdontexport</key>
+	<array/>
 	<key>version</key>
 	<string>3.4.0</string>
 	<key>webaddress</key>
