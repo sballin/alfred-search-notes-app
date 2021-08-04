@@ -34,6 +34,19 @@
 				<false/>
 			</dict>
 		</array>
+		<key>19CCE92E-2C07-4CB4-9874-E29AA3563F37</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>0B8A749B-E2E7-4B1B-9711-1C77A495BD97</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>1A6D4810-ABAF-4604-9639-CC1327A279B7</key>
 		<array>
 			<dict>
@@ -161,6 +174,16 @@
 				<integer>0</integer>
 				<key>modifiersubtext</key>
 				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>19CCE92E-2C07-4CB4-9874-E29AA3563F37</string>
+				<key>modifiers</key>
+				<integer>524288</integer>
+				<key>modifiersubtext</key>
+				<string>Move currently selected note to this folder</string>
 				<key>vitoclose</key>
 				<false/>
 			</dict>
@@ -901,6 +924,50 @@ end alfred_script</string>
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>applescript</key>
+				<string>-- This script takes "URLs" of format "identifier,itemID,accountID,userQuery"
+-- accountID can be the string "null", if so the default account is used
+-- Some commands need to run twice, otherwise they fail when toolbar search is active
+
+on alfred_script(q)
+	try
+		set AppleScript's text item delimiters to ","
+		set identifier to text item 1 of q
+		set itemID to text item 2 of q
+		set accountID to text item 3 of q
+		set AppleScript's text item delimiters to ""
+		tell application "Notes"
+			-- Show user-requested folder
+			set s to selection
+			repeat with n in s
+				if accountID is "null" then
+					move n to folder id itemID in default account
+					move n to folder id itemID in default account
+				else
+					move n to folder id itemID in account id accountID
+					move n to folder id itemID in account id accountID
+				end if
+			end repeat
+		end tell
+	on error errorMessage number errorNumber
+		display alert "Move Note to Folder Error" message ((errorNumber as string) &amp; ": " &amp; errorMessage &amp; "
+
+Input: " &amp; q) as critical
+	end try
+end alfred_script</string>
+				<key>cachescript</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.applescript</string>
+			<key>uid</key>
+			<string>19CCE92E-2C07-4CB4-9874-E29AA3563F37</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>argumenttype</key>
 				<integer>0</integer>
 				<key>keyword</key>
@@ -1102,16 +1169,9 @@ fi</string>
 		</dict>
 	</array>
 	<key>readme</key>
-	<string>Instructions and Help
----------------------
+	<string>Setup Instructions and Help
+---------------------------
 https://github.com/sballin/alfred-search-notes-app
-
-
-Required Setup
---------------
-1. Try searching for a note
-2. When an error message appears, press the "Open System Preferences" button
-3. Near the bottom of the pane click the "Open Anyway" button for the "search_notes" binary
 
 
 Environment Variables
@@ -1136,7 +1196,7 @@ Environment Variables
 			<key>xpos</key>
 			<integer>605</integer>
 			<key>ypos</key>
-			<integer>665</integer>
+			<integer>800</integer>
 		</dict>
 		<key>0B8A749B-E2E7-4B1B-9711-1C77A495BD97</key>
 		<dict>
@@ -1146,6 +1206,15 @@ Environment Variables
 			<integer>875</integer>
 			<key>ypos</key>
 			<integer>450</integer>
+		</dict>
+		<key>19CCE92E-2C07-4CB4-9874-E29AA3563F37</key>
+		<dict>
+			<key>note</key>
+			<string>Move note to folder</string>
+			<key>xpos</key>
+			<integer>605</integer>
+			<key>ypos</key>
+			<integer>665</integer>
 		</dict>
 		<key>1A6D4810-ABAF-4604-9639-CC1327A279B7</key>
 		<dict>
@@ -1161,7 +1230,7 @@ Environment Variables
 			<key>xpos</key>
 			<integer>50</integer>
 			<key>ypos</key>
-			<integer>800</integer>
+			<integer>935</integer>
 		</dict>
 		<key>4D8E3444-14C2-4D0E-A8C1-AA67988AE358</key>
 		<dict>
@@ -1198,7 +1267,7 @@ or create note</string>
 			<key>xpos</key>
 			<integer>290</integer>
 			<key>ypos</key>
-			<integer>665</integer>
+			<integer>800</integer>
 		</dict>
 		<key>6F3DD843-22EF-4A97-BAF8-511894B5202D</key>
 		<dict>
@@ -1216,7 +1285,7 @@ or create note</string>
 			<key>xpos</key>
 			<integer>290</integer>
 			<key>ypos</key>
-			<integer>800</integer>
+			<integer>935</integer>
 		</dict>
 		<key>B9ECD7D6-EA33-4E2E-AE3E-4E22EEDD6097</key>
 		<dict>
@@ -1261,13 +1330,13 @@ or create note</string>
 			<key>xpos</key>
 			<integer>605</integer>
 			<key>ypos</key>
-			<integer>800</integer>
+			<integer>935</integer>
 		</dict>
 	</dict>
 	<key>variables</key>
 	<dict>
 		<key>fallbackCreateNew</key>
-		<string>0</string>
+		<string>1</string>
 		<key>fallbackSearchBody</key>
 		<string>1</string>
 		<key>searchFolders</key>
@@ -1276,7 +1345,7 @@ or create note</string>
 		<string>1</string>
 	</dict>
 	<key>version</key>
-	<string>3.4.1</string>
+	<string>3.5.0</string>
 	<key>webaddress</key>
 	<string>https://github.com/sballin/alfred-search-notes-app</string>
 </dict>
