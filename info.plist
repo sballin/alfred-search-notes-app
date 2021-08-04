@@ -1210,7 +1210,7 @@ Environment Variables
 		<key>19CCE92E-2C07-4CB4-9874-E29AA3563F37</key>
 		<dict>
 			<key>note</key>
-			<string>Move note to folder</string>
+			<string>⌥ Move note to folder</string>
 			<key>xpos</key>
 			<integer>605</integer>
 			<key>ypos</key>
