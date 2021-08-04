@@ -38,6 +38,7 @@ SELECT
     identifier || ',x-coredata://' || z_uuid || '/ICNote/p' || xcoreDataID || ',' || IFNULL('x-coredata://' || z_uuid || '/ICAccount/p' || accountID, 'null') AS url,
     noteBodyZipped,
     tableText,
+    ocrText,
     hashtagText
 FROM (
     SELECT
@@ -79,6 +80,16 @@ LEFT JOIN (
 ) AS tables ON znote = xcoreDataID
 LEFT JOIN (
     SELECT 
+        IFNULL(GROUP_CONCAT(zhandwritingsummary, ''), '') || IFNULL(GROUP_CONCAT(zocrsummary, ''), '') AS ocrText,
+        znote AS znoteOcr
+    FROM ziccloudsyncingobject
+    WHERE (zocrsummary IS NOT NULL OR
+           zhandwritingsummary IS NOT NULL) AND
+          zmarkedfordeletion != 1 
+    GROUP BY znoteOcr
+) AS ocrs ON znoteOcr = xcoreDataID
+LEFT JOIN (
+    SELECT 
         GROUP_CONCAT(zalttext, ' ') AS hashtagText,
         znote1
     FROM ziccloudsyncingobject
@@ -97,7 +108,8 @@ SELECT
     folderTitle AS subtitle,
     identifier || ',x-coredata://' || z_uuid || '/ICNote/p' || xcoreDataID || ',' || IFNULL('x-coredata://' || z_uuid || '/ICAccount/p' || accountID, 'null') AS url,
     noteBodyZipped,
-    tableText
+    tableText,
+    ocrText
 FROM (
     SELECT
         c.ztitle1 AS noteTitle,
@@ -136,6 +148,16 @@ LEFT JOIN (
     WHERE ztypeuti = 'com.apple.notes.table'
     GROUP BY znote
 ) AS tables ON znote = xcoreDataID
+LEFT JOIN (
+    SELECT 
+        IFNULL(GROUP_CONCAT(zhandwritingsummary, ''), '') || IFNULL(GROUP_CONCAT(zocrsummary, ''), '') AS ocrText,
+        znote AS znoteOcr
+    FROM ziccloudsyncingobject
+    WHERE (zocrsummary IS NOT NULL OR
+           zhandwritingsummary IS NOT NULL) AND
+          zmarkedfordeletion != 1 
+    GROUP BY znoteOcr
+) AS ocrs ON znoteOcr = xcoreDataID
 LEFT JOIN (
     SELECT z_uuid FROM z_metadata
 )
@@ -349,10 +371,10 @@ func (lite LiteDB) GetResults(search string, scope string) ([]map[string]string,
         }
         
         hashtagText, ok := "", false
-        // columnPointers[5] is out of bounds for "folder" case
+        // columnPointers[6] is out of bounds for "folder" case
         if scope != "folder" && gotHashtags {
             // Get text of any hashtags in this note
-            valHashtagText := columnPointers[5].(*interface{})
+            valHashtagText := columnPointers[6].(*interface{})
             hashtagText, ok = (*valHashtagText).(string)
             if !ok {
                 hashtagText = ""
@@ -412,8 +434,14 @@ func (lite LiteDB) GetResults(search string, scope string) ([]map[string]string,
                                 if !ok {
                                     tableText = ""
                                 }
+                                // Get plaintext of any image OCRs in this note
+                                valOcrText := columnPointers[5].(*interface{})
+                                ocrText, ok := (*valOcrText).(string)
+                                if !ok {
+                                    ocrText = ""
+                                }
                                 // Extract protobuf-format data from unzipped note and add table text
-                                body := hashtagText + " " + GetNoteBody(noteBytes) + " " + tableText
+                                body := hashtagText + " " + GetNoteBody(noteBytes) + " " + tableText + " " + ocrText
                                 // Add body text to search scope
                                 scopeText += " " + body
                                 // Prepare result summary for subtitle string
