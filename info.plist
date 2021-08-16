@@ -1345,7 +1345,7 @@ or create note</string>
 		<string>1</string>
 	</dict>
 	<key>version</key>
-	<string>3.5.0</string>
+	<string>3.5.1</string>
 	<key>webaddress</key>
 	<string>https://github.com/sballin/alfred-search-notes-app</string>
 </dict>

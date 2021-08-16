@@ -30,16 +30,14 @@ const (
     ArgKey = "url"
     BodyKey = "noteBodyZipped"
     TableTextKey = "tableText"
-    HashtagTextKey = "hashtagText"
-    NotesWithHashtagsSQLTemplate = `
+    NotesSQLTemplate = `
 SELECT 
     noteTitle AS title,
     folderTitle AS subtitle,
     identifier || ',x-coredata://' || z_uuid || '/ICNote/p' || xcoreDataID || ',' || IFNULL('x-coredata://' || z_uuid || '/ICAccount/p' || accountID, 'null') AS url,
     noteBodyZipped,
     tableText,
-    ocrText,
-    hashtagText
+    CAST(xcoreDataID AS TEXT)
 FROM (
     SELECT
         c.ztitle1 AS noteTitle,
@@ -78,90 +76,30 @@ LEFT JOIN (
     WHERE ztypeuti = 'com.apple.notes.table'
     GROUP BY znote
 ) AS tables ON znote = xcoreDataID
-LEFT JOIN (
-    SELECT 
-        IFNULL(GROUP_CONCAT(zhandwritingsummary, ''), '') || IFNULL(GROUP_CONCAT(zocrsummary, ''), '') AS ocrText,
-        znote AS znoteOcr
-    FROM ziccloudsyncingobject
-    WHERE (zocrsummary IS NOT NULL OR
-           zhandwritingsummary IS NOT NULL) AND
-          zmarkedfordeletion != 1 
-    GROUP BY znoteOcr
-) AS ocrs ON znoteOcr = xcoreDataID
-LEFT JOIN (
-    SELECT 
-        GROUP_CONCAT(zalttext, ' ') AS hashtagText,
-        znote1
-    FROM ziccloudsyncingobject
-    WHERE ztypeuti1 = 'com.apple.notes.inlinetextattachment.hashtag'
-    GROUP BY znote1
-) AS hashtags ON znote1 = xcoreDataID
 LEFT JOIN (
     SELECT z_uuid FROM z_metadata
 )
 ORDER BY %s
 `
 
-    NotesWithoutHashtagsSQLTemplate = `
+    OCRsSQL = `
 SELECT 
-    noteTitle AS title,
-    folderTitle AS subtitle,
-    identifier || ',x-coredata://' || z_uuid || '/ICNote/p' || xcoreDataID || ',' || IFNULL('x-coredata://' || z_uuid || '/ICAccount/p' || accountID, 'null') AS url,
-    noteBodyZipped,
-    tableText,
-    ocrText
-FROM (
-    SELECT
-        c.ztitle1 AS noteTitle,
-        c.zfolder AS noteFolderID,
-        c.zmodificationdate1 AS modDate,
-        c.z_pk AS xcoredataID,
-        c.zaccount3 AS accountID,
-        c.zidentifier AS identifier,
-        n.zdata AS noteBodyZipped
-    FROM 
-        ziccloudsyncingobject AS c
-        INNER JOIN zicnotedata AS n ON c.znotedata = n.z_pk -- note id (int) distinct from xcoredataID
-    WHERE 
-        noteTitle IS NOT NULL AND 
-        modDate IS NOT NULL AND
-        xcoredataID IS NOT NULL AND
-        noteBodyZipped IS NOT NULL AND
-        c.zmarkedfordeletion != 1
-) AS notes
-INNER JOIN (
-    SELECT
-        z_pk AS folderID,
-        ztitle2 AS folderTitle,
-        zfoldertype AS isRecentlyDeletedFolder
-    FROM ziccloudsyncingobject
-    WHERE 
-        folderTitle IS NOT NULL AND 
-        isRecentlyDeletedFolder != 1 AND
-        zmarkedfordeletion != 1 
-) AS folders ON noteFolderID = folderID
-LEFT JOIN (
-    SELECT 
-        GROUP_CONCAT(zsummary, '') AS tableText,
-        znote
-    FROM ziccloudsyncingobject
-    WHERE ztypeuti = 'com.apple.notes.table'
-    GROUP BY znote
-) AS tables ON znote = xcoreDataID
-LEFT JOIN (
-    SELECT 
-        IFNULL(GROUP_CONCAT(zhandwritingsummary, ''), '') || IFNULL(GROUP_CONCAT(zocrsummary, ''), '') AS ocrText,
-        znote AS znoteOcr
-    FROM ziccloudsyncingobject
-    WHERE (zocrsummary IS NOT NULL OR
-           zhandwritingsummary IS NOT NULL) AND
-          zmarkedfordeletion != 1 
-    GROUP BY znoteOcr
-) AS ocrs ON znoteOcr = xcoreDataID
-LEFT JOIN (
-    SELECT z_uuid FROM z_metadata
-)
-ORDER BY %s
+    CAST(znote AS TEXT),
+    IFNULL(GROUP_CONCAT(zhandwritingsummary, ''), '') || IFNULL(GROUP_CONCAT(zocrsummary, ''), '')
+FROM ziccloudsyncingobject
+WHERE (zocrsummary IS NOT NULL OR
+       zhandwritingsummary IS NOT NULL) AND
+      zmarkedfordeletion != 1 
+GROUP BY znote
+`
+    
+    HashtagsSQL = `
+SELECT 
+    CAST(znote1 AS TEXT),
+    GROUP_CONCAT(zalttext, ' ')
+FROM ziccloudsyncingobject
+WHERE ztypeuti1 = 'com.apple.notes.inlinetextattachment.hashtag'
+GROUP BY znote1
 `
 
     FoldersSQLTemplate = `
@@ -219,43 +157,6 @@ func NewNotesDB() (LiteDB, error) {
     path := Expanduser(DbPath)
     litedb, err := NewLiteDB("file:" + path + "?mode=ro&_query_only=true")
     return litedb, err
-}
-
-func (lite LiteDB) Query(sqlQuery string, sqlArg string) ([]map[string]string, error) {
-    results := []map[string]string{}
-    rows, err := lite.db.Query(sqlQuery, sqlArg)
-    if err != nil {
-        return results, err
-    }
-    defer rows.Close()
-
-    cols, err := rows.Columns()
-    if err != nil {
-        return results, err
-    }
-
-    for rows.Next() {
-        m := map[string]string{}
-        columns := make([]interface{}, len(cols))
-        columnPointers := make([]interface{}, len(cols))
-        for i := range columns {
-            columnPointers[i] = &columns[i]
-        }
-        if err := rows.Scan(columnPointers...); err != nil {
-            return results, err
-        }
-        for i, colName := range cols {
-            val := columnPointers[i].(*interface{})
-            s, ok := (*val).(string)
-            if ok {
-                m[colName] = s
-            } else {
-                m[colName] = ""
-            }
-        }
-        results = append(results, m)
-    }
-    return results, err
 }
 
 func SafeUnicode(r rune) rune {
@@ -317,29 +218,65 @@ func SubtitleMatchSummary(body string, search string) string {
     return matchSummary
 }
 
+func (lite LiteDB) GetSpecialColumn(query string) (map[string]string, error) {
+    results := map[string]string{}
+    rows, err := lite.db.Query(query)
+    if err != nil {
+        return results, err
+    }
+    defer rows.Close()
+    cols, err := rows.Columns()
+    if err != nil {
+        return results, err
+    } 
+    for rows.Next() {
+        columns := make([]interface{}, len(cols))
+        columnPointers := make([]interface{}, len(cols))
+        for i := range columns {
+            columnPointers[i] = &columns[i]
+        }
+        if err := rows.Scan(columnPointers...); err != nil {
+            continue
+        }
+        valNoteID := columnPointers[0].(*interface{})
+        noteID, ok := (*valNoteID).(string)
+        if !ok {
+            continue
+        }
+        valSpecialColumn := columnPointers[1].(*interface{})
+        specialColumn, ok := (*valSpecialColumn).(string)
+        if !ok {
+            continue
+        }
+        results[noteID] = specialColumn
+    }
+    return results, nil
+}
+
 func (lite LiteDB) GetResults(search string, scope string) ([]map[string]string, error) {    
     // Format SQL query
-    sqlQuery := fmt.Sprintf(NotesWithHashtagsSQLTemplate, GetOrderPreference())
+    sqlQuery := fmt.Sprintf(NotesSQLTemplate, GetOrderPreference())
     if scope == "folder" {
         sqlQuery = FoldersSQLTemplate
     }
     
+    // Get OCR text
+    OCRs := map[string]string{}
+    if scope == "body" {
+        OCRs, _ = lite.GetSpecialColumn(OCRsSQL)
+    }
+    
+    // Get hashtags
+    hashtags := map[string]string{}
+    if scope == "body" || scope == "hashtag" {
+        hashtags, _ = lite.GetSpecialColumn(HashtagsSQL)
+    }
+    
     // Run query to get all results
-    gotHashtags := true
     results := []map[string]string{}
     rows, err := lite.db.Query(sqlQuery)
     if err != nil {
-        if scope != "folder" && scope != "hashtag" {
-            // Retry without hashtag support for macOS < 11.4
-            gotHashtags = false
-            sqlQuery = fmt.Sprintf(NotesWithoutHashtagsSQLTemplate, GetOrderPreference())
-            rows, err = lite.db.Query(sqlQuery)
-            if err != nil {
-                return results, err
-            }
-        } else {
-            return results, err
-        }
+        return results, err
     }
     defer rows.Close()
     cols, err := rows.Columns()
@@ -370,24 +307,21 @@ func (lite LiteDB) GetResults(search string, scope string) ([]map[string]string,
             continue
         }
         
-        hashtagText, ok := "", false
-        // columnPointers[6] is out of bounds for "folder" case
-        if scope != "folder" && gotHashtags {
-            // Get text of any hashtags in this note
-            valHashtagText := columnPointers[6].(*interface{})
-            hashtagText, ok = (*valHashtagText).(string)
-            if !ok {
-                hashtagText = ""
-            }
-            // Add space for correct formatting of subtitle string
-            if hashtagText != "" {
-                hashtagText = " " + hashtagText
-            }
-        }
-        
+        hashtagText := ""
         scopeText := ""
         matchSummary := ""
         if len(search) > 0 {
+            ocrText := ""
+            if scope == "body" || scope == "hashtag" {
+                // Get note ID and OCR text
+                valNoteID := columnPointers[5].(*interface{})
+                noteID, ok := (*valNoteID).(string)
+                if ok {
+                    ocrText = OCRs[noteID]
+                    hashtagText = hashtags[noteID]
+                }
+            }
+            
             // Add note/folder title to search scope
             valTitle := columnPointers[0].(*interface{})
             title, ok := (*valTitle).(string)
@@ -433,14 +367,8 @@ func (lite LiteDB) GetResults(search string, scope string) ([]map[string]string,
                                 tableText, ok := (*valTableText).(string)
                                 if !ok {
                                     tableText = ""
-                                }
-                                // Get plaintext of any image OCRs in this note
-                                valOcrText := columnPointers[5].(*interface{})
-                                ocrText, ok := (*valOcrText).(string)
-                                if !ok {
-                                    ocrText = ""
-                                }
-                                // Extract protobuf-format data from unzipped note and add table text
+                                }                                
+                                // Extract protobuf-format data from unzipped note and add other text
                                 body := hashtagText + " " + GetNoteBody(noteBytes) + " " + tableText + " " + ocrText
                                 // Add body text to search scope
                                 scopeText += " " + body
@@ -477,6 +405,9 @@ func (lite LiteDB) GetResults(search string, scope string) ([]map[string]string,
         }
         
         // Add additional text to subtitle string
+        if hashtagText != "" {
+            hashtagText = " " + hashtagText
+        }
         m[SubtitleKey] += hashtagText
         m[SubtitleKey] += matchSummary
         
