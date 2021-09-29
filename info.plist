@@ -901,8 +901,11 @@ on alfred_script(q)
 				show first note in default account
 				tell application "System Events"
 					tell process "Notes"
-						set focused of text area of scroll area of group 1 of splitter group 1 of splitter group 1 of window 1 to true
-						key code {125,125} -- down, down
+						-- Try because coming from a different space can cause an error
+						try
+							set focused of text area of scroll area of group 1 of splitter group 1 of splitter group 1 of window 1 to true
+							key code {125,125} -- down, down
+						end try
 					end tell
 				end tell
 			end if
@@ -1344,6 +1347,8 @@ or create note</string>
 		<key>sortByDate</key>
 		<string>1</string>
 	</dict>
+	<key>variablesdontexport</key>
+	<array/>
 	<key>version</key>
 	<string>3.5.1</string>
 	<key>webaddress</key>
