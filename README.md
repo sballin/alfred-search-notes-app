@@ -40,6 +40,8 @@ Download the [latest version](https://github.com/sballin/alfred-search-notes-app
 
 ### Required permissions
 
+If you get a permission-related error, especially after installing updates to macOS, try disabling and re-enabling these permissions.
+
 <img src="https://user-images.githubusercontent.com/2719004/123890681-a3335600-d925-11eb-9b3b-ac077dc26ef8.png" width="600">
 
 ### Email notes are not supported
