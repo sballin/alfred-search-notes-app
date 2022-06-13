@@ -25,7 +25,7 @@
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>0B8A749B-E2E7-4B1B-9711-1C77A495BD97</string>
+				<string>20016E4E-F65E-4467-A8F1-72DB4316C5BD</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -38,7 +38,7 @@
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>0B8A749B-E2E7-4B1B-9711-1C77A495BD97</string>
+				<string>20016E4E-F65E-4467-A8F1-72DB4316C5BD</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -77,7 +77,7 @@
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>0B8A749B-E2E7-4B1B-9711-1C77A495BD97</string>
+				<string>20016E4E-F65E-4467-A8F1-72DB4316C5BD</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -133,7 +133,7 @@
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>0B8A749B-E2E7-4B1B-9711-1C77A495BD97</string>
+				<string>20016E4E-F65E-4467-A8F1-72DB4316C5BD</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -291,7 +291,7 @@
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>0B8A749B-E2E7-4B1B-9711-1C77A495BD97</string>
+				<string>20016E4E-F65E-4467-A8F1-72DB4316C5BD</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -304,7 +304,7 @@
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>0B8A749B-E2E7-4B1B-9711-1C77A495BD97</string>
+				<string>20016E4E-F65E-4467-A8F1-72DB4316C5BD</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -317,7 +317,7 @@
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>0B8A749B-E2E7-4B1B-9711-1C77A495BD97</string>
+				<string>20016E4E-F65E-4467-A8F1-72DB4316C5BD</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -349,11 +349,9 @@
 				<key>focusedappvariablename</key>
 				<string></string>
 				<key>hotkey</key>
-				<integer>49</integer>
+				<integer>0</integer>
 				<key>hotmod</key>
-				<integer>1572864</integer>
-				<key>hotstring</key>
-				<string>Space</string>
+				<integer>0</integer>
 				<key>leftcursor</key>
 				<false/>
 				<key>modsmode</key>
@@ -378,7 +376,7 @@ on alfred_script(q)
 	try
 		tell application "System Events"
 			tell process "Notes"
-				-- Get search string 
+				-- Get search string
 				if q contains "/ICNote/p" or q contains "/ICFolder/p" then
 					set AppleScript's text item delimiters to ","
 					set userQuery to text from text item 4 to text item -1 of q
@@ -494,11 +492,9 @@ fi</string>
 				<key>focusedappvariablename</key>
 				<string></string>
 				<key>hotkey</key>
-				<integer>37</integer>
+				<integer>0</integer>
 				<key>hotmod</key>
-				<integer>1048576</integer>
-				<key>hotstring</key>
-				<string>L</string>
+				<integer>0</integer>
 				<key>leftcursor</key>
 				<false/>
 				<key>modsmode</key>
@@ -761,21 +757,94 @@ end alfred_script</string>
 				<key>concurrently</key>
 				<false/>
 				<key>escaping</key>
-				<integer>102</integer>
+				<integer>0</integer>
 				<key>script</key>
-				<string>workflow_dir=$alfred_preferences/workflows/$alfred_workflow_uid
-/usr/bin/python2 "$workflow_dir/update.py"</string>
+				<string># THESE VARIABLES MUST BE SET. SEE THE ONEUPDATER README FOR AN EXPLANATION OF EACH.
+readonly remote_info_plist='https://raw.githubusercontent.com/sballin/alfred-search-notes-app/master/info.plist'
+readonly workflow_url='sballin/alfred-search-notes-app'
+readonly download_type='github_release'
+readonly frequency_check='4'
+
+# FROM HERE ON, CODE SHOULD BE LEFT UNTOUCHED!
+function abort {
+  echo "${1}" &gt;&amp;2
+  exit 1
+}
+
+function url_exists {
+  curl --silent --location --output /dev/null --fail --range 0-0 "${1}"
+}
+
+function notification {
+  local -r notificator="$(find . -type f -name 'notificator')"
+
+  if [[ -f "${notificator}" &amp;&amp; "$(/usr/bin/file --brief --mime-type "${notificator}")" == 'text/x-shellscript' ]]; then
+    "${notificator}" --message "${1}" --title "${alfred_workflow_name}" --subtitle 'A new version is available'
+    return
+  fi
+
+  osascript -e "display notification \"${1}\" with title \"${alfred_workflow_name}\" subtitle \"A new version is available\""
+}
+
+# Local sanity checks
+readonly local_info_plist='info.plist'
+readonly local_version="$(/usr/libexec/PlistBuddy -c 'print version' "${local_info_plist}")"
+
+[[ -n "${local_version}" ]] || abort 'You need to set a workflow version in the configuration sheet.'
+[[ "${download_type}" =~ ^(direct|page|github_release)$ ]] || abort "'download_type' (${download_type}) needs to be one of 'direct', 'page', or 'github_release'."
+[[ "${frequency_check}" =~ ^[0-9]+$ ]] || abort "'frequency_check' (${frequency_check}) needs to be a number."
+
+# Check for updates
+if [[ $(find "${local_info_plist}" -mtime +"${frequency_check}"d) ]]; then
+  # Remote sanity check
+  if ! url_exists "${remote_info_plist}"; then
+    abort "'remote_info_plist' (${remote_info_plist}) appears to not be reachable."
+  fi
+
+  readonly tmp_file="$(mktemp)"
+  curl --silent --location --output "${tmp_file}" "${remote_info_plist}"
+  readonly remote_version="$(/usr/libexec/PlistBuddy -c 'print version' "${tmp_file}")"
+  rm "${tmp_file}"
+
+  if [[ "${local_version}" == "${remote_version}" ]]; then
+    touch "${local_info_plist}" # Reset timer by touching local file
+    exit 0
+  fi
+
+  if [[ "${download_type}" == 'page' ]]; then
+    notification 'Opening download page…'
+    open "${workflow_url}"
+    exit 0
+  fi
+
+  readonly download_url="$(
+    if [[ "${download_type}" == 'github_release' ]]; then
+      osascript -l JavaScript -e 'function run(argv) { return JSON.parse(argv[0])["assets"].find(asset =&gt; asset["browser_download_url"].endsWith(".alfredworkflow"))["browser_download_url"] }' "$(curl --silent "https://api.github.com/repos/${workflow_url}/releases/latest")"
+    else
+      echo "${workflow_url}"
+    fi
+  )"
+
+  if url_exists "${download_url}"; then
+    notification 'Downloading and installing…'
+    readonly download_name="$(basename "${download_url}")"
+    curl --silent --location --output "${HOME}/Downloads/${download_name}" "${download_url}"
+    open "${HOME}/Downloads/${download_name}"
+  else
+    abort "'workflow_url' (${download_url}) appears to not be reachable."
+  fi
+fi</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
-				<string>update.py</string>
+				<string></string>
 				<key>type</key>
 				<integer>0</integer>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.action.script</string>
 			<key>uid</key>
-			<string>0B8A749B-E2E7-4B1B-9711-1C77A495BD97</string>
+			<string>20016E4E-F65E-4467-A8F1-72DB4316C5BD</string>
 			<key>version</key>
 			<integer>2</integer>
 		</dict>
@@ -861,7 +930,7 @@ fi</string>
 
 on alfred_script(q)
 	try
-		if q contains "/ICNote/p" or q contains "/ICFolder/p" then 
+		if q contains "/ICNote/p" or q contains "/ICFolder/p" then
 			set AppleScript's text item delimiters to ","
 			set identifier to text item 1 of q
 			set itemID to text item 2 of q
@@ -883,7 +952,7 @@ on alfred_script(q)
 					else
 						show note id itemID in account id accountID
 						show note id itemID in account id accountID
-					end if 
+					end if
 				end if
 			else if q contains "/ICFolder/p" then
 				-- Show user-requested folder
@@ -893,7 +962,7 @@ on alfred_script(q)
 				else
 					show folder id itemID in account id accountID
 					show folder id itemID in account id accountID
-				end if 
+				end if
 			else
 				-- Create new note from user query
 				tell default account to make new note at default folder with properties {body:"&lt;div&gt;&lt;h1&gt;" &amp; q &amp; "&lt;/h1&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;"}
@@ -1160,8 +1229,6 @@ fi</string>
 				<false/>
 				<key>focusedappvariablename</key>
 				<string></string>
-				<key>keyword</key>
-				<string>[[[</string>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.trigger.snippet</string>
@@ -1201,15 +1268,6 @@ Environment Variables
 			<key>ypos</key>
 			<integer>800</integer>
 		</dict>
-		<key>0B8A749B-E2E7-4B1B-9711-1C77A495BD97</key>
-		<dict>
-			<key>note</key>
-			<string>Check for updates if more than 24 hours since last check</string>
-			<key>xpos</key>
-			<integer>875</integer>
-			<key>ypos</key>
-			<integer>450</integer>
-		</dict>
 		<key>19CCE92E-2C07-4CB4-9874-E29AA3563F37</key>
 		<dict>
 			<key>note</key>
@@ -1226,6 +1284,17 @@ Environment Variables
 			<key>ypos</key>
 			<integer>50</integer>
 		</dict>
+		<key>20016E4E-F65E-4467-A8F1-72DB4316C5BD</key>
+		<dict>
+			<key>colorindex</key>
+			<integer>12</integer>
+			<key>note</key>
+			<string>OneUpdater</string>
+			<key>xpos</key>
+			<integer>875</integer>
+			<key>ypos</key>
+			<integer>450</integer>
+		</dict>
 		<key>2A3C974B-57DF-4601-8EFC-4158CAA2005A</key>
 		<dict>
 			<key>note</key>
@@ -1238,7 +1307,7 @@ Environment Variables
 		<key>4D8E3444-14C2-4D0E-A8C1-AA67988AE358</key>
 		<dict>
 			<key>note</key>
-			<string>Show note/folder 
+			<string>Show note/folder
 or create note</string>
 			<key>xpos</key>
 			<integer>605</integer>
@@ -1347,8 +1416,10 @@ or create note</string>
 		<key>sortByDate</key>
 		<string>1</string>
 	</dict>
+	<key>variablesdontexport</key>
+	<array/>
 	<key>version</key>
-	<string>3.5.2</string>
+	<string>3.5.3</string>
 	<key>webaddress</key>
 	<string>https://github.com/sballin/alfred-search-notes-app</string>
 </dict>
