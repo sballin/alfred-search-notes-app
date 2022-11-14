@@ -44,6 +44,10 @@ If you get a permission-related error, especially after installing updates to ma
 
 <img src="https://user-images.githubusercontent.com/2719004/123890681-a3335600-d925-11eb-9b3b-ac077dc26ef8.png" width="600">
 
+### Troubleshooting
+
+Try disabling and re-enabling the above permissions. If that doesn't work, also try restarting Alfred or restarting your computer.
+
 ### Email notes are not supported
 
 This workflow doesn't support notes stored with Google or other internet accounts. Please make sure either iCloud or On My Mac is selected as the default account in the preferences of Notes.app.
