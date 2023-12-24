@@ -593,47 +593,14 @@ fi</string>
 			<key>config</key>
 			<dict>
 				<key>applescript</key>
-				<string>-- This script takes "URLs" of format "identifier,itemID,accountID,userQuery"
-
-use framework "Foundation"
-use scripting additions
-
-property NSMutableAttributedString : a reference to current application's NSMutableAttributedString
-property NSNull : a reference to current application's NSNull
-property NSPasteboardTypeRTF : a reference to current application's NSPasteboardTypeRTF
-property NSRTFTextDocumentType : a reference to current application's NSRTFTextDocumentType
-property NSString : a reference to current application's NSString
-property NSUTF8StringEncoding : a reference to current application's NSUTF8StringEncoding
-
-on HTMLToClipboard(HTMLContent)
-	set HTMLBody to ("&lt;html&gt;&lt;head&gt;&lt;meta charset=\"UTF-8\" /&gt;&lt;/head&gt;&lt;body&gt;" &amp; HTMLContent &amp; "&lt;/body&gt;&lt;/html&gt;")
-	set NSStringHTMLBody to NSString's stringWithString:HTMLBody
-	set HTMLBodyData to NSStringHTMLBody's dataUsingEncoding:NSUTF8StringEncoding
-	set attributedString to NSMutableAttributedString's alloc()
-	attributedString's initWithHTML:HTMLBodyData documentAttributes:NSNull
-	set range to {0, attributedString's |length|}
-	set RTF to (attributedString's RTFFromRange:range documentAttributes:{DocumentType:NSRTFTextDocumentType})
-	set pasteboard to current application's NSPasteboard's generalPasteboard()
-	pasteboard's clearContents()
-	pasteboard's setData:RTF forType:NSPasteboardTypeRTF
-end clipTextAndHtml
+				<string>-- This script takes "URLs" of format "identifier,itemID,accountID,userQuery"Z
 
 on alfred_script(q)
 	try
 		set AppleScript's text item delimiters to ","
 		set identifier to text item 1 of q
-		set itemID to text item 2 of q
-		set accountID to text item 3 of q
 		set AppleScript's text item delimiters to ""
-		tell application "Notes"
-			if accountID is "null" then
-				set noteName to name of note id itemID in default account
-			else
-				set noteName to name of note id itemID in account id accountID
-			end if
-			set HTMLLink to "&lt;a href=\"notes://showNote?identifier=" &amp; identifier &amp; "\"&gt;" &amp; noteName &amp; "&lt;/a&gt; (&lt;a href=\"mobilenotes://showNote?identifier=" &amp; identifier &amp; "\"&gt;iOS&lt;/a&gt;)"
-		end tell
-		my HTMLToClipboard(HTMLLink)
+		set the clipboard to "applenotes://note/" &amp; identifier
 	on error errorMessage number errorNumber
 		display alert "Copy Link to Note Error" message (errorNumber as string &amp; ": " &amp; errorMessage &amp; "\n\nInput: " &amp; q) as critical
 	end try
@@ -1059,7 +1026,7 @@ on alfred_script(q)
 			else
 				set noteName to name of note id itemID in account id accountID
 			end if
-			set HTMLLink to "&lt;a href=\"notes://showNote?identifier=" &amp; identifier &amp; "\"&gt;" &amp; noteName &amp; "&lt;/a&gt; (&lt;a href=\"mobilenotes://showNote?identifier=" &amp; identifier &amp; "\"&gt;iOS&lt;/a&gt;)"
+			set HTMLLink to "&lt;a href=\"applenotes://note/" &amp; identifier &amp; "\"&gt;􀓕 " &amp; noteName &amp; "&lt;/a&gt;"
 		end tell
 		my HTMLToClipboard(HTMLLink)
 		tell application "System Events" to keystroke "v" using command down
