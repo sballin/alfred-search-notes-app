@@ -1002,12 +1002,6 @@ on alfred_script(q)
 			tell default account to make new note at default folder with properties {body:"&lt;div&gt;&lt;h1&gt;" &amp; q &amp; "&lt;/h1&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;"}
 			show first note in default account
 			show first note in default account
-			tell application "System Events"
-				tell process "Notes"
-					set focused of text area of scroll area of group 1 of splitter group 1 of splitter group 1 of window 1 to true
-					key code {125,125} -- down, down
-				end tell
-			end tell
 		end tell
 	on error errorMessage number errorNumber
 		display alert "Create Note Error" message (errorNumber as string &amp; ": " &amp; errorMessage &amp; "\n\nInput: " &amp; q) as critical
@@ -1188,52 +1182,52 @@ Environment Variables
 		<key>060809AF-8160-439A-85F9-D672664E3A1A</key>
 		<dict>
 			<key>xpos</key>
-			<integer>50</integer>
+			<real>50</real>
 			<key>ypos</key>
-			<integer>160</integer>
+			<real>160</real>
 		</dict>
 		<key>092EA403-A1D7-49DA-B8DD-8D785DDAB3B9</key>
 		<dict>
 			<key>note</key>
 			<string>Create new note</string>
 			<key>xpos</key>
-			<integer>605</integer>
+			<real>605</real>
 			<key>ypos</key>
-			<integer>800</integer>
+			<real>800</real>
 		</dict>
 		<key>0B8A749B-E2E7-4B1B-9711-1C77A495BD97</key>
 		<dict>
 			<key>note</key>
 			<string>Check for updates if more than 24 hours since last check</string>
 			<key>xpos</key>
-			<integer>875</integer>
+			<real>875</real>
 			<key>ypos</key>
-			<integer>450</integer>
+			<real>450</real>
 		</dict>
 		<key>19CCE92E-2C07-4CB4-9874-E29AA3563F37</key>
 		<dict>
 			<key>note</key>
 			<string>⌥ Move note to folder</string>
 			<key>xpos</key>
-			<integer>605</integer>
+			<real>605</real>
 			<key>ypos</key>
-			<integer>665</integer>
+			<real>665</real>
 		</dict>
 		<key>1A6D4810-ABAF-4604-9639-CC1327A279B7</key>
 		<dict>
 			<key>xpos</key>
-			<integer>50</integer>
+			<real>50</real>
 			<key>ypos</key>
-			<integer>50</integer>
+			<real>50</real>
 		</dict>
 		<key>2A3C974B-57DF-4601-8EFC-4158CAA2005A</key>
 		<dict>
 			<key>note</key>
 			<string>Paste link to note</string>
 			<key>xpos</key>
-			<integer>50</integer>
+			<real>50</real>
 			<key>ypos</key>
-			<integer>935</integer>
+			<real>935</real>
 		</dict>
 		<key>4D8E3444-14C2-4D0E-A8C1-AA67988AE358</key>
 		<dict>
@@ -1241,101 +1235,103 @@ Environment Variables
 			<string>Show note/folder 
 or create note</string>
 			<key>xpos</key>
-			<integer>605</integer>
+			<real>605</real>
 			<key>ypos</key>
-			<integer>515</integer>
+			<real>515</real>
 		</dict>
 		<key>5BC84589-FA2A-459F-982A-54B612C9BA7F</key>
 		<dict>
 			<key>note</key>
 			<string>Search note titles</string>
 			<key>xpos</key>
-			<integer>290</integer>
+			<real>290</real>
 			<key>ypos</key>
-			<integer>105</integer>
+			<real>105</real>
 		</dict>
 		<key>6740BCB6-6818-49E2-A88A-9D19EA132F08</key>
 		<dict>
 			<key>note</key>
 			<string>⌥ Copy link to note</string>
 			<key>xpos</key>
-			<integer>605</integer>
+			<real>605</real>
 			<key>ypos</key>
-			<integer>245</integer>
+			<real>245</real>
 		</dict>
 		<key>69AB99D4-3231-4959-828B-383C93051FCC</key>
 		<dict>
 			<key>note</key>
 			<string>Create new note</string>
 			<key>xpos</key>
-			<integer>290</integer>
+			<real>290</real>
 			<key>ypos</key>
-			<integer>800</integer>
+			<real>800</real>
 		</dict>
 		<key>6F3DD843-22EF-4A97-BAF8-511894B5202D</key>
 		<dict>
 			<key>note</key>
 			<string>Search folder names</string>
 			<key>xpos</key>
-			<integer>290</integer>
+			<real>290</real>
 			<key>ypos</key>
-			<integer>375</integer>
+			<real>375</real>
 		</dict>
 		<key>A057AD2C-473A-4823-8624-8891E5C187F6</key>
 		<dict>
 			<key>note</key>
 			<string>Search note titles</string>
 			<key>xpos</key>
-			<integer>290</integer>
+			<real>290</real>
 			<key>ypos</key>
-			<integer>935</integer>
+			<real>935</real>
 		</dict>
 		<key>B9ECD7D6-EA33-4E2E-AE3E-4E22EEDD6097</key>
 		<dict>
 			<key>note</key>
 			<string>Search note bodies</string>
 			<key>xpos</key>
-			<integer>290</integer>
+			<real>290</real>
 			<key>ypos</key>
-			<integer>240</integer>
+			<real>240</real>
 		</dict>
 		<key>CAA4E408-453B-4518-B2B1-CD024BAA493C</key>
 		<dict>
 			<key>note</key>
 			<string>Search hashtags</string>
 			<key>xpos</key>
-			<integer>290</integer>
+			<real>290</real>
 			<key>ypos</key>
-			<integer>510</integer>
+			<real>510</real>
 		</dict>
 		<key>CE746687-24FD-4E5C-841F-0D4826E007C4</key>
 		<dict>
 			<key>note</key>
 			<string>⇧ Search in Notes toolbar</string>
 			<key>xpos</key>
-			<integer>605</integer>
+			<real>605</real>
 			<key>ypos</key>
-			<integer>95</integer>
+			<real>95</real>
 		</dict>
 		<key>DC692798-E272-4547-BE83-4B63B823E456</key>
 		<dict>
 			<key>note</key>
 			<string>⌘ Copy note body</string>
 			<key>xpos</key>
-			<integer>605</integer>
+			<real>605</real>
 			<key>ypos</key>
-			<integer>380</integer>
+			<real>380</real>
 		</dict>
 		<key>E91B4B80-CB26-4BC2-B808-5EC8A43F3E25</key>
 		<dict>
 			<key>note</key>
 			<string>Paste link to note</string>
 			<key>xpos</key>
-			<integer>605</integer>
+			<real>605</real>
 			<key>ypos</key>
-			<integer>935</integer>
+			<real>935</real>
 		</dict>
 	</dict>
+	<key>userconfigurationconfig</key>
+	<array/>
 	<key>variables</key>
 	<dict>
 		<key>fallbackCreateNew</key>
@@ -1347,6 +1343,8 @@ or create note</string>
 		<key>sortByDate</key>
 		<string>1</string>
 	</dict>
+	<key>variablesdontexport</key>
+	<array/>
 	<key>version</key>
 	<string>3.5.2</string>
 	<key>webaddress</key>
