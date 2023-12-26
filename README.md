@@ -27,20 +27,22 @@ You can generate links to any of your notes and use them on macOS or iOS. Copy t
 
 ## Install
 
-Download the [latest version](https://github.com/sballin/alfred-search-notes-app/releases/latest/download/Search.Notes.alfredworkflow) of the workflow. Alfred version 4 is required.
+Download the [latest version](https://github.com/sballin/alfred-search-notes-app/releases/latest/download/Search.Notes.alfredworkflow) of the workflow if you're on the latest macOS with Alfred >4. For older versions of macOS, you may need to use [older versions](https://github.com/sballin/alfred-search-notes-app/releases) of the workflow.
 
 ### Required setup
 
 1. Try searching for a note
 2. If a warning dialog appears (see image below), click "Cancel" rather than "Move to Trash". Then open System Preferences > Security & Privacy and click the "Open Anyway" button near the bottom
 4. Approve additional requests for permission as they appear
-5. If there are any other issues, make sure each of the required [permissions](#required-permissions), if present, is enabled
+5. If there are any other issues, please follow the advice under [troubleshooting](#troubleshooting), if present, is enabled
 
 <img src="https://user-images.githubusercontent.com/2719004/123869471-0b227600-d8ff-11eb-8c20-6537055b1336.png" width="890">
 
-### Required permissions
+### Troubleshooting
 
-<img src="https://user-images.githubusercontent.com/2719004/123890681-a3335600-d925-11eb-9b3b-ac077dc26ef8.png" width="600">
+If you get a permission-related error, especially after installing updates to macOS, try disabling and re-enabling the permissions shown below, especially full disk access for Alfred. If that doesn't work, please look through [common issues](https://github.com/sballin/alfred-search-notes-app/issues?q=) before submitting a new one.
+
+<img src="https://github.com/sballin/alfred-search-notes-app/assets/2719004/566002dd-f3be-4b98-88b7-16d6e185d531" width="890">
 
 ### Email notes are not supported
 
@@ -67,6 +69,7 @@ Big thanks to...
 * threeplanetssoftware for the [apple_cloud_notes_parser](https://github.com/threeplanetssoftware/apple_cloud_notes_parser) from which I copied the protobuf handling
 * [lslz627](https://github.com/lslz627) for help with protobuf and tables
 * [Artem Chistyakov](https://temochka.com/blog/posts/2020/02/22/linking-to-apple-notes.html) for a much improved way to create links to notes
+* [vitorgalvao](https://github.com/vitorgalvao) for the OneUpdater code
 
 ## Donate
 
