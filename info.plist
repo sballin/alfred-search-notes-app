@@ -381,14 +381,14 @@ on alfred_script(q)
 				-- Get search string 
 				if q contains "/ICNote/p" or q contains "/ICFolder/p" then
 					set AppleScript's text item delimiters to ","
-					set userQuery to text from text item 4 to text item -1 of q
+					set userQuery to text from text item 5 to text item -1 of q
 					set AppleScript's text item delimiters to ""
 				else
 					set userQuery to q
 				end if
 				-- Enter the string in the Notes search bar
 				set frontmost to true
-				click menu item 1 of menu of menu item 16 of menu 4 of menu bar 1 -- Edit, Find, Note List Search…
+				click menu item 1 of menu of menu item 17 of menu 4 of menu bar 1 -- Edit, Find, Note List Search…
 				set clipboardOld to the clipboard
 				set the clipboard to userQuery
 				click menu item 6 of menu 4 of menu bar 1 -- Edit, Paste
