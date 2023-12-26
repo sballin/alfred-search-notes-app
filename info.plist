@@ -1152,9 +1152,10 @@ fi</string>
 		</dict>
 	</array>
 	<key>readme</key>
-	<string>## New in the latest version
+	<string>## New in this version
+- Show enclosing folder when showing a note
 - Use new note linking format that works on macOS and iOS (macOS &gt; 14 required)
-- Use new updater script that doesn't require Python 2
+- Use new updater script that doesn't require Python 2 (thanks vitorgalvao!)
 - Bug fixes
 
 ## Setup instructions and help
@@ -1336,8 +1337,10 @@ or create note</string>
 		<key>sortByDate</key>
 		<string>1</string>
 	</dict>
+	<key>variablesdontexport</key>
+	<array/>
 	<key>version</key>
-	<string>3.5.2</string>
+	<string>3.6</string>
 	<key>webaddress</key>
 	<string>https://github.com/sballin/alfred-search-notes-app</string>
 </dict>
