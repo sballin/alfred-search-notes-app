@@ -26,16 +26,20 @@ var matcher = search.New(language.Und, search.Loose)
 
 const (
 	DbPath           = "~/Library/Group Containers/group.com.apple.notes/NoteStore.sqlite"
-	TitleKey         = "title"
-	SubtitleKey      = "subtitle"
-	ArgKey           = "url"
+	TitleKey         = "title"    // titles of rows in Alfred
+	SubtitleKey      = "subtitle" // subtitles of rows in Alfred
+	ArgKey           = "arg"      // comma-separated lists of identifiers that wind up in Alfred "arg" fields
 	BodyKey          = "noteBodyZipped"
 	TableTextKey     = "tableText"
 	NotesSQLTemplate = `
 SELECT 
     noteTitle AS title,
     folderTitle AS subtitle,
-    identifier || ',x-coredata://' || z_uuid || '/ICNote/p' || xcoreDataID || ',' || IFNULL('x-coredata://' || z_uuid || '/ICAccount/p' || accountID, 'null') AS url,
+    identifier || ',' || -- note ID used in notes:// and applenotes:// URI schemes
+        'x-coredata://' || z_uuid || '/ICNote/p' || xcoreDataID || ',' || -- applescript ID of note
+        IFNULL('x-coredata://' || z_uuid || '/ICAccount/p' || accountID, 'null') || ',' || -- applescript ID of account
+        %s -- applescript ID of folder that note is in or "null"
+        AS arg,
     noteBodyZipped,
     tableText,
     CAST(xcoreDataID AS TEXT)
@@ -107,7 +111,7 @@ GROUP BY znote1
 SELECT 
     ztitle2 AS title,
     '' AS subtitle,
-    zidentifier || ',x-coredata://' || z_uuid || '/ICFolder/p' || z_pk || ',' || IFNULL('x-coredata://' || z_uuid || '/ICAccount/p' || zaccount4, 'null') AS url
+    zidentifier || ',x-coredata://' || z_uuid || '/ICFolder/p' || z_pk || ',' || IFNULL('x-coredata://' || z_uuid || '/ICAccount/p' || zaccount4, 'null') AS arg
 FROM ziccloudsyncingobject
 LEFT JOIN (
     SELECT z_uuid FROM z_metadata
@@ -257,7 +261,7 @@ func (lite LiteDB) GetSpecialColumn(query string) (map[string]string, error) {
 
 func (lite LiteDB) GetResults(search string, scope string) ([]map[string]string, error) {
 	// Format SQL query
-	sqlQuery := fmt.Sprintf(NotesSQLTemplate, GetOrderPreference())
+	sqlQuery := fmt.Sprintf(NotesSQLTemplate, GetEnclosingFolderPreference(), GetOrderPreference())
 	if scope == "folder" {
 		sqlQuery = FoldersSQLTemplate
 	}
@@ -331,7 +335,7 @@ func (lite LiteDB) GetResults(search string, scope string) ([]map[string]string,
 				continue
 			}
 			scopeText = title
-			if searchFolders == true {
+			if searchFolders {
 				// Add folder of note object to search scope (this field is empty for folder objects)
 				valFolder := columnPointers[1].(*interface{})
 				folder, ok := (*valFolder).(string)
@@ -448,6 +452,14 @@ func ParseUserQuery(arg string) UserQuery {
 	}
 	userQuery.WordString = strings.Join(words, " ")
 	return userQuery
+}
+
+func GetEnclosingFolderPreference() string {
+	if os.Getenv("showEnclosingFolder") != "0" {
+		return "'x-coredata://' || z_uuid || '/ICFolder/p' || noteFolderID"
+	} else {
+		return "'null'"
+	}
 }
 
 func GetOrderPreference() string {
