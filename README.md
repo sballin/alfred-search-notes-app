@@ -44,10 +44,6 @@ If you get a permission-related error, especially after installing updates to ma
 
 <img src="https://github.com/sballin/alfred-search-notes-app/assets/2719004/566002dd-f3be-4b98-88b7-16d6e185d531" width="890">
 
-### Troubleshooting
-
-Try disabling and re-enabling the above permissions. If that doesn't work, also try restarting Alfred or restarting your computer.
-
 ### Email notes are not supported
 
 This workflow doesn't support notes stored with Google or other internet accounts. Please make sure either iCloud or On My Mac is selected as the default account in the preferences of Notes.app.
