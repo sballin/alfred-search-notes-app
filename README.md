@@ -27,7 +27,7 @@ You can generate links to any of your notes and use them on macOS or iOS. Copy t
 
 ## Install
 
-Download the [latest version](https://github.com/sballin/alfred-search-notes-app/releases/latest/download/Search.Notes.alfredworkflow) of the workflow if you're on the latest macOS with Alfred >4. For older versions of macOS, you may need to use [older versions](https://github.com/sballin/alfred-search-notes-app/releases) of the workflow.
+Download the [latest version](https://github.com/sballin/alfred-search-notes-app/releases/latest/download/Search.Notes.alfredworkflow) of the workflow if you're on the latest macOS with Alfred >= 4. For older versions of macOS, you may need to use [older versions](https://github.com/sballin/alfred-search-notes-app/releases) of the workflow.
 
 ### Required setup
 
