@@ -1154,7 +1154,7 @@ fi</string>
 	<key>readme</key>
 	<string>## New in this version
 - Show enclosing folder when showing a note
-- Use new note linking format that works on macOS and iOS (macOS &gt; 14 required)
+- Use new note linking format that works on macOS and iOS (macOS &gt;= 14 required)
 - Use new updater script that doesn't require Python 2 (thanks vitorgalvao!)
 - Bug fixes
 
