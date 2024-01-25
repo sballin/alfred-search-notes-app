@@ -1169,10 +1169,8 @@ fi</string>
 	</array>
 	<key>readme</key>
 	<string>## New in this version
-- Show enclosing folder when showing a note
-- Use new note linking format that works on macOS and iOS (macOS &gt;= 14 required)
-- Use new updater script that doesn't require Python 2 (thanks vitorgalvao!)
-- Bug fixes
+- Position cursor in body of note after creating a new note
+- Remove note glyph from links because it doesn't get rendered on iOS
 
 ## Setup instructions and help
 https://github.com/sballin/alfred-search-notes-app
@@ -1354,7 +1352,7 @@ or create note</string>
 		<string>1</string>
 	</dict>
 	<key>version</key>
-	<string>3.6</string>
+	<string>3.6.1</string>
 	<key>webaddress</key>
 	<string>https://github.com/sballin/alfred-search-notes-app</string>
 </dict>
