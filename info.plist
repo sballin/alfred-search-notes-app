@@ -989,6 +989,13 @@ on alfred_script(q)
 			show first note in default account
 			show first note in default account
 		end tell
+		try
+			tell application "System Events"				tell process "Notes"
+					set focused of scroll area 3 of splitter group 1 of window 1 to true
+					key code {125, 125} -- down, down
+				end tell
+			end tell
+		end try
 	on error errorMessage number errorNumber
 		display alert "Create Note Error" message (errorNumber as string &amp; ": " &amp; errorMessage &amp; "\n\nInput: " &amp; q) as critical
 	end try
@@ -1337,8 +1344,6 @@ or create note</string>
 		<key>sortByDate</key>
 		<string>1</string>
 	</dict>
-	<key>variablesdontexport</key>
-	<array/>
 	<key>version</key>
 	<string>3.6</string>
 	<key>webaddress</key>
