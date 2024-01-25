@@ -1052,7 +1052,7 @@ on alfred_script(q)
 			else
 				set noteName to name of note id itemID in account id accountID
 			end if
-			set HTMLLink to "&lt;a href=\"applenotes://note/" &amp; identifier &amp; "\"&gt;􀓕 " &amp; noteName &amp; "&lt;/a&gt;"
+			set HTMLLink to "&lt;a href=\"applenotes://note/" &amp; identifier &amp; "\"&gt;" &amp; noteName &amp; "&lt;/a&gt;"
 		end tell
 		my HTMLToClipboard(HTMLLink)
 		tell application "System Events" to keystroke "v" using command down
