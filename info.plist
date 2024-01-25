@@ -897,7 +897,15 @@ fi</string>
 				<key>applescript</key>
 				<string>-- This script takes "URLs" of format "identifier,itemID,accountID,itemFolderID,userQuery" or just "userQuery"-- accountID can be the string "null", if so the default account is used-- Some commands need to run twice, otherwise they fail when toolbar search is activeon alfred_script(q)	try		if q contains "/ICNote/p" or q contains "/ICFolder/p" then			set AppleScript's text item delimiters to ","			set identifier to text item 1 of q			set itemID to text item 2 of q			set accountID to text item 3 of q			set itemFolderID to text item 4 of q			set AppleScript's text item delimiters to ""			tell application "Notes"				if itemID contains "/ICNote/p" then					-- Show user-requested note					open location "notes://showNote?identifier=" &amp; identifier					open location "notes://showNote?identifier=" &amp; identifier					-- Compatibility with macOS &lt; 11 which does not support notes://					set OSVersion to system version of (system info)					set mainVersion to text 1 thru ((offset of "." in OSVersion) - 1) of OSVersion as number					if mainVersion &lt; 11 then						if accountID is "null" then							show note id itemID in default account							show note id itemID in default account						else							show note id itemID in account id accountID							show note id itemID in account id accountID						end if					end if
 					if itemFolderID is not "null" then						if accountID is "null" then							show folder id itemFolderID in default account						else							show folder id itemFolderID in account id accountID						end if
-					end if				else if itemID contains "/ICFolder/p" then					-- Show user-requested folder					if accountID is "null" then						show folder id itemID in default account						show folder id itemID in default account					else						show folder id itemID in account id accountID						show folder id itemID in account id accountID					end if				end if			end tell					else			tell application "Notes"				-- Create new note from user query				tell default account to make new note at default folder with properties {body:"&lt;div&gt;&lt;h1&gt;" &amp; q &amp; "&lt;/h1&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;"}				show first note in default account				show first note in default account			end tell		end if	on error errorMessage number errorNumber		display alert "Show Note Error" message ((errorNumber as string) &amp; ": " &amp; errorMessage &amp; "
+					end if				else if itemID contains "/ICFolder/p" then					-- Show user-requested folder					if accountID is "null" then						show folder id itemID in default account						show folder id itemID in default account					else						show folder id itemID in account id accountID						show folder id itemID in account id accountID					end if				end if			end tell					else			tell application "Notes"				-- Create new note from user query				tell default account to make new note at default folder with properties {body:"&lt;div&gt;&lt;h1&gt;" &amp; q &amp; "&lt;/h1&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;"}				show first note in default account				show first note in default account			end tell
+			-- Position cursor in body of new note
+			try
+				tell application "System Events"					tell process "Notes"
+						set focused of scroll area 3 of splitter group 1 of window 1 to true
+						key code {125, 125} -- down, down
+					end tell
+				end tell
+			end try		end if	on error errorMessage number errorNumber		display alert "Show Note Error" message ((errorNumber as string) &amp; ": " &amp; errorMessage &amp; "
 
 Input: " &amp; q) as critical	end tryend alfred_script</string>
 				<key>cachescript</key>
@@ -989,6 +997,7 @@ on alfred_script(q)
 			show first note in default account
 			show first note in default account
 		end tell
+		-- Position cursor in body of new note
 		try
 			tell application "System Events"				tell process "Notes"
 					set focused of scroll area 3 of splitter group 1 of window 1 to true
