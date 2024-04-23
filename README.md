@@ -42,6 +42,8 @@ Download the [latest version](https://github.com/sballin/alfred-search-notes-app
 
 If you get a permission-related error, especially after installing updates to macOS, try disabling and re-enabling the permissions shown below, especially full disk access for Alfred. If that doesn't work, please look through [common issues](https://github.com/sballin/alfred-search-notes-app/issues?q=) before submitting a new one.
 
+__The most common issue `panic: unable to open database file: operation not permitted` is fixed by turning full disk access for Alfred off and on again.__
+
 <img src="https://github.com/sballin/alfred-search-notes-app/assets/2719004/566002dd-f3be-4b98-88b7-16d6e185d531" width="890">
 
 ### Email notes are not supported
