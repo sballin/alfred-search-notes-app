@@ -56,7 +56,7 @@ Result ordering and title+folder search behavior can be controlled using the [en
 
 ## Updates
 
-By default, the workflow checks Github for updates every 24 hours. This can be disabled by removing the connections to the "Check for updates" block in the workflow.
+By default, the workflow checks Github for updates if you run it and it's been 4 days since the last check. This can be disabled by removing the connections to the OneUpdater block in the workflow.
 
 ## Compile
 
