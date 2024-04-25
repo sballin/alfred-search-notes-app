@@ -7,6 +7,10 @@ assignees: ''
 
 ---
 
+**Most common problem** 
+
+unable to open database: have you tried turning full disk access for Alfred off and on again in System Settings?
+
 **To Reproduce**
 
 Steps/context to reproduce the behavior:
