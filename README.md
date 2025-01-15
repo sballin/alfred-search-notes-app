@@ -2,10 +2,10 @@
 
 This is an Alfred workflow to find and open Apple/iCloud notes in Notes.app! It's written in Go and designed to be ripping fast, even for very large Notes databases, can search everything including note and attachment contents, and supports accented characters and non-Latin scripts. 
 
-* Download the latest version: [github](https://github.com/sballin/alfred-search-notes-app/releases/latest/download/Search.Notes.alfredworkflow)
-* Instructions to fix permissions issues: [github](https://github.com/sballin/alfred-search-notes-app?tab=readme-ov-file#troubleshooting)
-* View additional issues and get help: [github](https://github.com/sballin/alfred-search-notes-app/issues?q=is%3Aissue)
-* Support me maintaining this thing and keeping the binary verified: [patreon](https://www.patreon.com/sballin)
+* Download the latest version: [[github]](https://github.com/sballin/alfred-search-notes-app/releases/latest/download/Search.Notes.alfredworkflow)
+* Instructions to fix permissions issues: [[github]](https://github.com/sballin/alfred-search-notes-app?tab=readme-ov-file#troubleshooting)
+* View additional issues and get help: [[github]](https://github.com/sballin/alfred-search-notes-app/issues?q=is%3Aissue)
+* Support me maintaining this thing and keeping the binary verified: [[patreon]](https://www.patreon.com/sballin)
 
 Privacy note: this workflow uses a Go binary to search your Notes database. The binary is [open source](https://github.com/sballin/alfred-search-notes-app/blob/master/search_notes/main.go) with [instructions](https://github.com/sballin/alfred-search-notes-app/tree/master?tab=readme-ov-file#compile) on how to compile it yourself. For extra peace of mind, consider supporting me on [Patreon](https://www.patreon.com/sballin) so that the binary can be regularly verified for malicious content by Apple ($99/year Apple Developer Program membership required). 
 
